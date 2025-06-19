@@ -1,13 +1,841 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Charity Water Game</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Long Walk: A Journey for Water</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f4f4;
+      color: #111; /* Even darker text for best contrast */
+      font-weight: bold; /* Make all text bolder */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    #gameContainer {
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      /* We'll set background images from JavaScript */
+      background-size: cover;
+      background-position: center;
+      transition: background-image 0.5s;
+      color: #111; /* Ensure text is very dark on white */
+      font-weight: bold; /* Bolder text */
+      padding-bottom: 0; /* Remove extra space at bottom */
+    }
+
+    h1 {
+      color: #00263a; /* Even darker blue for better contrast */
+      font-size: 2rem;
+      text-align: center;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-shadow: 1px 1px 2px #fff, 0 0 2px #fff;
+    }
+
+    #storyText {
+      font-size: 1.2rem;
+      margin: 20px 0;
+      color: #111; /* Very dark text */
+      font-weight: bold;
+      text-shadow: 1px 1px 2px #fff, 0 0 2px #fff;
+      background: rgba(255,255,255,0.85); /* Light background for readability */
+      border-radius: 6px;
+      padding: 10px 12px;
+      box-sizing: border-box;
+    }
+
+    .choiceBtn {
+      display: block;
+      background-color: #005073;
+      color: #fff;
+      border: none;
+      padding: 12px;
+      margin: 10px 0;
+      width: 100%;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      transition: background 0.2s, color 0.2s;
+      box-shadow: 1px 1px 2px #fff, 0 0 2px #fff;
+    }
+
+    .choiceBtn:focus {
+      outline: 3px solid #FFC907;
+      outline-offset: 2px;
+    }
+
+    .choiceBtn:hover {
+      background-color: #0077b6;
+      color: #fff;
+    }
+
+    #statusBar {
+      margin-top: 20px;
+      font-size: 1rem;
+      color: #111;
+      background: rgba(255,255,255,0.85);
+      padding: 8px 0;
+      border-radius: 5px;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px #fff, 0 0 2px #fff;
+    }
+
+    /* Character styles */
+    #characterContainer {
+      position: relative; /* So progressPath can be placed after it */
+      margin-bottom: 0;
+      left: 10%;
+      bottom: 10px;
+      width: 70px;
+      height: 120px;
+      pointer-events: none;
+      z-index: 2;
+      transition: left 0.7s;
+    }
+    #characterSprite {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    #jerryCanIcon {
+      position: absolute;
+      right: 8px;
+      bottom: 18px;
+      width: 26px;
+      height: 26px;
+      z-index: 3;
+    }
+
+    /* Landing page overlay styles */
+    #landingPage {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #fff; /* Solid white for best contrast */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      color: #111;
+      font-weight: bold;
+    }
+    #landingTitle {
+      font-size: 2.2rem;
+      color: #00263a;
+      text-shadow: 1px 1px 2px #fff, 0 0 2px #fff;
+      margin-bottom: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+    #landingSubtitle {
+      font-size: 1.1rem;
+      color: #111;
+      margin-bottom: 30px;
+      text-align: center;
+      max-width: 400px;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px #fff, 0 0 2px #fff;
+    }
+    .landingBtn {
+      background-color: #005073;
+      color: #fff;
+      border: none;
+      padding: 14px 32px;
+      margin: 10px;
+      border-radius: 6px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s, color 0.2s;
+      letter-spacing: 0.5px;
+      box-shadow: 1px 1px 2px #fff, 0 0 2px #fff;
+    }
+    .landingBtn:focus {
+      outline: 3px solid #FFC907;
+      outline-offset: 2px;
+    }
+    .landingBtn:hover {
+      background-color: #0077b6;
+      color: #fff;
+    }
+    .landingBtn[style*="background-color:#FFC907"] {
+      color: #222 !important; /* Ensure readable text on yellow */
+    }
+    .landingBtn[style*="background-color:#FFC907"]:hover {
+      background-color: #e6b800 !important;
+      color: #222 !important;
+    }
+    a:focus {
+      outline: 3px solid #FFC907;
+      outline-offset: 2px;
+    }
+    #didYouKnow {
+      background: #FFFBEA;
+      border-left: 6px solid #FFC907;
+      color: #111;
+      font-size: 1rem;
+      margin: 16px 0 0 0;
+      padding: 12px 18px 12px 14px;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px #0001, 1px 1px 2px #fff;
+      max-width: 500px;
+      display: none;
+      transition: opacity 0.5s;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px #fff, 0 0 2px #fff;
+    }
+    #didYouKnow a {
+      color: #2E9DF7;
+      text-decoration: underline;
+      font-size: 0.98em;
+      font-weight: bold;
+    }
+    #progressPath {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto 10px auto;
+      user-select: none;
+      font-weight: bold;
+      position: relative;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255,255,255,0.85);
+      padding-bottom: 8px;
+      z-index: 5;
+    }
+    #pathSVG {
+      display: block;
+      margin: 0 auto;
+      background: none;
+    }
+    #milestoneLabels span {
+      min-width: 40px;
+      text-align: center;
+      color: #111;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px #fff, 0 0 2px #fff;
+    }
+  </style>
 </head>
 <body>
-    <h1>Welcome to the Charity Water Game Prototype</h1>
-    <script src="script.js"></script>
+  <!-- Landing Page Overlay -->
+  <div id="landingPage" role="dialog" aria-modal="true" aria-labelledby="landingTitle" aria-describedby="landingSubtitle">
+    <div id="landingTitle" tabindex="0">💧 The Long Walk: A Charity: Water Journey</div>
+    <div id="landingSubtitle" tabindex="0">
+      Every day, millions of girls walk miles for clean water.<br>
+      Can you help her reach a brighter future?<br>
+      <span style="color:#005073; font-weight:bold;">Play to experience her journey.</span>
+    </div>
+    <button class="landingBtn" id="startGameBtn" aria-label="Start Game">Start Game</button>
+    <a href="https://www.charitywater.org/" target="_blank" rel="noopener" aria-label="Learn more about Charity: Water">
+      <button class="landingBtn" style="background-color:#FFC907; color:#222;">Learn More</button>
+    </a>
+  </div>
+
+  <div id="gameContainer">
+    <h1>The Long Walk: A Journey for Water</h1>
+    <!-- Reset button for player control -->
+    <button id="resetBtn" class="choiceBtn" style="max-width:200px; margin: 0 auto 10px auto; background-color:#F5402C;">Reset</button>
+    <!-- Add a clear score area at the top -->
+    <div id="scoreArea" style="text-align:center; font-size:1.1em; color:#2E9DF7; margin-bottom:8px;">
+      Journey Points: <span id="scoreValue">10</span>
+    </div>
+    <div id="characterContainer">
+      <!-- Simple SVG: African girl with a rounder body and a green dress -->
+      <svg id="characterSprite" viewBox="0 0 64 120" xmlns="http://www.w3.org/2000/svg">
+        <!-- Hair: long, flowing, covers head and part of shoulders -->
+        <path d="M32 12 Q10 40 20 90 Q32 115 44 90 Q54 40 32 12" fill="#3e2723"/>
+        <!-- Head (tan skin) -->
+        <ellipse cx="32" cy="28" rx="13" ry="15" fill="#c68642"/>
+        <!-- Face: eyes, smile -->
+        <ellipse cx="27" cy="28" rx="2" ry="2.5" fill="#222"/>
+        <ellipse cx="37" cy="28" rx="2" ry="2.5" fill="#222"/>
+        <path d="M28 36 Q32 40 36 36" stroke="#6d4c24" stroke-width="2" fill="none"/>
+        <!-- Neck (single, simple, natural) -->
+        <rect x="29" y="40" width="6" height="10" rx="3" fill="#c68642"/>
+        <!-- Body: rounder torso (ellipse) -->
+        <ellipse cx="32" cy="65" rx="15" ry="20" fill="#4FCB53"/>
+        <!-- Dress (green, flared, overlays torso for skirt) -->
+        <path d="M17 75 Q32 120 47 75 Q47 110 17 75" fill="#4FCB53"/>
+        <!-- Dress belt -->
+        <rect x="22" y="80" width="20" height="6" rx="3" fill="#FFC907" opacity="0.7"/>
+        <!-- Left Arm (holding canister) -->
+        <rect x="7" y="52" width="10" height="28" rx="5" fill="#c68642" transform="rotate(-18 12 66)"/>
+        <!-- Right Arm (swinging) -->
+        <rect x="47" y="52" width="10" height="28" rx="5" fill="#c68642" transform="rotate(18 52 66)"/>
+        <!-- Left Leg -->
+        <rect x="26" y="105" width="6" height="13" rx="3" fill="#8d5524"/>
+        <!-- Right Leg -->
+        <rect x="32" y="105" width="6" height="13" rx="3" fill="#8d5524"/>
+        <!-- Canister (yellow, held in left hand) -->
+        <rect x="2" y="75" width="14" height="18" rx="3" fill="#FFC907" stroke="#bfa100" stroke-width="2"/>
+        <rect x="7" y="71" width="4" height="7" rx="1" fill="#bfa100"/>
+        <!-- Canister handle -->
+        <rect x="5" y="73" width="8" height="3" rx="1.5" fill="#bfa100"/>
+        <!-- Hair details (bangs) -->
+        <ellipse cx="32" cy="20" rx="10" ry="6" fill="#3e2723"/>
+      </svg>
+    </div>
+    <!-- Progress path directly under the character's feet -->
+    <div id="progressPath">
+      <svg id="pathSVG" width="100%" height="40" viewBox="0 0 600 40" style="max-width: 100%; min-width: 200px;">
+        <!-- Path line -->
+        <line x1="40" y1="20" x2="560" y2="20" stroke="#bfa77a" stroke-width="8" stroke-linecap="round"/>
+        <!-- Milestones (5 steps) -->
+        <circle cx="40"  cy="20" r="12" fill="#FFC907" stroke="#bfa100" stroke-width="2"/>
+        <circle cx="170" cy="20" r="10" fill="#8BD1CB" stroke="#159A48" stroke-width="2"/>
+        <circle cx="300" cy="20" r="10" fill="#2E9DF7" stroke="#005073" stroke-width="2"/>
+        <circle cx="430" cy="20" r="10" fill="#FF902A" stroke="#F5402C" stroke-width="2"/>
+        <circle cx="560" cy="20" r="14" fill="#4FCB53" stroke="#159A48" stroke-width="3"/>
+        <!-- Girl marker (moves along path) -->
+        <circle id="girlMarker" cx="40" cy="20" r="11" fill="#c68642" stroke="#3e2723" stroke-width="2"/>
+        <!-- Girl icon on the marker (simple head and dress) -->
+        <g id="girlMiniIcon">
+          <ellipse cx="40" cy="15" rx="4" ry="5" fill="#c68642"/>
+          <ellipse cx="40" cy="25" rx="5" ry="7" fill="#4FCB53"/>
+          <ellipse cx="40" cy="10" rx="5" ry="3" fill="#3e2723"/>
+        </g>
+      </svg>
+      <div id="milestoneLabels" style="display: flex; justify-content: space-between; font-size: 0.9em; color: #555; margin-top: 2px;">
+        <span>Start</span>
+        <span>Obstacle</span>
+        <span>Challenge</span>
+        <span>Village</span>
+        <span>Well</span>
+      </div>
+    </div>
+    <div id="storyText">Click "Start" to begin the journey.</div>
+    <div id="didYouKnow" style="display:none;">
+      <!-- Did You Know box will be filled by JS -->
+    </div>
+    <div id="choices"></div>
+    <div id="statusBar"></div>
+    <!-- Audio elements for ambient and SFX -->
+    <audio id="ambientWind" src="https://cdn.pixabay.com/audio/2022/10/16/audio_12b5b3b2e2.mp3" loop></audio>
+    <audio id="ambientFootsteps" src="https://cdn.pixabay.com/audio/2022/07/26/audio_124bfae7e7.mp3" loop></audio>
+    <audio id="ambientSchoolBell" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b6e7e7e.mp3"></audio>
+    <audio id="sfxClick" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b6e7e7e.mp3"></audio>
+    <audio id="sfxVictory" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b6e7e7e.mp3"></audio>
+    <audio id="sfxLoss" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b6e7e7e.mp3"></audio>
+  </div>
+
+  <script>
+    let currentStep = 0;
+    let health = 3;
+    let schoolProgress = 0;
+    let score = 10; // Add a score variable for the challenge
+    let lastScore = 10; // To track score changes
+
+    const storyText = document.getElementById('storyText');
+    const choicesContainer = document.getElementById('choices');
+    const statusBar = document.getElementById('statusBar');
+
+    // Expanded story with more steps, more options, and branching outcomes
+    const storySteps = [
+      {
+        text: "You wake up early. Your family's only water source is 3 miles away. Do you wear sandals or go barefoot?",
+        choices: [
+          { text: "Wear sandals", effect: () => {}, next: 1 },
+          { text: "Go barefoot", effect: () => { health--; }, next: 1 }
+        ]
+      },
+      {
+        text: "You meet your friend Amina at the edge of the village. She offers to walk with you. What do you do?",
+        choices: [
+          { text: "Walk together", effect: () => { schoolProgress++; }, next: 2 },
+          { text: "Go alone", effect: () => {}, next: 2 }
+        ]
+      },
+      {
+        text: "There’s broken glass ahead. What do you do?",
+        choices: [
+          { text: "Step carefully around it", effect: () => {}, next: 3 },
+          { text: "Run through it quickly", effect: () => { health--; }, next: 3 },
+          { text: "Ask Amina for help", effect: () => { schoolProgress++; }, next: 3 }
+        ]
+      },
+      {
+        text: "You see a shortcut through thorny bushes. It could save time, but looks risky.",
+        choices: [
+          { text: "Take the shortcut", effect: () => { health--; }, next: 4 },
+          { text: "Stay on the main path", effect: () => {}, next: 4 }
+        ]
+      },
+      {
+        text: "A snake is coiled in the path. What do you do?",
+        choices: [
+          { text: "Walk around slowly", effect: () => { schoolProgress++; }, next: 5 },
+          { text: "Throw a rock at it", effect: () => { health--; }, next: 5 },
+          { text: "Wait for it to leave", effect: () => {}, next: 5 }
+        ]
+      },
+      {
+        text: "You reach a muddy patch. Your container is heavy. What do you do?",
+        choices: [
+          { text: "Ask for help", effect: () => { schoolProgress++; }, next: 6 },
+          { text: "Push through alone", effect: () => { health--; }, next: 6 }
+        ]
+      },
+      {
+        text: "You see a group of boys playing soccer. They tease you for carrying water. What do you do?",
+        choices: [
+          { text: "Ignore them and keep walking", effect: () => {}, next: 7 },
+          { text: "Ask them to help carry the water", effect: () => { schoolProgress++; }, next: 7 }
+        ]
+      },
+      {
+        text: "You finally reach the river. The water looks dirty. What do you do?",
+        choices: [
+          { text: "Fill your container anyway", effect: () => { health--; }, next: 8 },
+          { text: "Walk further to a cleaner spot", effect: () => {}, next: 8 }
+        ]
+      },
+      {
+        text: "On the way back, you feel tired and thirsty. What do you do?",
+        choices: [
+          { text: "Drink some water from your container", effect: () => { health++; schoolProgress--; }, next: 9 },
+          { text: "Wait until you get home", effect: () => {}, next: 9 }
+        ]
+      },
+      {
+        text: "You trip and spill some water. What do you do?",
+        choices: [
+          { text: "Go back to refill", effect: () => { schoolProgress--; }, next: 10 },
+          { text: "Keep going with less water", effect: () => { health--; }, next: 10 }
+        ]
+      },
+      {
+        text: "You're exhausted. A friend offers to carry the container with you.",
+        choices: [
+          { text: "Accept the help and share the load", effect: () => { schoolProgress++; }, next: 11 },
+          { text: "Refuse help and keep walking alone", effect: () => {}, next: 11 }
+        ]
+      },
+      {
+        text: "You see a well being built in your village. Today, you don’t have to walk miles anymore.",
+        choices: [
+          { text: "Visit the new well and go to school", effect: () => { schoolProgress += 2; }, next: 12 },
+          { text: "Stay to help your mother", effect: () => {}, next: 12 }
+        ]
+      },
+      {
+        text: "A new day begins. With clean water nearby, what will you do?",
+        choices: [
+          { text: "Go to school with friends", effect: () => { schoolProgress++; }, next: null },
+          { text: "Help your family at home", effect: () => {}, next: null }
+        ]
+      },
+      {
+        text: "A wild dog blocks your path and barks loudly. What do you do?",
+        choices: [
+          { text: "Try to scare it away", effect: () => { score -= 3; health--; }, next: 3 },
+          { text: "Wait for it to leave", effect: () => { score--; }, next: 3 },
+          { text: "Take a longer route", effect: () => { score -= 2; }, next: 3 }
+        ]
+      },
+      {
+        text: "You encounter a heavy rain, making the path slippery. What do you do?",
+        choices: [
+          { text: "Walk carefully and slowly", effect: () => { score--; }, next: 4 },
+          { text: "Run to get home faster", effect: () => { health--; }, next: 4 },
+          { text: "Seek shelter and wait", effect: () => { schoolProgress--; }, next: 4 }
+        ]
+      },
+      {
+        text: "A stranger offers you food. They look friendly but you never know...",
+        choices: [
+          { text: "Accept the food gratefully", effect: () => { health++; score--; }, next: 5 },
+          { text: "Politely decline and move on", effect: () => {}, next: 5 }
+        ]
+      },
+      {
+        text: "You hear about a water source being polluted by a factory. It's far from here.",
+        choices: [
+          { text: "Report it to the village chief", effect: () => { schoolProgress += 2; }, next: 6 },
+          { text: "Ignore it and continue your way", effect: () => {}, next: 6 }
+        ]
+      },
+      {
+        text: "Some children challenge you to a race. The winner gets a prize!",
+        choices: [
+          { text: "Accept the challenge", effect: () => { score += 3; }, next: 7 },
+          { text: "Politely decline", effect: () => {}, next: 7 }
+        ]
+      },
+      {
+        text: "You find a lost puppy on the way. It's scared and alone.",
+        choices: [
+          { text: "Take it with you", effect: () => { health++; score--; }, next: 8 },
+          { text: "Leave it and continue", effect: () => {}, next: 8 }
+        ]
+      },
+      {
+        text: "Finally, you reach home. Your family is worried but relieved to see you safe.",
+        choices: [
+          { text: "Tell them about your day", effect: () => { schoolProgress++; }, next: 9 },
+          { text: "Just rest and say nothing", effect: () => {}, next: 9 }
+        ]
+      },
+      {
+        text: "You did it! You've completed the long walk for water. What an adventure!",
+        choices: [
+          { text: "Restart the journey", effect: () => { currentStep = 0; }, next: null },
+          { text: "Exit", effect: () => { window.close(); }, next: null }
+        ]
+      }
+    ];
+
+    // Array of background images for each scene
+    // (You can replace these URLs with your own or other free images)
+    const backgroundImages = [
+      // Morning sunrise
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
+      // Dry, cracked trails
+      "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=600&q=80",
+      // Thorny brush or broken-glass paths
+      "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=600&q=80",
+      // A small village
+      "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80",
+      // Vibrant well with children
+      "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=600&q=80"
+    ];
+
+    // Function to set the background image for the current step
+    function setBackground(step) {
+      // Get the game container element
+      const gameContainer = document.getElementById('gameContainer');
+      // If step is valid, set the background image
+      if (backgroundImages[step]) {
+        gameContainer.style.backgroundImage = `url('${backgroundImages[step]}')`;
+      } else {
+        // Default background if step is out of range
+        gameContainer.style.backgroundImage = '';
+      }
+    }
+
+    // Move the character forward with each step
+    function moveCharacter(step) {
+      // Get the character container
+      const character = document.getElementById('characterContainer');
+      // We'll move from 10% (start) to 70% (end) as the journey progresses
+      const minLeft = 10; // percent
+      const maxLeft = 70; // percent
+      const totalSteps = backgroundImages.length - 1;
+      // Calculate new left position based on step
+      let leftPercent = minLeft + ((maxLeft - minLeft) * (step / totalSteps));
+      // Clamp between min and max
+      if (leftPercent > maxLeft) leftPercent = maxLeft;
+      if (leftPercent < minLeft) leftPercent = minLeft;
+      // Set the new left position
+      character.style.left = `${leftPercent}%`;
+    }
+
+    // Move the girl marker and icon along the path based on currentStep
+    function updatePathMarker(step) {
+      // There are 5 steps, so 5 positions (0 to 4)
+      // SVG cx positions for each step: [40, 170, 300, 430, 560]
+      const positions = [40, 170, 300, 430, 560];
+      const marker = document.getElementById('girlMarker');
+      const miniIcon = document.getElementById('girlMiniIcon');
+      // Clamp step to valid range
+      let idx = step;
+      if (idx < 0) idx = 0;
+      if (idx > 4) idx = 4;
+      marker.setAttribute('cx', positions[idx]);
+      // Move the mini icon group to match the marker
+      miniIcon.setAttribute('transform', `translate(${positions[idx] - 40},0)`);
+    }
+
+    // Get audio elements
+    const ambientWind = document.getElementById('ambientWind');
+    const ambientFootsteps = document.getElementById('ambientFootsteps');
+    const ambientSchoolBell = document.getElementById('ambientSchoolBell');
+    const sfxClick = document.getElementById('sfxClick');
+    const sfxVictory = document.getElementById('sfxVictory');
+    const sfxLoss = document.getElementById('sfxLoss');
+
+    // Helper to play a sound from the start
+    function playSound(audio) {
+      audio.currentTime = 0;
+      audio.play();
+    }
+
+    // Start ambient sounds when game starts
+    function startGame() {
+      currentStep = 0;
+      health = 3;
+      schoolProgress = 0;
+      score = 10; // Reset score
+      setBackground(currentStep);
+      moveCharacter(currentStep);
+      updatePathMarker(currentStep); // Move marker to start
+      choicesContainer.innerHTML = '';
+      // Hide the well scene if it exists
+      hideWellScene();
+      ambientWind.volume = 0.3;
+      ambientWind.play();
+      ambientFootsteps.volume = 0.2;
+      ambientFootsteps.play();
+      showStep();
+    }
+
+    // Stop all ambient sounds
+    function stopAmbient() {
+      ambientWind.pause();
+      ambientWind.currentTime = 0;
+      ambientFootsteps.pause();
+      ambientFootsteps.currentTime = 0;
+      ambientSchoolBell.pause();
+      ambientSchoolBell.currentTime = 0;
+    }
+
+    // Array of "Did You Know?" facts
+    const didYouKnowFacts = [
+      "1 in 10 people lack access to clean water.",
+      "Girls in sub-Saharan Africa spend 4x more time fetching water than boys.",
+      "Access to clean water means more time for school and play.",
+      "Diseases from dirty water kill more people every year than all forms of violence, including war.",
+      "Learn more inspiring stories at <a href='https://www.charitywater.org/stories' target='_blank'>charitywater.org/stories</a>."
+    ];
+
+    // Show a random Did You Know box after each decision
+    function showDidYouKnow() {
+      const box = document.getElementById('didYouKnow');
+      // Pick a random fact except the last one (save last for ending)
+      const factIndex = Math.floor(Math.random() * (didYouKnowFacts.length - 1));
+      box.innerHTML = `<strong>Did You Know?</strong> ${didYouKnowFacts[factIndex]}`;
+      box.style.display = 'block';
+      box.style.opacity = '1';
+      // Hide after 5 seconds (was 2.5 seconds)
+      setTimeout(() => {
+        box.style.opacity = '0';
+        setTimeout(() => { box.style.display = 'none'; }, 500);
+      }, 5000);
+    }
+
+    function updateScoreDisplay() {
+      const scoreValue = document.getElementById('scoreValue');
+      if (!scoreValue) return;
+      scoreValue.textContent = score;
+      // Show feedback if score changed
+      if (score !== lastScore) {
+        const diff = score - lastScore;
+        const feedback = document.createElement('span');
+        feedback.textContent = diff > 0 ? ` +${diff}` : ` ${diff}`;
+        feedback.style.color = diff > 0 ? "#4FCB53" : "#F5402C";
+        feedback.style.fontWeight = "bold";
+        feedback.style.marginLeft = "8px";
+        scoreValue.parentElement.appendChild(feedback);
+        setTimeout(() => feedback.remove(), 1200);
+        lastScore = score;
+      }
+    }
+
+    function showStep() {
+      // Set the background for the current step
+      setBackground(currentStep);
+      moveCharacter(currentStep); // Move character forward
+      updatePathMarker(currentStep); // Move marker along path
+
+      // If the game is over, show the ending
+      if (
+        currentStep >= storySteps.length ||
+        health <= 0 ||
+        storySteps[currentStep].choices.every(choice => choice.next === null)
+      ) {
+        endGame();
+        return;
+      }
+
+      const step = storySteps[currentStep];
+      storyText.textContent = step.text;
+      storyText.focus();
+      choicesContainer.innerHTML = '';
+
+      // Show choices for this step
+      step.choices.forEach((choice, idx) => {
+        const btn = document.createElement('button');
+        btn.classList.add('choiceBtn');
+        btn.textContent = choice.text;
+        btn.onclick = () => {
+          playSound(sfxClick); // Play click sound
+          choice.effect();
+          // Go to the next step based on the choice
+          if (typeof choice.next === "number") {
+            currentStep = choice.next;
+          } else {
+            currentStep++;
+          }
+          showStep();
+          showDidYouKnow(); // Show fact after each decision
+        };
+        choicesContainer.appendChild(btn);
+      });
+
+      updateStatus();
+      updateScoreDisplay(); // Update score visually
+    }
+
+    function updateStatus() {
+      // Show score in the status bar
+      statusBar.textContent = `Health: ${health} | School Progress: ${schoolProgress} | Journey Points: ${score}`;
+    }
+
+    function endGame() {
+      choicesContainer.innerHTML = '';
+      stopAmbient();
+
+      // Move marker to final position
+      if (health <= 0) {
+        updatePathMarker(currentStep);
+        moveCharacter(currentStep);
+        setBackground(currentStep);
+        storyText.innerHTML = "You were injured on the journey and couldn't continue. <br> Try again to learn how to stay safe.";
+        playSound(sfxLoss);
+        // Show last fact (link to stories)
+        const box = document.getElementById('didYouKnow');
+        box.innerHTML = `<strong>Did You Know?</strong> ${didYouKnowFacts[didYouKnowFacts.length - 1]}`;
+        box.style.display = 'block';
+        box.style.opacity = '1';
+      } else {
+        updatePathMarker(4);
+        moveCharacter(backgroundImages.length - 1);
+
+        // Show a special well scene at the end
+        showWellCelebrationScene();
+
+        // Different endings based on schoolProgress and health
+        if (schoolProgress >= 4 && health > 1) {
+          storyText.innerHTML = "You made it! With clean water and support, you now attend school every day and play with friends. 💧🎒";
+        } else if (schoolProgress >= 2) {
+          storyText.innerHTML = "You helped your family and sometimes go to school. Clean water makes life better!";
+        } else {
+          storyText.innerHTML = "Your journey ends, but access to clean water could change everything.";
+        }
+        playSound(sfxVictory);
+        if (schoolProgress >= 3) {
+          setTimeout(() => { playSound(ambientSchoolBell); }, 800);
+        }
+        // Show last fact (link to stories)
+        const box = document.getElementById('didYouKnow');
+        box.innerHTML = `<strong>Did You Know?</strong> ${didYouKnowFacts[didYouKnowFacts.length - 1]}`;
+        box.style.display = 'block';
+        box.style.opacity = '1';
+      }
+      storyText.focus();
+      const restart = document.createElement('button');
+      restart.classList.add('choiceBtn');
+      restart.textContent = 'Restart';
+      restart.onclick = startGame;
+      choicesContainer.appendChild(restart);
+      updateStatus();
+      updateScoreDisplay(); // Show final score
+      // Show a summary message based on score
+      const scoreArea = document.getElementById('scoreArea');
+      if (scoreArea) {
+        let msg = "";
+        if (score >= 15) {
+          msg = "Amazing! You made great choices and helped your family.";
+        } else if (score >= 10) {
+          msg = "Good job! You finished the journey safely.";
+        } else {
+          msg = "Try again to make safer and smarter choices!";
+        }
+        scoreArea.innerHTML = `Journey Points: <span id="scoreValue">${score}</span> <br><span style="color:#159A48;">${msg}</span>`;
+      }
+    }
+
+    // Show a well celebration scene at the end of the game
+    function showWellCelebrationScene() {
+      // Remove any previous well scene if present
+      let oldWell = document.getElementById('wellCelebrationScene');
+      if (oldWell) oldWell.remove();
+
+      // Create a new div for the well scene
+      const wellDiv = document.createElement('div');
+      wellDiv.id = 'wellCelebrationScene';
+      wellDiv.style.position = 'absolute';
+      wellDiv.style.left = '50%';
+      wellDiv.style.top = '50%';
+      wellDiv.style.transform = 'translate(-50%, -40%)';
+      wellDiv.style.zIndex = '20';
+      wellDiv.style.background = 'rgba(255,255,255,0.95)';
+      wellDiv.style.borderRadius = '12px';
+      wellDiv.style.boxShadow = '0 4px 24px #0002';
+      wellDiv.style.padding = '18px 24px 12px 24px';
+      wellDiv.style.textAlign = 'center';
+
+      // SVG well and happy people
+      wellDiv.innerHTML = `
+        <svg width="180" height="120" viewBox="0 0 180 120">
+          <!-- Well base -->
+          <ellipse cx="90" cy="110" rx="35" ry="10" fill="#bfa77a"/>
+          <rect x="60" y="60" width="60" height="50" rx="12" fill="#bfa77a" stroke="#8d5524" stroke-width="2"/>
+          <!-- Well water -->
+          <ellipse cx="90" cy="90" rx="25" ry="8" fill="#2E9DF7" opacity="0.7"/>
+          <!-- Well roof -->
+          <rect x="55" y="45" width="70" height="15" rx="4" fill="#8BD1CB" stroke="#159A48" stroke-width="2"/>
+          <!-- Well posts -->
+          <rect x="68" y="62" width="8" height="38" fill="#8d5524"/>
+          <rect x="104" y="62" width="8" height="38" fill="#8d5524"/>
+          <!-- Rope and bucket -->
+          <rect x="87" y="62" width="6" height="22" fill="#FFC907"/>
+          <ellipse cx="90" cy="92" rx="7" ry="4" fill="#FFC907" stroke="#bfa100" stroke-width="1"/>
+          <!-- Happy people (simple circles) -->
+          <circle cx="40" cy="110" r="10" fill="#c68642"/>
+          <circle cx="140" cy="110" r="10" fill="#c68642"/>
+          <circle cx="25" cy="100" r="7" fill="#c68642"/>
+          <circle cx="155" cy="100" r="7" fill="#c68642"/>
+          <!-- Water splash for celebration -->
+          <ellipse cx="90" cy="85" rx="15" ry="4" fill="#2E9DF7" opacity="0.5"/>
+        </svg>
+        <div style="color:#159A48; font-size:1.2em; font-weight:bold; margin-top:8px;">
+          Thanks to Charity: Water, your village has a new well!<br>
+          Now you don't have to walk so far for water.
+        </div>
+      `;
+      document.getElementById('gameContainer').appendChild(wellDiv);
+    }
+
+    // Optionally hide the well scene if needed
+    function hideWellScene() {
+      let oldWell = document.getElementById('wellCelebrationScene');
+      if (oldWell) oldWell.remove();
+    }
+
+    // Hide landing page and start game when Start Game is clicked
+    document.getElementById('startGameBtn').onclick = function() {
+      // Hide the landing page
+      document.getElementById('landingPage').style.display = 'none';
+      // Start the game
+      startGame();
+    };
+
+    // Add event listener for the Reset button
+    document.getElementById('resetBtn').onclick = function() {
+      // Reset the game to the beginning
+      startGame();
+    };
+  </script>
 </body>
 </html>
