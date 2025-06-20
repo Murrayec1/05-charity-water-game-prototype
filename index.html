@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- Responsive viewport for mobile and tablet -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Long Walk: A Journey for Water</title>
   <style>
@@ -9,8 +10,8 @@
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
       background: #f4f4f4;
-      color: #111; /* Even darker text for best contrast */
-      font-weight: bold; /* Make all text bolder */
+      color: #111;
+      font-weight: bold;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -58,6 +59,15 @@
       box-sizing: border-box;
     }
 
+    #choices {
+      display: flex; /* Use flexbox to center options */
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin: 0 auto;
+    }
+
     .choiceBtn {
       display: block;
       background-color: #005073;
@@ -73,6 +83,8 @@
       letter-spacing: 0.5px;
       transition: background 0.2s, color 0.2s;
       box-shadow: 1px 1px 2px #fff, 0 0 2px #fff;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .choiceBtn:focus {
@@ -98,15 +110,15 @@
 
     /* Character styles */
     #characterContainer {
-      position: relative; /* So progressPath can be placed after it */
+      position: absolute; /* Place the character exactly over the map line */
       margin-bottom: 0;
-      left: 10%;
-      bottom: 10px;
-      width: 70px;
-      height: 120px;
+      left: 0; /* Will be set by JS */
+      top: 0;  /* Will be set by JS */
+      width: 40px;
+      height: 75px;
       pointer-events: none;
-      z-index: 2;
-      transition: left 0.7s;
+      z-index: 10; /* Above the SVG path */
+      transition: left 0.7s, top 0.7s;
     }
     #characterSprite {
       width: 100%;
@@ -215,7 +227,7 @@
       margin: 0 auto 10px auto;
       user-select: none;
       font-weight: bold;
-      position: relative;
+      position: relative; /* Needed for absolute positioning of the character */
       left: 0;
       right: 0;
       bottom: 0;
@@ -234,6 +246,62 @@
       color: #111;
       font-weight: bold;
       text-shadow: 1px 1px 2px #fff, 0 0 2px #fff;
+    }
+
+    /* Make SVGs and overlays responsive */
+    #characterContainer, #characterSprite {
+      max-width: 100vw;
+      max-height: 25vh;
+      width: 40px;
+      height: 75px;
+    }
+    #progressPath, #pathSVG {
+      width: 100%;
+      max-width: 600px;
+      min-width: 180px;
+    }
+    .choiceBtn, .landingBtn {
+      font-size: 1rem;
+      padding: 12px;
+      width: 100%;
+      max-width: 350px;
+      box-sizing: border-box;
+    }
+    /* Responsive overlay for cut scenes and directions */
+    #directionsCutScene, #schoolEndingScene, #glassCutScene, #wellCelebrationScene {
+      max-width: 100vw;
+      max-height: 100vh;
+      overflow-y: auto;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    /* Responsive text and layout for small screens */
+    @media (max-width: 600px) {
+      #gameContainer {
+        padding: 8px;
+        max-width: 98vw;
+      }
+      h1 {
+        font-size: 1.1rem;
+      }
+      #scoreArea, #statusBar, #storyText {
+        font-size: 1em;
+        padding: 6px 4px;
+      }
+      .choiceBtn, .landingBtn {
+        font-size: 0.95rem;
+        padding: 10px;
+      }
+      #characterContainer, #characterSprite {
+        width: 28px;
+        height: 52px;
+      }
+      #progressPath, #pathSVG {
+        min-width: 120px;
+      }
+      #milestoneLabels {
+        font-size: 0.6em;
+      }
     }
   </style>
 </head>
@@ -260,68 +328,80 @@
     <div id="scoreArea" style="text-align:center; font-size:1.1em; color:#2E9DF7; margin-bottom:8px;">
       Journey Points: <span id="scoreValue">10</span>
     </div>
-    <div id="characterContainer">
-      <!-- Simple SVG: African girl with a rounder body and a green dress -->
-      <svg id="characterSprite" viewBox="0 0 64 120" xmlns="http://www.w3.org/2000/svg">
-        <!-- Hair: long, flowing, covers head and part of shoulders -->
-        <path d="M32 12 Q10 40 20 90 Q32 115 44 90 Q54 40 32 12" fill="#3e2723"/>
-        <!-- Head (tan skin) -->
-        <ellipse cx="32" cy="28" rx="13" ry="15" fill="#c68642"/>
-        <!-- Face: eyes, smile -->
-        <ellipse cx="27" cy="28" rx="2" ry="2.5" fill="#222"/>
-        <ellipse cx="37" cy="28" rx="2" ry="2.5" fill="#222"/>
-        <path d="M28 36 Q32 40 36 36" stroke="#6d4c24" stroke-width="2" fill="none"/>
-        <!-- Neck (single, simple, natural) -->
-        <rect x="29" y="40" width="6" height="10" rx="3" fill="#c68642"/>
-        <!-- Body: rounder torso (ellipse) -->
-        <ellipse cx="32" cy="65" rx="15" ry="20" fill="#4FCB53"/>
-        <!-- Dress (green, flared, overlays torso for skirt) -->
-        <path d="M17 75 Q32 120 47 75 Q47 110 17 75" fill="#4FCB53"/>
-        <!-- Dress belt -->
-        <rect x="22" y="80" width="20" height="6" rx="3" fill="#FFC907" opacity="0.7"/>
-        <!-- Left Arm (holding canister) -->
-        <rect x="7" y="52" width="10" height="28" rx="5" fill="#c68642" transform="rotate(-18 12 66)"/>
-        <!-- Right Arm (swinging) -->
-        <rect x="47" y="52" width="10" height="28" rx="5" fill="#c68642" transform="rotate(18 52 66)"/>
-        <!-- Left Leg -->
-        <rect x="26" y="105" width="6" height="13" rx="3" fill="#8d5524"/>
-        <!-- Right Leg -->
-        <rect x="32" y="105" width="6" height="13" rx="3" fill="#8d5524"/>
-        <!-- Canister (yellow, held in left hand) -->
-        <rect x="2" y="75" width="14" height="18" rx="3" fill="#FFC907" stroke="#bfa100" stroke-width="2"/>
-        <rect x="7" y="71" width="4" height="7" rx="1" fill="#bfa100"/>
-        <!-- Canister handle -->
-        <rect x="5" y="73" width="8" height="3" rx="1.5" fill="#bfa100"/>
-        <!-- Hair details (bangs) -->
-        <ellipse cx="32" cy="20" rx="10" ry="6" fill="#3e2723"/>
-      </svg>
-    </div>
     <!-- Progress path directly under the character's feet -->
     <div id="progressPath">
-      <svg id="pathSVG" width="100%" height="40" viewBox="0 0 600 40" style="max-width: 100%; min-width: 200px;">
-        <!-- Path line -->
-        <line x1="40" y1="20" x2="560" y2="20" stroke="#bfa77a" stroke-width="8" stroke-linecap="round"/>
-        <!-- Milestones (5 steps) -->
-        <circle cx="40"  cy="20" r="12" fill="#FFC907" stroke="#bfa100" stroke-width="2"/>
-        <circle cx="170" cy="20" r="10" fill="#8BD1CB" stroke="#159A48" stroke-width="2"/>
-        <circle cx="300" cy="20" r="10" fill="#2E9DF7" stroke="#005073" stroke-width="2"/>
-        <circle cx="430" cy="20" r="10" fill="#FF902A" stroke="#F5402C" stroke-width="2"/>
-        <circle cx="560" cy="20" r="14" fill="#4FCB53" stroke="#159A48" stroke-width="3"/>
+      <!-- Place the character icon absolutely over the SVG path -->
+      <div id="characterContainer">
+        <!-- Simple SVG: African girl with a rounder body and a green dress -->
+        <svg id="characterSprite" viewBox="0 0 64 120" width="40" height="75" xmlns="http://www.w3.org/2000/svg">
+          <!-- Hair: long, flowing, covers head and part of shoulders -->
+          <path d="M32 12 Q10 40 20 90 Q32 115 44 90 Q54 40 32 12" fill="#3e2723"/>
+          <!-- Head (tan skin) -->
+          <ellipse cx="32" cy="28" rx="13" ry="15" fill="#c68642"/>
+          <!-- Face: eyes, smile -->
+          <ellipse cx="27" cy="28" rx="2" ry="2.5" fill="#222"/>
+          <ellipse cx="37" cy="28" rx="2" ry="2.5" fill="#222"/>
+          <path d="M28 36 Q32 40 36 36" stroke="#6d4c24" stroke-width="2" fill="none"/>
+          <!-- Neck (single, simple, natural) -->
+          <rect x="29" y="40" width="6" height="10" rx="3" fill="#c68642"/>
+          <!-- Body: rounder torso (ellipse) -->
+          <ellipse cx="32" cy="65" rx="15" ry="20" fill="#4FCB53"/>
+          <!-- Dress (green, flared, overlays torso for skirt) -->
+          <path d="M17 75 Q32 120 47 75 Q47 110 17 75" fill="#4FCB53"/>
+          <!-- Dress belt -->
+          <rect x="22" y="80" width="20" height="6" rx="3" fill="#FFC907" opacity="0.7"/>
+          <!-- Left Arm (holding canister) -->
+          <rect x="7" y="52" width="10" height="28" rx="5" fill="#c68642" transform="rotate(-18 12 66)"/>
+          <!-- Right Arm (swinging) -->
+          <rect x="47" y="52" width="10" height="28" rx="5" fill="#c68642" transform="rotate(18 52 66)"/>
+          <!-- Left Leg -->
+          <rect x="26" y="105" width="6" height="13" rx="3" fill="#8d5524"/>
+          <!-- Right Leg -->
+          <rect x="32" y="105" width="6" height="13" rx="3" fill="#8d5524"/>
+          <!-- Canister (yellow, held in left hand) -->
+          <rect x="2" y="75" width="14" height="18" rx="3" fill="#FFC907" stroke="#bfa100" stroke-width="2"/>
+          <rect x="7" y="71" width="4" height="7" rx="1" fill="#bfa100"/>
+          <!-- Canister handle -->
+          <rect x="5" y="73" width="8" height="3" rx="1.5" fill="#bfa100"/>
+          <!-- Hair details (bangs) -->
+          <ellipse cx="32" cy="20" rx="10" ry="6" fill="#3e2723"/>
+        </svg>
+      </div>
+      <svg id="pathSVG" width="100%" height="60" viewBox="0 0 400 60" style="max-width: 100%; min-width: 200px;">
+        <!-- Winding path (brown) - only to river -->
+        <path d="M 40 50 Q 120 10 200 40 Q 280 70 350 30" stroke="#8d5524" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <!-- Milestones (4 steps) -->
+        <circle cx="40"  cy="50" r="13" fill="#FFC907" stroke="#bfa100" stroke-width="2"/>
+        <circle cx="140" cy="20" r="11" fill="#FF902A" stroke="#F5402C" stroke-width="2"/>
+        <circle cx="220" cy="45" r="11" fill="#8BD1CB" stroke="#159A48" stroke-width="2"/>
+        <circle cx="350" cy="30" r="13" fill="#2E9DF7" stroke="#005073" stroke-width="3"/>
         <!-- Girl marker (moves along path) -->
-        <circle id="girlMarker" cx="40" cy="20" r="11" fill="#c68642" stroke="#3e2723" stroke-width="2"/>
+        <circle id="girlMarker" cx="40" cy="50" r="12" fill="#c68642" stroke="#3e2723" stroke-width="2"/>
         <!-- Girl icon on the marker (simple head and dress) -->
         <g id="girlMiniIcon">
-          <ellipse cx="40" cy="15" rx="4" ry="5" fill="#c68642"/>
-          <ellipse cx="40" cy="25" rx="5" ry="7" fill="#4FCB53"/>
-          <ellipse cx="40" cy="10" rx="5" ry="3" fill="#3e2723"/>
+          <ellipse cx="40" cy="45" rx="4" ry="5" fill="#c68642"/>
+          <ellipse cx="40" cy="55" rx="5" ry="7" fill="#4FCB53"/>
+          <ellipse cx="40" cy="40" rx="5" ry="3" fill="#3e2723"/>
         </g>
+        <!-- Simple SVG trees and rocks for jungle/forest feel -->
+        <ellipse cx="100" cy="10" rx="8" ry="4" fill="#159A48"/>
+        <rect x="95" y="5" width="4" height="8" fill="#8d5524"/>
+        <ellipse cx="250" cy="60" rx="10" ry="5" fill="#159A48"/>
+        <rect x="245" y="55" width="4" height="8" fill="#8d5524"/>
+        <ellipse cx="400" cy="10" rx="7" ry="3" fill="#159A48"/>
+        <rect x="397" y="7" width="3" height="6" fill="#8d5524"/>
+        <ellipse cx="550" cy="55" rx="8" ry="4" fill="#159A48"/>
+        <rect x="547" y="51" width="3" height="7" fill="#8d5524"/>
+        <!-- Rocks -->
+        <ellipse cx="180" cy="55" rx="5" ry="2" fill="#bfa77a"/>
+        <ellipse cx="620" cy="40" rx="6" ry="3" fill="#bfa77a"/>
       </svg>
-      <div id="milestoneLabels" style="display: flex; justify-content: space-between; font-size: 0.9em; color: #555; margin-top: 2px;">
-        <span>Start</span>
-        <span>Obstacle</span>
-        <span>Challenge</span>
-        <span>Village</span>
-        <span>Well</span>
+      <!-- Milestone labels for the new map (forward only) -->
+      <div id="milestoneLabels" style="display: flex; justify-content: space-between; font-size: 0.7em; color: #555; margin-top: 16px; margin-bottom: 4px;">
+        <span>start</span>
+        <span>obstacle</span>
+        <span>stale water</span>
+        <span>river (turn back)</span>
       </div>
     </div>
     <div id="storyText">Click "Start" to begin the journey.</div>
@@ -341,10 +421,11 @@
 
   <script>
     let currentStep = 0;
-    let health = 3;
-    let schoolProgress = 0;
-    let score = 10; // Add a score variable for the challenge
-    let lastScore = 10; // To track score changes
+    let energy = 4; // Start Energy at 4
+    let score = 0; // Start Journey Points at 0
+    let lastScore = 0; // Track last score for feedback
+    let wentAlone = false; // Track if player chose 'Go alone'
+    let returning = false; // Track if player is returning home
 
     const storyText = document.getElementById('storyText');
     const choicesContainer = document.getElementById('choices');
@@ -353,102 +434,141 @@
     // Expanded story with more steps, more options, and branching outcomes
     const storySteps = [
       {
-        text: "You wake up early. Your family's only water source is 3 miles away. Do you wear sandals or go barefoot?",
+        // New, more thoughtful intro
+        text: "You wake up early. Your family's only water source is 3 miles away. What do you do?",
         choices: [
-          { text: "Wear sandals", effect: () => {}, next: 1 },
-          { text: "Go barefoot", effect: () => { health--; }, next: 1 }
+          {
+            text: "Go to school",
+            effect: () => {},
+            next: null, // End the game if this is chosen
+            endMessage: "You went to school, but your family is limited tonight on what they can eat and drink. Education is important, but so is water. Maybe next time you can help both!"
+          },
+          {
+            text: "Grab the yellow jerry can and start on your trail",
+            effect: () => {},
+            next: 1
+          }
         ]
       },
       {
         text: "You meet your friend Amina at the edge of the village. She offers to walk with you. What do you do?",
         choices: [
-          { text: "Walk together", effect: () => { schoolProgress++; }, next: 2 },
-          { text: "Go alone", effect: () => {}, next: 2 }
+          { text: "Walk together", effect: () => { wentAlone = false; }, next: 2 },
+          {
+            text: "Go alone",
+            // Double the journey points for this step and set flag
+            effect: () => {
+              window.doublePointsThisStep = true;
+              wentAlone = true; // Remember that player went alone
+            },
+            next: 2
+          }
         ]
       },
       {
         text: "There’s broken glass ahead. What do you do?",
         choices: [
           { text: "Step carefully around it", effect: () => {}, next: 3 },
-          { text: "Run through it quickly", effect: () => { health--; }, next: 3 },
-          { text: "Ask Amina for help", effect: () => { schoolProgress++; }, next: 3 }
+          {
+            text: "Run through it quickly",
+            // No health penalty here; penalty is handled in the glass cut scene below
+            effect: () => {},
+            next: 3,
+            glassCutScene: true // Custom property to trigger the cut scene
+          },
+          {
+            text: "Ask Amina for help",
+            // Show broom cut scene, lose 1 health, double journey points
+            effect: () => {
+              window.broomCutScene = true;
+            },
+            next: 3
+          }
         ]
       },
       {
         text: "You see a shortcut through thorny bushes. It could save time, but looks risky.",
         choices: [
-          { text: "Take the shortcut", effect: () => { health--; }, next: 4 },
+          {
+            text: "Take the shortcut",
+            // This shortcut is risky: lose 2 energy, double journey points, and jump to the river scene
+            effect: () => {
+              energy = energy - 2; // Lose 2 energy
+              window.doublePointsThisStep = true; // Double journey points for this step
+            },
+            next: 8 // Go directly to the river/clean water scene
+          },
           { text: "Stay on the main path", effect: () => {}, next: 4 }
         ]
       },
       {
         text: "A snake is coiled in the path. What do you do?",
         choices: [
-          { text: "Walk around slowly", effect: () => { schoolProgress++; }, next: 5 },
-          { text: "Throw a rock at it", effect: () => { health--; }, next: 5 },
+          { text: "Walk around slowly", effect: () => {}, next: 5 },
+          { text: "Throw a rock at it", effect: () => { energy--; }, next: 5 },
           { text: "Wait for it to leave", effect: () => {}, next: 5 }
         ]
       },
       {
         text: "You reach a muddy patch. Your container is heavy. What do you do?",
         choices: [
-          { text: "Ask for help", effect: () => { schoolProgress++; }, next: 6 },
-          { text: "Push through alone", effect: () => { health--; }, next: 6 }
+          { text: "Ask for help", effect: () => {}, next: 6 },
+          { text: "Push through alone", effect: () => { energy--; }, next: 6 }
         ]
       },
       {
         text: "You see a group of boys playing soccer. They tease you for carrying water. What do you do?",
         choices: [
           { text: "Ignore them and keep walking", effect: () => {}, next: 7 },
-          { text: "Ask them to help carry the water", effect: () => { schoolProgress++; }, next: 7 }
+          { text: "Ask them to help carry the water", effect: () => {}, next: 7 }
         ]
       },
       {
         text: "You finally reach the river. The water looks dirty. What do you do?",
         choices: [
-          { text: "Fill your container anyway", effect: () => { health--; }, next: 8 },
+          { text: "Fill your container anyway", effect: () => { energy--; }, next: 8 },
           { text: "Walk further to a cleaner spot", effect: () => {}, next: 8 }
         ]
       },
       {
         text: "On the way back, you feel tired and thirsty. What do you do?",
         choices: [
-          { text: "Drink some water from your container", effect: () => { health++; schoolProgress--; }, next: 9 },
+          { text: "Drink some water from your container", effect: () => { energy++; }, next: 9 },
           { text: "Wait until you get home", effect: () => {}, next: 9 }
         ]
       },
       {
         text: "You trip and spill some water. What do you do?",
         choices: [
-          { text: "Go back to refill", effect: () => { schoolProgress--; }, next: 10 },
-          { text: "Keep going with less water", effect: () => { health--; }, next: 10 }
+          { text: "Go back to refill", effect: () => {}, next: 10 },
+          { text: "Keep going with less water", effect: () => { energy--; }, next: 10 }
         ]
       },
       {
         text: "You're exhausted. A friend offers to carry the container with you.",
         choices: [
-          { text: "Accept the help and share the load", effect: () => { schoolProgress++; }, next: 11 },
+          { text: "Accept the help and share the load", effect: () => {}, next: 11 },
           { text: "Refuse help and keep walking alone", effect: () => {}, next: 11 }
         ]
       },
       {
         text: "You see a well being built in your village. Today, you don’t have to walk miles anymore.",
         choices: [
-          { text: "Visit the new well and go to school", effect: () => { schoolProgress += 2; }, next: 12 },
+          { text: "Visit the new well and go to school", effect: () => {}, next: 12 },
           { text: "Stay to help your mother", effect: () => {}, next: 12 }
         ]
       },
       {
         text: "A new day begins. With clean water nearby, what will you do?",
         choices: [
-          { text: "Go to school with friends", effect: () => { schoolProgress++; }, next: null },
+          { text: "Go to school with friends", effect: () => {}, next: null },
           { text: "Help your family at home", effect: () => {}, next: null }
         ]
       },
       {
         text: "A wild dog blocks your path and barks loudly. What do you do?",
         choices: [
-          { text: "Try to scare it away", effect: () => { score -= 3; health--; }, next: 3 },
+          { text: "Try to scare it away", effect: () => { score -= 3; energy--; }, next: 3 },
           { text: "Wait for it to leave", effect: () => { score--; }, next: 3 },
           { text: "Take a longer route", effect: () => { score -= 2; }, next: 3 }
         ]
@@ -457,14 +577,14 @@
         text: "You encounter a heavy rain, making the path slippery. What do you do?",
         choices: [
           { text: "Walk carefully and slowly", effect: () => { score--; }, next: 4 },
-          { text: "Run to get home faster", effect: () => { health--; }, next: 4 },
+          { text: "Run to get home faster", effect: () => { energy--; }, next: 4 },
           { text: "Seek shelter and wait", effect: () => { schoolProgress--; }, next: 4 }
         ]
       },
       {
         text: "A stranger offers you food. They look friendly but you never know...",
         choices: [
-          { text: "Accept the food gratefully", effect: () => { health++; score--; }, next: 5 },
+          { text: "Accept the food gratefully", effect: () => { energy++; score--; }, next: 5 },
           { text: "Politely decline and move on", effect: () => {}, next: 5 }
         ]
       },
@@ -485,14 +605,14 @@
       {
         text: "You find a lost puppy on the way. It's scared and alone.",
         choices: [
-          { text: "Take it with you", effect: () => { health++; score--; }, next: 8 },
+          { text: "Take it with you", effect: () => { energy++; score--; }, next: 8 },
           { text: "Leave it and continue", effect: () => {}, next: 8 }
         ]
       },
       {
         text: "Finally, you reach home. Your family is worried but relieved to see you safe.",
         choices: [
-          { text: "Tell them about your day", effect: () => { schoolProgress++; }, next: 9 },
+          { text: "Tell them about your day", effect: () => {}, next: 9 },
           { text: "Just rest and say nothing", effect: () => {}, next: 9 }
         ]
       },
@@ -533,37 +653,70 @@
       }
     }
 
-    // Move the character forward with each step
+    // Update the map SVG and milestone labels to stop at the river, then return
+    const journeyPositions = [
+      {cx:40, cy:50},    // Start
+      {cx:140, cy:20},  // Obstacle
+      {cx:220, cy:45},  // Stale Water
+      {cx:350, cy:30}   // River (turn back)
+    ];
+
+    // Map each story step to a milestone index on the map
+    // 0 = start, 1 = obstacle, 2 = stale water, 3 = river
+    // The icon only moves when a key scene is reached
+    const stepToMilestone = [
+      0, // Step 0: start
+      0, // Step 1: still at start
+      1, // Step 2: obstacle (broken glass)
+      1, // Step 3: still at obstacle (shortcut/thorns)
+      1, // Step 4: still at obstacle (snake)
+      1, // Step 5: still at obstacle (muddy patch)
+      1, // Step 6: still at obstacle (boys playing soccer)
+      2, // Step 7: stale water (dirty water scene)
+      3, // Step 8: river (clean water scene)
+      3, // Step 9: on the way back
+      3, // Step 10: on the way back
+      3, // Step 11: on the way back
+      3, // Step 12: on the way back
+      3, // Step 13: on the way back
+      3, // Step 14: on the way back
+      3, // Step 15: on the way back
+      3, // Step 16: on the way back
+      3, // Step 17: on the way back
+      3  // Step 18: on the way back
+    ];
+
+    // Move the character to the correct milestone for the current story step
     function moveCharacter(step) {
-      // Get the character container
+      // Use the mapping to get the milestone index
+      let idx = stepToMilestone[step] || 0;
+      if (returning) {
+        idx = 3 - idx; // Reverse the index for return
+      }
       const character = document.getElementById('characterContainer');
-      // We'll move from 10% (start) to 70% (end) as the journey progresses
-      const minLeft = 10; // percent
-      const maxLeft = 70; // percent
-      const totalSteps = backgroundImages.length - 1;
-      // Calculate new left position based on step
-      let leftPercent = minLeft + ((maxLeft - minLeft) * (step / totalSteps));
-      // Clamp between min and max
-      if (leftPercent > maxLeft) leftPercent = maxLeft;
-      if (leftPercent < minLeft) leftPercent = minLeft;
-      // Set the new left position
-      character.style.left = `${leftPercent}%`;
+      const pathSVG = document.getElementById('pathSVG');
+      const svgRect = pathSVG.getBoundingClientRect();
+      const scaleX = svgRect.width / 400;
+      const scaleY = svgRect.height / 60;
+      const left = journeyPositions[idx].cx * scaleX - character.offsetWidth / 2;
+      const top = journeyPositions[idx].cy * scaleY - character.offsetHeight + 30; // 30px offset to align feet
+      // Set the position
+      character.style.left = `${left}px`;
+      character.style.top = `${top}px`;
     }
 
-    // Move the girl marker and icon along the path based on currentStep
+    // Update the marker on the SVG path to match the story step
     function updatePathMarker(step) {
-      // There are 5 steps, so 5 positions (0 to 4)
-      // SVG cx positions for each step: [40, 170, 300, 430, 560]
-      const positions = [40, 170, 300, 430, 560];
+      let idx = stepToMilestone[step] || 0;
+      if (returning) {
+        idx = 3 - idx;
+      }
       const marker = document.getElementById('girlMarker');
       const miniIcon = document.getElementById('girlMiniIcon');
-      // Clamp step to valid range
-      let idx = step;
-      if (idx < 0) idx = 0;
-      if (idx > 4) idx = 4;
-      marker.setAttribute('cx', positions[idx]);
+      marker.setAttribute('cx', journeyPositions[idx].cx);
+      marker.setAttribute('cy', journeyPositions[idx].cy);
       // Move the mini icon group to match the marker
-      miniIcon.setAttribute('transform', `translate(${positions[idx] - 40},0)`);
+      miniIcon.setAttribute('transform', `translate(${journeyPositions[idx].cx - 40},${journeyPositions[idx].cy - 50})`);
     }
 
     // Get audio elements
@@ -580,15 +733,70 @@
       audio.play();
     }
 
+    // Show a directions cut scene at the start of the game (now with two screens)
+    function showDirectionsCutScene() {
+      // Remove any previous overlay if present
+      let oldOverlay = document.getElementById('directionsCutScene');
+      if (oldOverlay) oldOverlay.remove();
+
+      // Create a new overlay div
+      const overlay = document.createElement('div');
+      overlay.id = 'directionsCutScene';
+      overlay.style.position = 'absolute';
+      overlay.style.left = '0';
+      overlay.style.top = '0';
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.background = 'rgba(255,255,255,0.97)';
+      overlay.style.display = 'flex';
+      overlay.style.flexDirection = 'column';
+      overlay.style.alignItems = 'center';
+      overlay.style.justifyContent = 'center';
+      overlay.style.zIndex = '30';
+      overlay.style.textAlign = 'center';
+
+      // First screen: introduction
+      overlay.innerHTML = `
+        <div id="directionsIntro" style="font-size:1.2em; color:#005073; font-weight:bold; margin-bottom:18px; max-width:420px;">
+          <span style="font-size:1.4em;">Welcome to The Long Walk: A Journey for Water</span><br><br>
+          This story is based on the true journeys of girls in countries like Ethiopia, Uganda, and India.<br><br>
+          Today, you will follow <span style='color:#4FCB53;'>Amina</span> as she walks miles to collect water for her family.<br><br>
+          <span style='color:#F5402C;'>Your choices will affect what happens to Amina and her village.</span><br><br>
+        </div>
+        <button id="nextDirectionsBtn" class="choiceBtn" style="max-width:220px; background-color:#2E9DF7;">Next</button>
+      `;
+      document.getElementById('gameContainer').appendChild(overlay);
+
+      // When 'Next' is clicked, show the instructions screen
+      document.getElementById('nextDirectionsBtn').onclick = function() {
+        // Replace the content with instructions
+        overlay.innerHTML = `
+          <div id="directionsInstructions" style="font-size:1.1em; color:#005073; font-weight:bold; margin-bottom:18px; max-width:420px;">
+            <span style='color:#2E9DF7;'>Journey Points:</span> Make good choices to earn points. If you reach <b>20 Journey Points</b> by the end, the new well in the village will be working for everyone!<br><br>
+            <span style='color:#159A48;'>Energy:</span> You start with <b>4 Energy</b>. If you lose all your energy, Amina must turn back and her family won't get water that day.<br><br>
+            The more people play and help Amina, the more is donated to <a href='https://www.charitywater.org/' target='_blank' style='color:#2E9DF7;'>Charity: Water</a>.<br><br>
+            <span style='color:#FFC907;'>Are you ready to help Amina on her journey?</span>
+          </div>
+          <button id="startJourneyBtn" class="choiceBtn" style="max-width:220px; background-color:#4FCB53;">Start Journey</button>
+        `;
+        // When 'Start Journey' is clicked, remove overlay and start the story
+        document.getElementById('startJourneyBtn').onclick = function() {
+          overlay.remove();
+          showStep();
+        };
+      };
+    }
+
     // Start ambient sounds when game starts
     function startGame() {
       currentStep = 0;
-      health = 3;
-      schoolProgress = 0;
-      score = 10; // Reset score
+      energy = 4;
+      score = 0; // Reset Journey Points to 0
+      lastScore = 0;
+      returning = false; // Reset return flag
       setBackground(currentStep);
       moveCharacter(currentStep);
-      updatePathMarker(currentStep); // Move marker to start
+      updatePathMarker(currentStep);
       choicesContainer.innerHTML = '';
       // Hide the well scene if it exists
       hideWellScene();
@@ -596,7 +804,8 @@
       ambientWind.play();
       ambientFootsteps.volume = 0.2;
       ambientFootsteps.play();
-      showStep();
+      // Show the directions cut scene first
+      showDirectionsCutScene();
     }
 
     // Stop all ambient sounds
@@ -626,11 +835,11 @@
       box.innerHTML = `<strong>Did You Know?</strong> ${didYouKnowFacts[factIndex]}`;
       box.style.display = 'block';
       box.style.opacity = '1';
-      // Hide after 5 seconds (was 2.5 seconds)
+      // Show the fact for 15 seconds (was 5 seconds)
       setTimeout(() => {
         box.style.opacity = '0';
         setTimeout(() => { box.style.display = 'none'; }, 500);
-      }, 5000);
+      }, 15000); // 15000 ms = 15 seconds
     }
 
     function updateScoreDisplay() {
@@ -651,43 +860,123 @@
       }
     }
 
+    // In showStep, always add 2 journey points per step, or 4 if double points
     function showStep() {
       // Set the background for the current step
       setBackground(currentStep);
-      moveCharacter(currentStep); // Move character forward
-      updatePathMarker(currentStep); // Move marker along path
+      // Move the character and marker to match the story's progress on the map
+      moveCharacter(currentStep);
+      updatePathMarker(currentStep);
 
       // If the game is over, show the ending
       if (
         currentStep >= storySteps.length ||
-        health <= 0 ||
+        energy <= 0 ||
         storySteps[currentStep].choices.every(choice => choice.next === null)
       ) {
+        // If the ending is from a choice with a custom endMessage, show it
+        const lastStep = storySteps[currentStep] || {};
+        const chosen = lastStep.choices && lastStep.choices.find(c => c.next === null && c.endMessage);
+        if (chosen && chosen.endMessage) {
+          // Show a gentle overlay scene for the 'Go to school' ending
+          showSchoolEndingScene(chosen.endMessage);
+          // Stop the game here so it does not continue
+          return;
+        }
         endGame();
         return;
       }
 
-      const step = storySteps[currentStep];
+      // Special logic: If player went alone, hide 'Ask Amina for help' in the glass step
+      let step = storySteps[currentStep];
+      let choicesToShow = step.choices;
+      // If this is the glass step and player went alone, filter out the help option
+      if (step.text.includes("broken glass") && wentAlone) {
+        choicesToShow = step.choices.filter(choice => !choice.text.includes("Amina"));
+      }
       storyText.textContent = step.text;
       storyText.focus();
       choicesContainer.innerHTML = '';
 
       // Show choices for this step
-      step.choices.forEach((choice, idx) => {
+      choicesToShow.forEach((choice, idx) => {
         const btn = document.createElement('button');
         btn.classList.add('choiceBtn');
         btn.textContent = choice.text;
         btn.onclick = () => {
           playSound(sfxClick); // Play click sound
+          // If this is the 'Go alone' choice, show the cut scene and double points
+          if (step.text.includes("Amina") && choice.text.includes("Go alone")) {
+            showGoAloneScene(() => {
+              choice.effect(); // Set doublePointsThisStep and wentAlone
+              // Always add 4 journey points for double points steps
+              score += 4;
+              if (typeof choice.next === "number") {
+                currentStep = choice.next;
+              } else {
+                currentStep++;
+              }
+              showStep();
+              showDidYouKnow();
+            });
+            return;
+          }
           choice.effect();
-          // Go to the next step based on the choice
+          // If this is the snake step and player throws a rock, show the snake bite scene and end the game
+          if (step.text.includes("snake") && choice.text.includes("Throw a rock")) {
+            showSnakeBiteScene(() => {
+              energy = 0;
+              endGame();
+            });
+            return;
+          }
+          // If this choice ends the game, show the overlay and stop
+          if (choice.endMessage) {
+            showSchoolEndingScene(choice.endMessage);
+            return;
+          }
+          // If this choice triggers the glass cut scene, show it and stop
+          if (choice.glassCutScene) {
+            showGlassCutScene(() => {
+              // Do NOT add journey points for this step, just move to next
+              if (typeof choice.next === "number") {
+                currentStep = choice.next;
+              } else {
+                currentStep++;
+              }
+              showStep();
+              showDidYouKnow();
+            });
+            return;
+          }
+          // If this choice triggers the broom cut scene, show it and stop
+          if (window.broomCutScene) {
+            showBroomCutScene(() => {
+              // Always add 4 journey points for teamwork
+              score += 4;
+              energy = energy - 1; // Lose 1 energy for the effort
+              window.broomCutScene = false;
+              if (typeof choice.next === "number") {
+                currentStep = choice.next;
+              } else {
+                currentStep++;
+              }
+              showStep();
+              showDidYouKnow();
+            });
+            return;
+          }
+          // For all other steps, always add 2 journey points (unless this step is a penalty step)
+          // Penalty steps are handled in their own cut scenes or effect functions
+          // So here, just add 2 points for a normal step
+          score += 2;
           if (typeof choice.next === "number") {
             currentStep = choice.next;
           } else {
             currentStep++;
           }
           showStep();
-          showDidYouKnow(); // Show fact after each decision
+          showDidYouKnow();
         };
         choicesContainer.appendChild(btn);
       });
@@ -697,8 +986,8 @@
     }
 
     function updateStatus() {
-      // Show score in the status bar
-      statusBar.textContent = `Health: ${health} | School Progress: ${schoolProgress} | Journey Points: ${score}`;
+      // Show only Energy and Journey Points in the status bar
+      statusBar.textContent = `Energy: ${energy} | Journey Points: ${score}`;
     }
 
     function endGame() {
@@ -706,11 +995,11 @@
       stopAmbient();
 
       // Move marker to final position
-      if (health <= 0) {
+      if (energy <= 0) {
         updatePathMarker(currentStep);
         moveCharacter(currentStep);
         setBackground(currentStep);
-        storyText.innerHTML = "You were injured on the journey and couldn't continue. <br> Try again to learn how to stay safe.";
+        storyText.innerHTML = "You ran out of energy and couldn't continue. <br> Try again to learn how to stay safe.";
         playSound(sfxLoss);
         // Show last fact (link to stories)
         const box = document.getElementById('didYouKnow');
@@ -718,24 +1007,15 @@
         box.style.display = 'block';
         box.style.opacity = '1';
       } else {
-        updatePathMarker(4);
+        updatePathMarker(6);
         moveCharacter(backgroundImages.length - 1);
 
         // Show a special well scene at the end
         showWellCelebrationScene();
 
-        // Different endings based on schoolProgress and health
-        if (schoolProgress >= 4 && health > 1) {
-          storyText.innerHTML = "You made it! With clean water and support, you now attend school every day and play with friends. 💧🎒";
-        } else if (schoolProgress >= 2) {
-          storyText.innerHTML = "You helped your family and sometimes go to school. Clean water makes life better!";
-        } else {
-          storyText.innerHTML = "Your journey ends, but access to clean water could change everything.";
-        }
+        // Only show a simple ending message (removed schoolProgress logic)
+        storyText.innerHTML = "You made it! With clean water, your family is healthier and happier.";
         playSound(sfxVictory);
-        if (schoolProgress >= 3) {
-          setTimeout(() => { playSound(ambientSchoolBell); }, 800);
-        }
         // Show last fact (link to stories)
         const box = document.getElementById('didYouKnow');
         box.innerHTML = `<strong>Did You Know?</strong> ${didYouKnowFacts[didYouKnowFacts.length - 1]}`;
@@ -836,6 +1116,261 @@
       // Reset the game to the beginning
       startGame();
     };
+
+    // Function to show a gentle overlay scene if the player chooses 'Go to school'
+    function showSchoolEndingScene(message) {
+      // Remove any previous overlay if present
+      let oldOverlay = document.getElementById('schoolEndingScene');
+      if (oldOverlay) oldOverlay.remove();
+
+      // Create a new overlay div
+      const overlay = document.createElement('div');
+      overlay.id = 'schoolEndingScene';
+      overlay.style.position = 'absolute';
+      overlay.style.left = '0';
+      overlay.style.top = '0';
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.background = 'rgba(255,255,255,0.97)';
+      overlay.style.display = 'flex';
+      overlay.style.flexDirection = 'column';
+      overlay.style.alignItems = 'center';
+      overlay.style.justifyContent = 'center';
+      overlay.style.zIndex = '30';
+      overlay.style.textAlign = 'center';
+
+      // Add a gentle message and a Restart button
+      overlay.innerHTML = `
+        <div style="font-size:1.3em; color:#005073; font-weight:bold; margin-bottom:18px; max-width:400px;">
+          ${message}
+        </div>
+        <div style="font-size:1em; color:#222; margin-bottom:18px; max-width:400px;">
+          Your family is proud of your learning, but tonight there is less water and food to share. <br> <span style='color:#FFC907;'>Clean water helps everyone thrive!</span>
+        </div>
+        <button id="restartSchoolBtn" class="choiceBtn" style="max-width:200px; background-color:#2E9DF7;">Restart</button>
+      `;
+      // Add the overlay to the game container
+      document.getElementById('gameContainer').appendChild(overlay);
+
+      // Add event listener for the Restart button
+      document.getElementById('restartSchoolBtn').onclick = function() {
+        overlay.remove(); // Remove the overlay
+        startGame(); // Restart the game
+      };
+    }
+
+    // Show a simple cut scene if glass breaks off in her sandal
+    function showGlassCutScene(continueCallback) {
+      // Remove any previous overlay if present
+      let oldOverlay = document.getElementById('glassCutScene');
+      if (oldOverlay) oldOverlay.remove();
+
+      // Create a new overlay div
+      const overlay = document.createElement('div');
+      overlay.id = 'glassCutScene';
+      overlay.style.position = 'absolute';
+      overlay.style.left = '0';
+      overlay.style.top = '0';
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.background = 'rgba(255,255,255,0.97)';
+      overlay.style.display = 'flex';
+      overlay.style.flexDirection = 'column';
+      overlay.style.alignItems = 'center';
+      overlay.style.justifyContent = 'center';
+      overlay.style.zIndex = '30';
+      overlay.style.textAlign = 'center';
+
+      // Add a gentle message, a simple SVG, and a Continue button
+      overlay.innerHTML = `
+        <div style="font-size:1.2em; color:#F5402C; font-weight:bold; margin-bottom:10px; max-width:400px;">
+          Ouch! Some glass broke off in your sandal. You need to slow down and be careful.
+        </div>
+        <div style="font-size:1em; color:#222; margin-bottom:12px; max-width:400px;">
+          You lose <span style='color:#F5402C;'>1 Energy</span> and <span style='color:#2E9DF7;'>1 Journey Point</span>.
+        </div>
+        <svg width="80" height="60" viewBox="0 0 80 60" style="margin-bottom:16px;">
+          <ellipse cx="40" cy="50" rx="30" ry="8" fill="#bfa77a"/>
+          <rect x="30" y="30" width="20" height="12" rx="6" fill="#FFC907" stroke="#bfa100" stroke-width="2"/>
+          <polygon points="40,38 44,44 36,44" fill="#F5402C" opacity="0.7"/>
+          <rect x="38" y="44" width="4" height="8" rx="2" fill="#8d5524"/>
+          <polyline points="42,44 44,48 40,50 36,48 38,44" fill="none" stroke="#6d4c24" stroke-width="2"/>
+          <line x1="40" y1="44" x2="40" y2="50" stroke="#F5402C" stroke-width="2"/>
+        </svg>
+        <button id="continueGlassBtn" class="choiceBtn" style="max-width:200px; background-color:#2E9DF7;">Continue</button>
+      `;
+      document.getElementById('gameContainer').appendChild(overlay);
+
+      // Add event listener for the Continue button
+      document.getElementById('continueGlassBtn').onclick = function() {
+        overlay.remove(); // Remove the overlay
+        // Always subtract 1 energy and 1 journey point for running through glass
+        // This happens no matter if you go alone or with Amina
+        energy = energy - 1;
+        score = score - 1; // Always subtract exactly 1 Journey Point (not random)
+        if (typeof continueCallback === 'function') {
+          continueCallback(); // Continue the journey
+        }
+      };
+    }
+
+    // Show a cut scene for teamwork with Amina to sweep away the glass
+    function showBroomCutScene(continueCallback) {
+      // Remove any previous overlay if present
+      let oldOverlay = document.getElementById('broomCutScene');
+      if (oldOverlay) oldOverlay.remove();
+
+      // Create a new overlay div
+      const overlay = document.createElement('div');
+      overlay.id = 'broomCutScene';
+      overlay.style.position = 'absolute';
+      overlay.style.left = '0';
+      overlay.style.top = '0';
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.background = 'rgba(255,255,255,0.97)';
+      overlay.style.display = 'flex';
+      overlay.style.flexDirection = 'column';
+      overlay.style.alignItems = 'center';
+      overlay.style.justifyContent = 'center';
+      overlay.style.zIndex = '30';
+      overlay.style.textAlign = 'center';
+
+      // Add teamwork message, SVG, and Continue button
+      overlay.innerHTML = `
+        <div style="font-size:1.2em; color:#159A48; font-weight:bold; margin-bottom:10px; max-width:400px;">
+          You and Amina find some sticks and make brooms.<br>
+          Working together, you sweep away the glass so it's safe to walk!
+        </div>
+        <div style="font-size:1em; color:#222; margin-bottom:12px; max-width:400px;">
+          You lose <span style='color:#F5402C;'>1 Energy</span> (it was hard work),<br>
+          but you earn <span style='color:#2E9DF7;'>double Journey Points</span> for teamwork!
+        </div>
+        <svg width="90" height="60" viewBox="0 0 90 60" style="margin-bottom:16px;">
+          <!-- Two stick brooms and some glass -->
+          <rect x="20" y="40" width="6" height="18" rx="2" fill="#8d5524"/>
+          <rect x="64" y="40" width="6" height="18" rx="2" fill="#8d5524"/>
+          <ellipse cx="23" cy="58" rx="7" ry="4" fill="#FFC907"/>
+          <ellipse cx="67" cy="58" rx="7" ry="4" fill="#FFC907"/>
+          <polygon points="45,50 50,55 40,55" fill="#2E9DF7" opacity="0.5"/>
+          <polygon points="55,52 60,57 50,57" fill="#2E9DF7" opacity="0.5"/>
+        </svg>
+        <button id="continueBroomBtn" class="choiceBtn" style="max-width:200px; background-color:#2E9DF7;">Continue</button>
+      `;
+      document.getElementById('gameContainer').appendChild(overlay);
+
+      // Add event listener for the Continue button
+      document.getElementById('continueBroomBtn').onclick = function() {
+        overlay.remove(); // Remove the overlay
+        if (typeof continueCallback === 'function') {
+          continueCallback(); // Continue the journey
+        }
+      };
+    }
+
+    // Show a cut scene if the player is bitten by a snake
+    function showSnakeBiteScene(continueCallback) {
+      // Remove any previous overlay if present
+      let oldOverlay = document.getElementById('snakeBiteScene');
+      if (oldOverlay) oldOverlay.remove();
+
+      // Create a new overlay div
+      const overlay = document.createElement('div');
+      overlay.id = 'snakeBiteScene';
+      overlay.style.position = 'absolute';
+      overlay.style.left = '0';
+      overlay.style.top = '0';
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.background = 'rgba(255,255,255,0.97)';
+      overlay.style.display = 'flex';
+      overlay.style.flexDirection = 'column';
+      overlay.style.alignItems = 'center';
+      overlay.style.justifyContent = 'center';
+      overlay.style.zIndex = '30';
+      overlay.style.textAlign = 'center';
+
+      // Add a message, SVG, and a Continue button
+      overlay.innerHTML = `
+        <div style="font-size:1.2em; color:#F5402C; font-weight:bold; margin-bottom:10px; max-width:400px;">
+          Oh no! You stumble and the snake bites you.<br>
+          You become ill and must return home without water.
+        </div>
+        <div style="font-size:1em; color:#222; margin-bottom:12px; max-width:400px;">
+          Your family will have to wait for water. Try again and be careful next time!
+        </div>
+        <svg width="90" height="60" viewBox="0 0 90 60" style="margin-bottom:16px;">
+          <!-- Simple snake and bite illustration -->
+          <ellipse cx="45" cy="50" rx="30" ry="8" fill="#bfa77a"/>
+          <path d="M20 50 Q45 10 70 50" stroke="#159A48" stroke-width="6" fill="none"/>
+          <circle cx="70" cy="50" r="6" fill="#159A48"/>
+          <circle cx="72" cy="48" r="1.5" fill="#fff"/>
+          <circle cx="68" cy="48" r="1.5" fill="#fff"/>
+          <ellipse cx="70" cy="54" rx="2" ry="1" fill="#F5402C"/>
+          <rect x="40" y="44" width="10" height="6" rx="2" fill="#c68642"/>
+        </svg>
+        <button id="continueSnakeBtn" class="choiceBtn" style="max-width:200px; background-color:#2E9DF7;">Continue</button>
+      `;
+      document.getElementById('gameContainer').appendChild(overlay);
+
+      // Add event listener for the Continue button
+      document.getElementById('continueSnakeBtn').onclick = function() {
+        overlay.remove(); // Remove the overlay
+        if (typeof continueCallback === 'function') {
+          continueCallback(); // Continue the journey
+        }
+      };
+    }
+
+    // Show a cut scene if the player chooses to go alone
+    function showGoAloneScene(continueCallback) {
+      // Remove any previous overlay if present
+      let oldOverlay = document.getElementById('goAloneScene');
+      if (oldOverlay) oldOverlay.remove();
+
+      // Create a new overlay div
+      const overlay = document.createElement('div');
+      overlay.id = 'goAloneScene';
+      overlay.style.position = 'absolute';
+      overlay.style.left = '0';
+      overlay.style.top = '0';
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.background = 'rgba(255,255,255,0.97)';
+      overlay.style.display = 'flex';
+      overlay.style.flexDirection = 'column';
+      overlay.style.alignItems = 'center';
+      overlay.style.justifyContent = 'center';
+      overlay.style.zIndex = '30';
+      overlay.style.textAlign = 'center';
+
+      // Add a message, SVG, and a Continue button
+      overlay.innerHTML = `
+        <div style="font-size:1.2em; color:#159A48; font-weight:bold; margin-bottom:10px; max-width:400px;">
+          Wow, you're brave and courteous.<br>
+          Amina can stay and go to school today!
+        </div>
+        <div style="font-size:1em; color:#222; margin-bottom:12px; max-width:400px;">
+          You will earn <span style='color:#2E9DF7;'>double Journey Points</span> for this step.
+        </div>
+        <svg width="80" height="60" viewBox="0 0 80 60" style="margin-bottom:16px;">
+          <ellipse cx="40" cy="50" rx="30" ry="8" fill="#bfa77a"/>
+          <circle cx="30" cy="40" r="10" fill="#4FCB53"/>
+          <circle cx="50" cy="40" r="10" fill="#FFC907"/>
+          <text x="40" y="35" text-anchor="middle" font-size="12" fill="#005073" font-weight="bold">:)</text>
+        </svg>
+        <button id="continueGoAloneBtn" class="choiceBtn" style="max-width:200px; background-color:#2E9DF7;">Continue</button>
+      `;
+      document.getElementById('gameContainer').appendChild(overlay);
+
+      // Add event listener for the Continue button
+      document.getElementById('continueGoAloneBtn').onclick = function() {
+        overlay.remove(); // Remove the overlay
+        if (typeof continueCallback === 'function') {
+          continueCallback(); // Continue the journey
+        }
+      };
+    }
   </script>
 </body>
 </html>
