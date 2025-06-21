@@ -504,16 +504,42 @@
       {
         text: "A snake is coiled in the path. What do you do?",
         choices: [
-          { text: "Walk around slowly", effect: () => {}, next: 5 },
+          {
+            text: "Walk around slowly",
+            effect: () => {
+              // Subtract 1 energy if player walks around the snake
+              energy = energy - 1;
+              window.snakeWalkAroundCutScene = true;
+            },
+            next: 5
+          },
           { text: "Throw a rock at it", effect: () => { energy--; }, next: 5 },
-          { text: "Wait for it to leave", effect: () => {}, next: 5 }
+          {
+            text: "Wait for it to leave",
+            effect: () => {
+              // Subtract 2 journey points if player waits for the snake
+              score = score - 2;
+              window.snakeWaitCutScene = true;
+            },
+            next: 5
+          }
         ]
       },
       {
-        text: "You reach a muddy patch. Your container is heavy. What do you do?",
+        text: "You reach a muddy patch. What do you do?",
         choices: [
-          { text: "Ask for help", effect: () => {}, next: 6 },
-          { text: "Push through alone", effect: () => { energy--; }, next: 6 }
+          {
+            text: "Rest for a moment",
+            effect: () => {
+              // Add 1 Energy if the player rests
+              energy = energy + 1;
+              // Set a flag to skip journey points for this step
+              window.skipJourneyPointsThisStep = true;
+            },
+            next: 6
+          },
+          { text: "Push through", effect: () => { energy--; }, next: 6 },
+          { text: "Step in carefully", effect: () => { energy--; }, next: 6 }
         ]
       },
       {
@@ -969,7 +995,12 @@
           // For all other steps, always add 2 journey points (unless this step is a penalty step)
           // Penalty steps are handled in their own cut scenes or effect functions
           // So here, just add 2 points for a normal step
-          score += 2;
+          if (!window.skipJourneyPointsThisStep) {
+            score += 2;
+          } else {
+            // If skipJourneyPointsThisStep is true, do not add journey points
+            window.skipJourneyPointsThisStep = false; // Reset the flag for next step
+          }
           if (typeof choice.next === "number") {
             currentStep = choice.next;
           } else {
@@ -983,6 +1014,31 @@
 
       updateStatus();
       updateScoreDisplay(); // Update score visually
+
+      // Check for the snake wait cut scene
+      if (window.snakeWaitCutScene) {
+        // Show the cut scene and then continue
+        showSnakeWaitCutScene(() => {
+          window.snakeWaitCutScene = false;
+          // Move to the next step after the cut scene
+          currentStep = 5;
+          showStep();
+          showDidYouKnow();
+        });
+        return;
+      }
+
+      // Check for the snake walk around cut scene
+      if (window.snakeWalkAroundCutScene) {
+        showSnakeWalkAroundCutScene(() => {
+          window.snakeWalkAroundCutScene = false;
+          // Move to the next step after the cut scene
+          currentStep = 5;
+          showStep();
+          showDidYouKnow();
+        });
+        return;
+      }
     }
 
     function updateStatus() {
@@ -1368,6 +1424,111 @@
         overlay.remove(); // Remove the overlay
         if (typeof continueCallback === 'function') {
           continueCallback(); // Continue the journey
+        }
+      };
+    }
+
+    // Show a cut scene if the player waits for the snake to leave
+    function showSnakeWaitCutScene(continueCallback) {
+      // Remove any previous overlay if present
+      let oldOverlay = document.getElementById('snakeWaitCutScene');
+      if (oldOverlay) oldOverlay.remove();
+
+      // Create a new overlay div
+      const overlay = document.createElement('div');
+      overlay.id = 'snakeWaitCutScene';
+      overlay.style.position = 'absolute';
+      overlay.style.left = '0';
+      overlay.style.top = '0';
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.background = 'rgba(255,255,255,0.97)';
+      overlay.style.display = 'flex';
+      overlay.style.flexDirection = 'column';
+      overlay.style.alignItems = 'center';
+      overlay.style.justifyContent = 'center';
+      overlay.style.zIndex = '30';
+      overlay.style.textAlign = 'center';
+
+      // Add a message, SVG, and a Continue button
+      overlay.innerHTML = `
+        <div style="font-size:1.2em; color:#159A48; font-weight:bold; margin-bottom:10px; max-width:400px;">
+          You wait quietly and the snake finally slithers away.<br>
+          This was a safe choice, but it took a long time and you lost some time on your journey.
+        </div>
+        <div style="font-size:1em; color:#222; margin-bottom:12px; max-width:400px;">
+          You lose <span style='color:#F5402C;'>2 Journey Points</span> because you had to wait.
+        </div>
+        <svg width="90" height="60" viewBox="0 0 90 60" style="margin-bottom:16px;">
+          <!-- Simple snake illustration -->
+          <ellipse cx="45" cy="50" rx="30" ry="8" fill="#bfa77a"/>
+          <path d="M20 50 Q45 20 70 50" stroke="#159A48" stroke-width="6" fill="none"/>
+          <circle cx="70" cy="50" r="6" fill="#159A48"/>
+          <ellipse cx="70" cy="54" rx="2" ry="1" fill="#FFC907"/>
+        </svg>
+        <button id="continueSnakeWaitBtn" class="choiceBtn" style="max-width:200px; background-color:#2E9DF7;">Continue</button>
+      `;
+      document.getElementById('gameContainer').appendChild(overlay);
+
+      // Add event listener for the Continue button
+      document.getElementById('continueSnakeWaitBtn').onclick = function() {
+        overlay.remove(); // Remove the overlay
+        // Subtract 2 Journey Points for waiting
+        score = score - 2;
+        // Call the callback to continue the journey
+        if (typeof continueCallback === 'function') {
+          continueCallback();
+        }
+      };
+    }
+
+    // Show a cut scene if the player walks around the snake slowly
+    function showSnakeWalkAroundCutScene(continueCallback) {
+      // Remove any previous overlay if present
+      let oldOverlay = document.getElementById('snakeWalkAroundCutScene');
+      if (oldOverlay) oldOverlay.remove();
+
+      // Create a new overlay div
+      const overlay = document.createElement('div');
+      overlay.id = 'snakeWalkAroundCutScene';
+      overlay.style.position = 'absolute';
+      overlay.style.left = '0';
+      overlay.style.top = '0';
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.background = 'rgba(255,255,255,0.97)';
+      overlay.style.display = 'flex';
+      overlay.style.flexDirection = 'column';
+      overlay.style.alignItems = 'center';
+      overlay.style.justifyContent = 'center';
+      overlay.style.zIndex = '30';
+      overlay.style.textAlign = 'center';
+
+      // Add a message, SVG, and a Continue button
+      overlay.innerHTML = `
+        <div style="font-size:1.2em; color:#159A48; font-weight:bold; margin-bottom:10px; max-width:400px;">
+          You carefully walk around the snake. It works, but you feel tired from moving so slowly and quietly.
+        </div>
+        <div style="font-size:1em; color:#222; margin-bottom:12px; max-width:400px;">
+          You lose <span style='color:#F5402C;'>1 Energy</span> because it took extra effort.
+        </div>
+        <svg width="90" height="60" viewBox="0 0 90 60" style="margin-bottom:16px;">
+          <!-- Simple snake illustration -->
+          <ellipse cx="45" cy="50" rx="30" ry="8" fill="#bfa77a"/>
+          <path d="M20 50 Q45 20 70 50" stroke="#159A48" stroke-width="6" fill="none"/>
+          <circle cx="70" cy="50" r="6" fill="#159A48"/>
+          <ellipse cx="70" cy="54" rx="2" ry="1" fill="#FFC907"/>
+        </svg>
+        <button id="continueSnakeWalkBtn" class="choiceBtn" style="max-width:200px; background-color:#2E9DF7;">Continue</button>
+      `;
+      document.getElementById('gameContainer').appendChild(overlay);
+
+      // Add event listener for the Continue button
+      document.getElementById('continueSnakeWalkBtn').onclick = function() {
+        overlay.remove(); // Remove the overlay
+        // Call the callback to continue the journey
+        if (typeof continueCallback === 'function') {
+          continueCallback();
         }
       };
     }
