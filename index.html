@@ -535,7 +535,7 @@
               energy = energy + 2;
               // Set a flag to show the muddy patch rest cut scene
               window.muddyPatchRestCutScene = true;
-              checkGameOver(); // Check if game is over after energy change
+              // Do NOT call checkGameOver() here, so the cut scene always shows first
             },
             next: 6
           },
@@ -550,7 +550,7 @@
             },
             next: 6
           },
-          { text: "Step in carefully", effect: () => { energy--; checkGameOver(); }, next: 6 }
+          { text: "Try to find another way around", effect: () => { energy--; checkGameOver(); }, next: 6 }
         ]
       },
       {
@@ -915,6 +915,30 @@
 
     // In showStep, always add 2 journey points per step, or 4 if double points
     function showStep() {
+      // Always check for muddy patch cut scene flags FIRST, before game over or anything else
+      if (window.muddyPatchRestCutScene) {
+        showMuddyPatchRestCutScene(() => {
+          window.muddyPatchRestCutScene = false;
+          currentStep = 6;
+          showStep();
+          showDidYouKnow();
+        });
+        return;
+      }
+      if (window.muddyPatchPushThroughCutScene) {
+        showMuddyPatchPushThroughCutScene(() => {
+          window.muddyPatchPushThroughCutScene = false;
+          if (energy <= 0) {
+            showGameOverCutScene();
+            return;
+          }
+          currentStep = 6;
+          showStep();
+          showDidYouKnow();
+        });
+        return;
+      }
+
       // Always check if energy is 0 or less before doing anything else
       // If so, show the Game Over cut scene and stop the game
       if (checkGameOver()) {
@@ -1086,9 +1110,10 @@
 
       // Check for the muddy patch push through cut scene
       if (window.muddyPatchPushThroughCutScene) {
+        // Always show the cut scene if the flag is set
         showMuddyPatchPushThroughCutScene(() => {
           window.muddyPatchPushThroughCutScene = false;
-          // If energy is 0 or less after pushing through, show the Game Over cut scene
+          // After the cut scene, check if energy is 0 or less
           if (energy <= 0) {
             showGameOverCutScene();
             return;
@@ -1524,7 +1549,6 @@
           <!-- Simple snake illustration -->
           <ellipse cx="45" cy="50" rx="30" ry="8" fill="#bfa77a"/>
           <path d="M20 50 Q45 20 70 50" stroke="#159A48" stroke-width="6" fill="none"/>
-          <circle cx="70" cy="50" r="6" fill="#159A48"/>
           <ellipse cx="70" cy="54" rx="2" ry="1" fill="#FFC907"/>
         </svg>
         <button id="continueSnakeWaitBtn" class="choiceBtn" style="max-width:200px; background-color:#2E9DF7;">Continue</button>
@@ -1607,11 +1631,7 @@
       // Add a message, SVG, and a Continue button
       overlay.innerHTML = `
         <div style="font-size:1.2em; color:#159A48; font-weight:bold; margin-bottom:10px; max-width:400px;">
-          While you are resting, you notice a path of stepping stones through the mud.<br>
-          You use them to cross easily and feel refreshed!
-        </div>
-        <div style="font-size:1em; color:#222; margin-bottom:12px; max-width:400px;">
-          You gain <span style='color:#4FCB53;'>2 Energy</span> and skip the muddy patch challenge.
+          While resting and gathering your thoughts, you see a path of rocks to cross over the mud easily. Gain 2 energy points.
         </div>
         <svg width="90" height="60" viewBox="0 0 90 60" style="margin-bottom:16px;">
           <!-- Simple stepping stones illustration -->
