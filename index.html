@@ -431,233 +431,64 @@
     const choicesContainer = document.getElementById('choices');
     const statusBar = document.getElementById('statusBar');
 
-    // Expanded story with more steps, more options, and branching outcomes
+    // Shorter story: only 8 steps, matching the map and milestones
     const storySteps = [
       {
-        // New, more thoughtful intro
         text: "You wake up early. Your family's only water source is 3 miles away. What do you do?",
         choices: [
-          {
-            text: "Go to school",
-            effect: () => {},
-            next: null, // End the game if this is chosen
-            endMessage: "You went to school, but your family is limited tonight on what they can eat and drink. Education is important, but so is water. Maybe next time you can help both!"
-          },
-          {
-            text: "Grab the yellow jerry can and start on your trail",
-            effect: () => {},
-            next: 1
-          }
+          { text: "Go to school", effect: () => {}, next: null, endMessage: "You went to school, but your family is limited tonight on what they can eat and drink. Education is important, but so is water. Maybe next time you can help both!" },
+          { text: "Grab the yellow jerry can and start on your trail", effect: () => {}, next: 1 }
         ]
       },
       {
         text: "You meet your friend Amina at the edge of the village. She offers to walk with you. What do you do?",
         choices: [
           { text: "Walk together", effect: () => { wentAlone = false; }, next: 2 },
-          {
-            text: "Go alone",
-            // Double the journey points for this step and set flag
-            effect: () => {
-              window.doublePointsThisStep = true;
-              wentAlone = true; // Remember that player went alone
-            },
-            next: 2
-          }
+          { text: "Go alone", effect: () => { window.doublePointsThisStep = true; wentAlone = true; }, next: 2 }
         ]
       },
       {
         text: "There’s broken glass ahead. What do you do?",
         choices: [
           { text: "Step carefully around it", effect: () => {}, next: 3 },
-          {
-            text: "Run through it quickly",
-            // No health penalty here; penalty is handled in the glass cut scene below
-            effect: () => {},
-            next: 3,
-            glassCutScene: true // Custom property to trigger the cut scene
-          },
-          {
-            text: "Ask Amina for help",
-            // Show broom cut scene, lose 1 health, double journey points
-            effect: () => {
-              window.broomCutScene = true;
-            },
-            next: 3
-          }
-        ]
-      },
-      {
-        text: "You see a shortcut through thorny bushes. It could save time, but looks risky.",
-        choices: [
-          {
-            text: "Take the shortcut",
-            // This shortcut is risky: lose 2 energy, double journey points, and jump to the river scene
-            effect: () => {
-              energy = energy - 2; // Lose 2 energy
-              window.doublePointsThisStep = true; // Double journey points for this step
-            },
-            next: 8 // Go directly to the river/clean water scene
-          },
-          { text: "Stay on the main path", effect: () => {}, next: 4 }
+          { text: "Run through it quickly", effect: () => {}, next: 3, glassCutScene: true },
+          { text: "Ask Amina for help", effect: () => { window.broomCutScene = true; }, next: 3 }
         ]
       },
       {
         text: "A snake is coiled in the path. What do you do?",
         choices: [
-          {
-            text: "Walk around slowly",
-            effect: () => {
-              // Subtract 1 energy if player walks around the snake
-              energy = energy - 1;
-              window.snakeWalkAroundCutScene = true;
-            },
-            next: 5
-          },
-          { text: "Throw a rock at it", effect: () => { energy--; }, next: 5 },
-          {
-            text: "Wait for it to leave",
-            effect: () => {
-              // Subtract 2 journey points if player waits for the snake
-              score = score - 2;
-              window.snakeWaitCutScene = true;
-            },
-            next: 5
-          }
+          { text: "Walk around slowly", effect: () => { window.snakeWalkAroundCutScene = true; }, next: 4 },
+          { text: "Throw a rock at it", effect: () => { energy--; }, next: 4 },
+          { text: "Wait for it to leave", effect: () => { energy = energy - 1; window.skipJourneyPointsThisStep = true; window.snakeWaitCutScene = true; }, next: 4 }
         ]
       },
       {
         text: "You reach a muddy patch. What do you do?",
         choices: [
-          {
-            text: "Rest for a moment",
-            effect: () => {
-              // Add 2 Energy if the player rests
-              energy = energy + 2;
-              // Set a flag to show the muddy patch rest cut scene
-              window.muddyPatchRestCutScene = true;
-              // Do NOT call checkGameOver() here, so the cut scene always shows first
-            },
-            next: 6
-          },
-          {
-            text: "Push through",
-            effect: () => {
-              // Subtract 2 Energy if the player pushes through
-              energy = energy - 2;
-              // Set a flag to show the muddy patch push through cut scene
-              window.muddyPatchPushThroughCutScene = true;
-              // Do NOT call checkGameOver() here, so the cut scene always shows first
-            },
-            next: 6
-          },
-          { text: "Try to find another way around", effect: () => { energy--; checkGameOver(); }, next: 6 }
+          { text: "Rest for a moment", effect: () => { energy = energy + 2; window.muddyPatchRestCutScene = true; }, next: 5 },
+          { text: "Push through", effect: () => { energy = energy - 2; window.muddyPatchPushThroughCutScene = true; }, next: 5 },
+          { text: "Try to find another way around", effect: () => { showLostInBrushCutScene(); }, next: null }
         ]
       },
       {
         text: "You see a group of boys playing soccer. They tease you for carrying water. What do you do?",
         choices: [
-          { text: "Ignore them and keep walking", effect: () => {}, next: 7 },
-          { text: "Ask them to help carry the water", effect: () => {}, next: 7 }
+          { text: "Ignore them and keep walking", effect: () => {}, next: 6 },
+          { text: "Ask them to help carry the water", effect: () => {}, next: 6 }
         ]
       },
       {
         text: "You finally reach the river. The water looks dirty. What do you do?",
         choices: [
-          { text: "Fill your container anyway", effect: () => { energy--; }, next: 8 },
-          { text: "Walk further to a cleaner spot", effect: () => {}, next: 8 }
+          { text: "Fill your container anyway", effect: () => { energy--; }, next: 7 },
+          { text: "Walk further to a cleaner spot", effect: () => {}, next: 7 }
         ]
       },
       {
-        text: "On the way back, you feel tired and thirsty. What do you do?",
+        text: "You made it to the water! Time to head home.",
         choices: [
-          { text: "Drink some water from your container", effect: () => { energy++; }, next: 9 },
-          { text: "Wait until you get home", effect: () => {}, next: 9 }
-        ]
-      },
-      {
-        text: "You trip and spill some water. What do you do?",
-        choices: [
-          { text: "Go back to refill", effect: () => {}, next: 10 },
-          { text: "Keep going with less water", effect: () => { energy--; }, next: 10 }
-        ]
-      },
-      {
-        text: "You're exhausted. A friend offers to carry the container with you.",
-        choices: [
-          { text: "Accept the help and share the load", effect: () => {}, next: 11 },
-          { text: "Refuse help and keep walking alone", effect: () => {}, next: 11 }
-        ]
-      },
-      {
-        text: "You see a well being built in your village. Today, you don’t have to walk miles anymore.",
-        choices: [
-          { text: "Visit the new well and go to school", effect: () => {}, next: 12 },
-          { text: "Stay to help your mother", effect: () => {}, next: 12 }
-        ]
-      },
-      {
-        text: "A new day begins. With clean water nearby, what will you do?",
-        choices: [
-          { text: "Go to school with friends", effect: () => {}, next: null },
-          { text: "Help your family at home", effect: () => {}, next: null }
-        ]
-      },
-      {
-        text: "A wild dog blocks your path and barks loudly. What do you do?",
-        choices: [
-          { text: "Try to scare it away", effect: () => { score -= 3; energy--; }, next: 3 },
-          { text: "Wait for it to leave", effect: () => { score--; }, next: 3 },
-          { text: "Take a longer route", effect: () => { score -= 2; }, next: 3 }
-        ]
-      },
-      {
-        text: "You encounter a heavy rain, making the path slippery. What do you do?",
-        choices: [
-          { text: "Walk carefully and slowly", effect: () => { score--; }, next: 4 },
-          { text: "Run to get home faster", effect: () => { energy--; }, next: 4 },
-          { text: "Seek shelter and wait", effect: () => { schoolProgress--; }, next: 4 }
-        ]
-      },
-      {
-        text: "A stranger offers you food. They look friendly but you never know...",
-        choices: [
-          { text: "Accept the food gratefully", effect: () => { energy++; score--; }, next: 5 },
-          { text: "Politely decline and move on", effect: () => {}, next: 5 }
-        ]
-      },
-      {
-        text: "You hear about a water source being polluted by a factory. It's far from here.",
-        choices: [
-          { text: "Report it to the village chief", effect: () => { schoolProgress += 2; }, next: 6 },
-          { text: "Ignore it and continue your way", effect: () => {}, next: 6 }
-        ]
-      },
-      {
-        text: "Some children challenge you to a race. The winner gets a prize!",
-        choices: [
-          { text: "Accept the challenge", effect: () => { score += 3; }, next: 7 },
-          { text: "Politely decline", effect: () => {}, next: 7 }
-        ]
-      },
-      {
-        text: "You find a lost puppy on the way. It's scared and alone.",
-        choices: [
-          { text: "Take it with you", effect: () => { energy++; score--; }, next: 8 },
-          { text: "Leave it and continue", effect: () => {}, next: 8 }
-        ]
-      },
-      {
-        text: "Finally, you reach home. Your family is worried but relieved to see you safe.",
-        choices: [
-          { text: "Tell them about your day", effect: () => {}, next: 9 },
-          { text: "Just rest and say nothing", effect: () => {}, next: 9 }
-        ]
-      },
-      {
-        text: "You did it! You've completed the long walk for water. What an adventure!",
-        choices: [
-          { text: "Restart the journey", effect: () => { currentStep = 0; }, next: null },
-          { text: "Exit", effect: () => { window.close(); }, next: null }
+          { text: "Finish the journey", effect: () => {}, next: null }
         ]
       }
     ];
@@ -701,6 +532,7 @@
     // Map each story step to a milestone index on the map
     // 0 = start, 1 = obstacle, 2 = stale water, 3 = river
     // The icon only moves when a key scene is reached
+    // Only 8 steps for the short game. Each number matches a milestone on the map.
     const stepToMilestone = [
       0, // Step 0: start
       0, // Step 1: still at start
@@ -708,19 +540,8 @@
       1, // Step 3: still at obstacle (shortcut/thorns)
       1, // Step 4: still at obstacle (snake)
       1, // Step 5: still at obstacle (muddy patch)
-      1, // Step 6: still at obstacle (boys playing soccer)
-      2, // Step 7: stale water (dirty water scene)
-      3, // Step 8: river (clean water scene)
-      3, // Step 9: on the way back
-      3, // Step 10: on the way back
-      3, // Step 11: on the way back
-      3, // Step 12: on the way back
-      3, // Step 13: on the way back
-      3, // Step 14: on the way back
-      3, // Step 15: on the way back
-      3, // Step 16: on the way back
-      3, // Step 17: on the way back
-      3  // Step 18: on the way back
+      2, // Step 6: stale water (boys playing soccer)
+      3  // Step 7: river (clean water scene)
     ];
 
     // Move the character to the correct milestone for the current story step
@@ -809,7 +630,7 @@
         // Replace the content with instructions
         overlay.innerHTML = `
           <div id="directionsInstructions" style="font-size:1.1em; color:#005073; font-weight:bold; margin-bottom:18px; max-width:420px;">
-            <span style='color:#2E9DF7;'>Journey Points:</span> Make good choices to earn points. If you reach <b>20 Journey Points</b> by the end, the new well in the village will be working for everyone!<br><br>
+            <span style='color:#2E9DF7;'>Journey Points:</span> Make good choices to earn points. If you reach <b>10 Journey Points</b> by the end, the new well in the village will be working for everyone!<br><br>
             <span style='color:#159A48;'>Energy:</span> You start with <b>4 Energy</b>. If you lose all your energy, Amina must turn back and her family won't get water that day.<br><br>
             The more people play and help Amina, the more is donated to <a href='https://www.charitywater.org/' target='_blank' style='color:#2E9DF7;'>Charity: Water</a>.<br><br>
             <span style='color:#FFC907;'>Are you ready to help Amina on her journey?</span>
@@ -915,30 +736,38 @@
 
     // In showStep, always add 2 journey points per step, or 4 if double points
     function showStep() {
-      // Always check for muddy patch cut scene flags FIRST, before game over or anything else
+      // Check for the muddy patch rest cut scene FIRST
       if (window.muddyPatchRestCutScene) {
         showMuddyPatchRestCutScene(() => {
           window.muddyPatchRestCutScene = false;
-          currentStep = 6;
-          showStep();
-          showDidYouKnow();
-        });
-        return;
-      }
-      if (window.muddyPatchPushThroughCutScene) {
-        showMuddyPatchPushThroughCutScene(() => {
-          window.muddyPatchPushThroughCutScene = false;
+          // After the cut scene, check if energy is 0 or less
           if (energy <= 0) {
             showGameOverCutScene();
             return;
           }
-          currentStep = 6;
-          showStep();
+          // Go to the next step after muddy patch (step 5: boys playing soccer)
+          currentStep = 5;
+          showStep(); // Call showStep() to continue the game
           showDidYouKnow();
         });
         return;
       }
-
+      // Check for the muddy patch push through cut scene FIRST
+      if (window.muddyPatchPushThroughCutScene) {
+        showMuddyPatchPushThroughCutScene(() => {
+          window.muddyPatchPushThroughCutScene = false;
+          // After the cut scene, check if energy is 0 or less
+          if (energy <= 0) {
+            showGameOverCutScene();
+            return;
+          }
+          // Go to the next step after muddy patch (step 5: boys playing soccer)
+          currentStep = 5;
+          showStep(); // Call showStep() to continue the game
+          showDidYouKnow();
+        });
+        return;
+      }
       // Always check if energy is 0 or less before doing anything else
       // If so, show the Game Over cut scene and stop the game
       if (checkGameOver()) {
@@ -1076,7 +905,6 @@
         // Show the cut scene and then continue
         showSnakeWaitCutScene(() => {
           window.snakeWaitCutScene = false;
-          // Move to the next step after the cut scene
           currentStep = 5;
           showStep();
           showDidYouKnow();
@@ -1088,38 +916,7 @@
       if (window.snakeWalkAroundCutScene) {
         showSnakeWalkAroundCutScene(() => {
           window.snakeWalkAroundCutScene = false;
-          // Move to the next step after the cut scene
           currentStep = 5;
-          showStep();
-          showDidYouKnow();
-        });
-        return;
-      }
-
-      // Check for the muddy patch rest cut scene
-      if (window.muddyPatchRestCutScene) {
-        showMuddyPatchRestCutScene(() => {
-          window.muddyPatchRestCutScene = false;
-          // Move to the next step after the cut scene
-          currentStep = 6;
-          showStep();
-          showDidYouKnow();
-        });
-        return;
-      }
-
-      // Check for the muddy patch push through cut scene
-      if (window.muddyPatchPushThroughCutScene) {
-        // Always show the cut scene if the flag is set
-        showMuddyPatchPushThroughCutScene(() => {
-          window.muddyPatchPushThroughCutScene = false;
-          // After the cut scene, check if energy is 0 or less
-          if (energy <= 0) {
-            showGameOverCutScene();
-            return;
-          }
-          // Move to the next step after the cut scene
-          currentStep = 6;
           showStep();
           showDidYouKnow();
         });
@@ -1136,7 +933,45 @@
       choicesContainer.innerHTML = '';
       stopAmbient();
 
-      // Move marker to final position
+      // Beginner-friendly: You win if you have 10 or more Journey Points at the end
+      if (currentStep === 7 && score >= 10) {
+        updatePathMarker(currentStep);
+        moveCharacter(currentStep);
+        setBackground(currentStep);
+        showWellCelebrationScene();
+        storyText.innerHTML = "You made it! With clean water, your family is healthier and happier.";
+        playSound(sfxVictory);
+        const box = document.getElementById('didYouKnow');
+        box.innerHTML = `<strong>Did You Know?</strong> ${didYouKnowFacts[didYouKnowFacts.length - 1]}`;
+        box.style.display = 'block';
+        box.style.opacity = '1';
+        storyText.focus();
+        const restart = document.createElement('button');
+        restart.classList.add('choiceBtn');
+        restart.textContent = 'Restart';
+        restart.onclick = startGame;
+        choicesContainer.appendChild(restart);
+        updateStatus();
+        updateScoreDisplay();
+        return;
+      }
+      // If you finished the journey but have less than 10 points, show restart scene
+      if (currentStep === 7 && score < 10) {
+        updatePathMarker(currentStep);
+        moveCharacter(currentStep);
+        setBackground(currentStep);
+        storyText.innerHTML = "You finished, but you need 10 Journey Points to win. Try again!";
+        playSound(sfxLoss);
+        const restart = document.createElement('button');
+        restart.classList.add('choiceBtn');
+        restart.textContent = 'Restart';
+        restart.onclick = startGame;
+        choicesContainer.appendChild(restart);
+        updateStatus();
+        updateScoreDisplay();
+        return;
+      }
+      // If energy is 0, show the Game Over cut scene
       if (energy <= 0) {
         updatePathMarker(currentStep);
         moveCharacter(currentStep);
@@ -1211,7 +1046,7 @@
       wellDiv.innerHTML = `
         <svg width="180" height="120" viewBox="0 0 180 120">
           <!-- Well base -->
-          <ellipse cx="90" cy="110" rx="35" ry="10" fill="#bfa77a"/>
+          <ellipse cx="90"
           <rect x="60" y="60" width="60" height="50" rx="12" fill="#bfa77a" stroke="#8d5524" stroke-width="2"/>
           <!-- Well water -->
           <ellipse cx="90" cy="90" rx="25" ry="8" fill="#2E9DF7" opacity="0.7"/>
@@ -1549,7 +1384,6 @@
           <!-- Simple snake illustration -->
           <ellipse cx="45" cy="50" rx="30" ry="8" fill="#bfa77a"/>
           <path d="M20 50 Q45 20 70 50" stroke="#159A48" stroke-width="6" fill="none"/>
-          <ellipse cx="70" cy="54" rx="2" ry="1" fill="#FFC907"/>
         </svg>
         <button id="continueSnakeWaitBtn" class="choiceBtn" style="max-width:200px; background-color:#2E9DF7;">Continue</button>
       `;
@@ -1565,159 +1399,17 @@
           continueCallback();
         }
       };
-      overlay.style.left = '0';
-      overlay.style.top = '0';
-      overlay.style.width = '100%';
-      overlay.style.height = '100%';
-      overlay.style.background = 'rgba(255,255,255,0.97)';
-      overlay.style.display = 'flex';
-      overlay.style.flexDirection = 'column';
-      overlay.style.alignItems = 'center';
-      overlay.style.justifyContent = 'center';
-      overlay.style.zIndex = '30';
-      overlay.style.textAlign = 'center';
-
-      // Add a message, SVG, and a Continue button
-      overlay.innerHTML = `
-        <div style="font-size:1.2em; color:#159A48; font-weight:bold; margin-bottom:10px; max-width:400px;">
-          You carefully walk around the snake. It works, but you feel tired from moving so slowly and quietly.
-        </div>
-        <div style="font-size:1em; color:#222; margin-bottom:12px; max-width:400px;">
-          You lose <span style='color:#F5402C;'>1 Energy</span> because it took extra effort.
-        </div>
-        <svg width="90" height="60" viewBox="0 0 90 60" style="margin-bottom:16px;">
-          <!-- Simple snake illustration -->
-          <ellipse cx="45" cy="50" rx="30" ry="8" fill="#bfa77a"/>
-          <path d="M20 50 Q45 20 70 50" stroke="#159A48" stroke-width="6" fill="none"/>
-          <circle cx="70" cy="50" r="6" fill="#159A48"/>
-          <ellipse cx="70" cy="54" rx="2" ry="1" fill="#FFC907"/>
-        </svg>
-        <button id="continueSnakeWalkBtn" class="choiceBtn" style="max-width:200px; background-color:#2E9DF7;">Continue</button>
-      `;
-      document.getElementById('gameContainer').appendChild(overlay);
-
-      // Add event listener for the Continue button
-      document.getElementById('continueSnakeWalkBtn').onclick = function() {
-        overlay.remove(); // Remove the overlay
-        // Call the callback to continue the journey
-        if (typeof continueCallback === 'function') {
-          continueCallback();
-        }
-      };
     }
 
-    // Show a cut scene if the player rests at the muddy patch and finds a trail of rocks
-    function showMuddyPatchRestCutScene(continueCallback) {
+    // Add a simple cut scene for getting lost in the brush
+    function showLostInBrushCutScene() {
       // Remove any previous overlay if present
-      let oldOverlay = document.getElementById('muddyPatchRestCutScene');
+      let oldOverlay = document.getElementById('lostInBrushCutScene');
       if (oldOverlay) oldOverlay.remove();
 
       // Create a new overlay div
       const overlay = document.createElement('div');
-      overlay.id = 'muddyPatchRestCutScene';
-      overlay.style.position = 'absolute';
-      overlay.style.left = '0';
-      overlay.style.top = '0';
-      overlay.style.width = '100%';
-      overlay.style.height = '100%';
-      overlay.style.background = 'rgba(255,255,255,0.97)';
-      overlay.style.display = 'flex';
-      overlay.style.flexDirection = 'column';
-      overlay.style.alignItems = 'center';
-      overlay.style.justifyContent = 'center';
-      overlay.style.zIndex = '30';
-      overlay.style.textAlign = 'center';
-
-      // Add a message, SVG, and a Continue button
-      overlay.innerHTML = `
-        <div style="font-size:1.2em; color:#159A48; font-weight:bold; margin-bottom:10px; max-width:400px;">
-          While resting and gathering your thoughts, you see a path of rocks to cross over the mud easily. Gain 2 energy points.
-        </div>
-        <svg width="90" height="60" viewBox="0 0 90 60" style="margin-bottom:16px;">
-          <!-- Simple stepping stones illustration -->
-          <ellipse cx="20" cy="50" rx="8" ry="4" fill="#bfa77a"/>
-          <ellipse cx="35" cy="45" rx="8" ry="4" fill="#bfa77a"/>
-          <ellipse cx="50" cy="40" rx="8" ry="4" fill="#bfa77a"/>
-          <ellipse cx="65" cy="35" rx="8" ry="4" fill="#bfa77a"/>
-        </svg>
-        <button id="continueMuddyPatchBtn" class="choiceBtn" style="max-width:200px; background-color:#2E9DF7;">Continue</button>
-      `;
-      document.getElementById('gameContainer').appendChild(overlay);
-
-      // Add event listener for the Continue button
-      document.getElementById('continueMuddyPatchBtn').onclick = function() {
-        overlay.remove(); // Remove the overlay
-        if (typeof continueCallback === 'function') {
-          continueCallback(); // Continue the journey
-        }
-      };
-    }
-
-    // Show a cut scene if the player pushes through the muddy patch and gets very tired
-    function showMuddyPatchPushThroughCutScene(continueCallback) {
-      // Remove any previous overlay if present
-      let oldOverlay = document.getElementById('muddyPatchPushThroughCutScene');
-      if (oldOverlay) oldOverlay.remove();
-
-      // Create a new overlay div
-      const overlay = document.createElement('div');
-      overlay.id = 'muddyPatchPushThroughCutScene';
-      overlay.style.position = 'absolute';
-      overlay.style.left = '0';
-      overlay.style.top = '0';
-      overlay.style.width = '100%';
-      overlay.style.height = '100%';
-      overlay.style.background = 'rgba(255,255,255,0.97)';
-      overlay.style.display = 'flex';
-      overlay.style.flexDirection = 'column';
-      overlay.style.alignItems = 'center';
-      overlay.style.justifyContent = 'center';
-      overlay.style.zIndex = '30';
-      overlay.style.textAlign = 'center';
-
-      // Add a message, SVG, and a Continue button
-      overlay.innerHTML = `
-        <div style="font-size:1.2em; color:#F5402C; font-weight:bold; margin-bottom:10px; max-width:400px;">
-          You push through the mud, but it takes a lot of effort. You feel very tired!
-        </div>
-        <div style="font-size:1em; color:#222; margin-bottom:12px; max-width:400px;">
-          You lose <span style='color:#F5402C;'>2 Energy</span> because it was so hard.
-        </div>
-        <svg width="90" height="60" viewBox="0 0 90 60" style="margin-bottom:16px;">
-          <!-- Simple mud illustration -->
-          <ellipse cx="45" cy="50" rx="30" ry="8" fill="#bfa77a"/>
-          <ellipse cx="45" cy="54" rx="20" ry="4" fill="#8d5524"/>
-          <ellipse cx="30" cy="56" rx="6" ry="2" fill="#8d5524"/>
-          <ellipse cx="60" cy="56" rx="6" ry="2" fill="#8d5524"/>
-        </svg>
-        <button id="continueMuddyPushBtn" class="choiceBtn" style="max-width:200px; background-color:#2E9DF7;">Continue</button>
-      `;
-      document.getElementById('gameContainer').appendChild(overlay);
-
-      // Add event listener for the Continue button
-      document.getElementById('continueMuddyPushBtn').onclick = function() {
-        overlay.remove(); // Remove the overlay
-        // If energy is 0 or less after pushing through, show the Game Over cut scene and stop
-        if (energy <= 0) {
-          showGameOverCutScene();
-          return;
-        }
-        // Otherwise, continue the journey
-        if (typeof continueCallback === 'function') {
-          continueCallback();
-        }
-      };
-    }
-
-    // Show a Game Over cut scene when Energy reaches 0
-    function showGameOverCutScene() {
-      // Remove any previous overlay if present
-      let oldOverlay = document.getElementById('gameOverCutScene');
-      if (oldOverlay) oldOverlay.remove();
-
-      // Create a new overlay div
-      const overlay = document.createElement('div');
-      overlay.id = 'gameOverCutScene';
+      overlay.id = 'lostInBrushCutScene';
       overlay.style.position = 'absolute';
       overlay.style.left = '0';
       overlay.style.top = '0';
@@ -1731,34 +1423,30 @@
       overlay.style.zIndex = '40';
       overlay.style.textAlign = 'center';
 
-      // Add a message, SVG, and a Restart button
+      // Add a message, SVG, and a Continue button
       overlay.innerHTML = `
-        <div style="font-size:2em; color:#F5402C; font-weight:bold; margin-bottom:10px; max-width:400px;">
-          GAME OVER
-        </div>
-        <div style="font-size:1.1em; color:#222; margin-bottom:12px; max-width:400px;">
-          You ran out of energy and couldn't continue.<br>Try again to learn how to stay safe and finish the journey!
+        <div style="font-size:1.2em; color:#F5402C; font-weight:bold; margin-bottom:10px; max-width:400px;">
+          You get lost in the thick brush and can't find your way back.<br>
+          You are too tired to continue.
         </div>
         <svg width="90" height="60" viewBox="0 0 90 60" style="margin-bottom:16px;">
-          <!-- Simple tired character illustration -->
+          <!-- Simple lost in brush illustration -->
           <ellipse cx="45" cy="50" rx="30" ry="8" fill="#bfa77a"/>
-          <ellipse cx="45" cy="40" rx="12" ry="14" fill="#c68642"/>
-          <ellipse cx="41" cy="38" rx="2" ry="2.5" fill="#222"/>
-          <ellipse cx="49" cy="38" rx="2" ry="2.5" fill="#222"/>
-          <path d="M41 45 Q45 48 49 45" stroke="#6d4c24" stroke-width="2" fill="none"/>
-          <rect x="42" y="52" width="6" height="8" rx="3" fill="#c68642"/>
+          <ellipse cx="30" cy="40" rx="10" ry="14" fill="#159A48" opacity="0.7"/>
+          <ellipse cx="60" cy="40" rx="10" ry="14" fill="#159A48" opacity="0.7"/>
+          <ellipse cx="45" cy="45" rx="12" ry="10" fill="#4FCB53" opacity="0.5"/>
         </svg>
-        <button id="restartGameOverBtn" class="choiceBtn" style="max-width:200px; background-color:#2E9DF7;">Restart</button>
+        <button id="continueLostBrushBtn" class="choiceBtn" style="max-width:200px; background-color:#2E9DF7;">Continue</button>
       `;
       document.getElementById('gameContainer').appendChild(overlay);
 
-      // Play loss sound
-      playSound(sfxLoss);
-
-      // Add event listener for the Restart button
-      document.getElementById('restartGameOverBtn').onclick = function() {
+      // When the player clicks Continue, end the game for real
+      document.getElementById('continueLostBrushBtn').onclick = function() {
         overlay.remove(); // Remove the overlay
-        startGame(); // Restart the game
+        // Set energy to 0 so the ending message is clear
+        energy = 0;
+        // Call endGame() to stop the game and show the ending
+        endGame();
       };
     }
   </script>
