@@ -472,16 +472,19 @@
         ]
       },
       {
-        text: "You see a group of boys playing soccer. They tease you for carrying water. What do you do?",
+        text: "You see a wild dog in the road. What do you do?",
         choices: [
-          { text: "Ignore them and keep walking", effect: () => {}, next: 6 },
-          { text: "Ask them to help carry the water", effect: () => {}, next: 6 }
+          // If you stand your ground, just continue to the next step
+          { text: "Stand your ground. Ignore the dog and keep walking past it.", effect: () => {}, next: 6 },
+          // If you distract the dog, set the flag for the cut scene (do not advance step here)
+          { text: "Distract the dog by tossing something into the brush, then run past it yelling.", effect: () => { window.wildDogCutScene = true; }, next: null }
         ]
       },
       {
         text: "You finally reach the river. The water looks dirty. What do you do?",
         choices: [
-          { text: "Fill your container anyway", effect: () => { energy--; }, next: 7 },
+          // Show a cut scene if you fill your container anyway
+          { text: "Fill your container anyway", effect: () => { window.dirtyWaterCutScene = true; }, next: null },
           { text: "Walk further to a cleaner spot", effect: () => {}, next: 7 }
         ]
       },
@@ -833,6 +836,23 @@
             return;
           }
           choice.effect();
+          // --- Fix for wild dog cut scene: if the flag is set, show the cut scene and return immediately ---
+          if (window.wildDogCutScene) {
+            // After the wild dog cut scene, subtract 2 energy. If energy is now 0 or less, show game over. Otherwise, go to the next step.
+            showWildDogCutScene(() => {
+              window.wildDogCutScene = false;
+              energy = energy - 2; // Lose 2 energy for running past the dog
+              if (energy <= 0) {
+                // If energy is 0 or less, show the game over cut scene
+                showGameOverCutScene();
+                return;
+              }
+              currentStep++; // Go to the next step
+              showStep();
+              showDidYouKnow();
+            });
+            return;
+          }
           // If this is the snake step and player throws a rock, show the snake bite scene and end the game
           if (step.text.includes("snake") && choice.text.includes("Throw a rock")) {
             showSnakeBiteScene(() => {
@@ -917,6 +937,37 @@
         showSnakeWalkAroundCutScene(() => {
           window.snakeWalkAroundCutScene = false;
           currentStep = 5;
+          showStep();
+          showDidYouKnow();
+        });
+        return;
+      }
+
+      // Check for the wild dog cut scene
+      if (window.wildDogCutScene) {
+        // After the wild dog cut scene, subtract 2 energy. If energy is now 0 or less, show game over. Otherwise, go to the next step.
+        showWildDogCutScene(() => {
+          window.wildDogCutScene = false;
+          energy = energy - 2; // Lose 2 energy for running past the dog
+          if (energy <= 0) {
+            // If energy is 0 or less, show the game over cut scene
+            showGameOverCutScene();
+            return;
+          }
+          currentStep++; // Go to the next step
+          showStep();
+          showDidYouKnow();
+        });
+        return;
+      }
+
+      // In showStep, after wild dog cut scene, check for dirty water cut scene
+      if (window.dirtyWaterCutScene) {
+        // After the dirty water cut scene, always go to the next step (currentStep++)
+        showDirtyWaterCutScene(() => {
+          window.dirtyWaterCutScene = false;
+          energy = energy - 1; // Lose 1 energy
+          currentStep++; // Go to the next step
           showStep();
           showDidYouKnow();
         });
@@ -1447,6 +1498,204 @@
         energy = 0;
         // Call endGame() to stop the game and show the ending
         endGame();
+      };
+    }
+
+    // Show a cut scene for 'Rest for a moment' at the muddy patch
+   
+    // This function is called when the player chooses to rest in the mud
+    function showMuddyPatchRestCutScene(continueCallback) {
+      // Remove any previous overlay if present
+      let oldOverlay = document.getElementById('muddyPatchRestCutScene');
+      if (oldOverlay) oldOverlay.remove();
+
+      // Create a new overlay div
+      const overlay = document.createElement('div');
+      overlay.id = 'muddyPatchRestCutScene';
+      overlay.style.position = 'absolute';
+      overlay.style.left = '0';
+      overlay.style.top = '0';
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.background = 'rgba(255,255,255,0.97)';
+      overlay.style.display = 'flex';
+      overlay.style.flexDirection = 'column';
+      overlay.style.alignItems = 'center';
+      overlay.style.justifyContent = 'center';
+      overlay.style.zIndex = '40';
+      overlay.style.textAlign = 'center';
+
+      // Add a message and a Continue button
+      overlay.innerHTML = `
+        <div style="font-size:1.2em; color:#159A48; font-weight:bold; margin-bottom:10px; max-width:400px;">
+          You rest for a moment and catch your breath.<br>
+          You feel a little better and gain 2 Energy.
+        </div>
+        <svg width="90" height="60" viewBox="0 0  90 60" style="margin-bottom:16px;">
+          <ellipse cx="45" cy="50" rx="30" ry="8" fill="#bfa77a"/>
+          <ellipse cx="45" cy="40" rx="15" ry="10" fill="#8BD1CB" opacity="0.7"/>
+          <ellipse cx="45" cy="45" rx="12" ry="8" fill="#4FCB53" opacity="0.5"/>
+        </svg>
+        <button id="continueMuddyRestBtn" class="choiceBtn" style="max-width:200px; background-color:#2E9DF7;">Continue</button>
+      `;
+      document.getElementById('gameContainer').appendChild(overlay);
+
+      // When the player clicks Continue, remove overlay and continue
+      document.getElementById('continueMuddyRestBtn').onclick = function() {
+        overlay.remove();
+        if (typeof continueCallback === 'function') {
+          continueCallback();
+        }
+      };
+    }
+
+    // Show a cut scene for 'Push through' at the muddy patch
+    // This function is called when the player chooses to push through the mud
+    function showMuddyPatchPushThroughCutScene(continueCallback) {
+      // Remove any previous overlay if present
+      let oldOverlay = document.getElementById('muddyPatchPushThroughCutScene');
+      if (oldOverlay) oldOverlay.remove();
+
+      // Create a new overlay div
+      const overlay = document.createElement('div');
+      overlay.id = 'muddyPatchPushThroughCutScene';
+      overlay.style.position = 'absolute';
+      overlay.style.left = '0';
+      overlay.style.top = '0';
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.background = 'rgba(255,255,255,0.97)';
+      overlay.style.display = 'flex';
+      overlay.style.flexDirection = 'column';
+      overlay.style.alignItems = 'center';
+      overlay.style.justifyContent = 'center';
+      overlay.style.zIndex = '40';
+      overlay.style.textAlign = 'center';
+
+      // Add a message and a Continue button
+      overlay.innerHTML = `
+        <div style="font-size:1.2em; color:#F5402C; font-weight:bold; margin-bottom:10px; max-width:400px;">
+          You push through the mud and keep going.<br>
+          It's hard work and you lose 2 Energy.
+        </div>
+        <svg width="90" height="60" viewBox="0 0 90 60" style="margin-bottom:16px;">
+          <ellipse cx="45" cy="50" rx="30" ry="8" fill="#bfa77a"/>
+          <ellipse cx="45" cy="45" rx="18" ry="7" fill="#8d5524" opacity="0.7"/>
+          <ellipse cx="45" cy="48" rx="12" ry="5" fill="#F5402C" opacity="0.5"/>
+        </svg>
+        <button id="continueMuddyPushBtn" class="choiceBtn" style="max-width:200px; background-color:#2E9DF7;">Continue</button>
+      `;
+      document.getElementById('gameContainer').appendChild(overlay);
+
+      // When the player clicks Continue, remove overlay and continue
+      document.getElementById('continueMuddyPushBtn').onclick = function() {
+        overlay.remove();
+        if (typeof continueCallback === 'function') {
+          continueCallback();
+        }
+      };
+    }
+
+    // Show a cut scene for the wild dog event
+    function showWildDogCutScene(continueCallback) {
+      // Remove any previous overlay if present
+      let oldOverlay = document.getElementById('wildDogCutScene');
+      if (oldOverlay) oldOverlay.remove();
+
+      // Create a new overlay div
+      const overlay = document.createElement('div');
+      overlay.id = 'wildDogCutScene';
+      overlay.style.position = 'absolute';
+      overlay.style.left = '0';
+      overlay.style.top = '0';
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.background = 'rgba(255,255,255,0.97)';
+      overlay.style.display = 'flex';
+      overlay.style.flexDirection = 'column';
+      overlay.style.alignItems = 'center';
+      overlay.style.justifyContent = 'center';
+      overlay.style.zIndex = '40';
+      overlay.style.textAlign = 'center';
+
+      // Add a message, SVG, and a Continue button
+      overlay.innerHTML = `
+        <div style="font-size:1.2em; color:#F5402C; font-weight:bold; margin-bottom:10px; max-width:400px;">
+          You throw a stick into the brush and run past the wild dog, yelling.<br>
+          That was scary! You lose 2 Energy.
+        </div>
+        <svg width="90" height="60" viewBox="0 0 90 60" style="margin-bottom:16px;">
+          <ellipse cx="45" cy="50" rx="30" ry="8" fill="#bfa77a"/>
+          <ellipse cx="60" cy="45" rx="10" ry="6" fill="#8d5524"/>
+          <ellipse cx="60" cy="40" rx="7" ry="4" fill="#c68642"/>
+          <ellipse cx="65" cy="38" rx="2" ry="2" fill="#fff"/>
+          <ellipse cx="55" cy="38" rx="2" ry="2" fill="#fff"/>
+          <ellipse cx="60" cy="48" rx="4" ry="2" fill="#F5402C" opacity="0.5"/>
+          <rect x="30" y="48" width="18" height="3" rx="1.5" fill="#8d5524"/>
+        </svg>
+        <button id="continueWildDogBtn" class="choiceBtn" style="max-width:200px; background-color:#2E9DF7;">Continue</button>
+      `;
+      document.getElementById('gameContainer').appendChild(overlay);
+
+      // When the player clicks Continue, remove overlay and continue
+      document.getElementById('continueWildDogBtn').onclick = function() {
+        overlay.remove();
+        if (typeof continueCallback === 'function') {
+          continueCallback();
+        }
+      };
+    }
+
+    // Add the dirty water cut scene function
+    function showDirtyWaterCutScene(continueCallback) {
+      // Remove any previous overlay if present
+      let oldOverlay = document.getElementById('dirtyWaterCutScene');
+      if (oldOverlay) oldOverlay.remove();
+
+      // Create a new overlay div
+      const overlay = document.createElement('div');
+      overlay.id = 'dirtyWaterCutScene';
+      overlay.style.position = 'absolute';
+      overlay.style.left = '0';
+      overlay.style.top = '0';
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.background = 'rgba(255,255,255,0.97)';
+      overlay.style.display = 'flex';
+      overlay.style.flexDirection = 'column';
+      overlay.style.alignItems = 'center';
+      overlay.style.justifyContent = 'center';
+      overlay.style.zIndex = '40';
+      overlay.style.textAlign = 'center';
+
+      // Add a message, SVG, and a Continue button
+      overlay.innerHTML = `
+        <div style="font-size:1.2em; color:#F5402C; font-weight:bold; margin-bottom:10px; max-width:400px;">
+          You fill your container, but the water is full of bugs and dirt.<br>
+          You have to pour it all out. What a waste of time and energy!
+        </div>
+        <div style="font-size:1em; color:#222; margin-bottom:12px; max-width:400px;">
+          You lose <span style='color:#F5402C;'>1 Energy</span>.
+        </div>
+        <svg width="90" height="60" viewBox="0 0 90 60" style="margin-bottom:16px;">
+          <ellipse cx="45" cy="50" rx="30" ry="8" fill="#bfa77a"/>
+          <rect x="35" y="35" width="20" height="18" rx="5" fill="#FFC907" stroke="#bfa100" stroke-width="2"/>
+          <ellipse cx="45" cy="45" rx="8" ry="4" fill="#2E9DF7" opacity="0.7"/>
+          <circle cx="45" cy="45" r="2" fill="#159A48"/>
+          <ellipse cx="50" cy="48" rx="1.5" ry="1" fill="#8d5524"/>
+          <ellipse cx="40" cy="48" rx="1.5" ry="1" fill="#8d5524"/>
+          <ellipse cx="45" cy="50" rx="2" ry="1" fill="#F5402C"/>
+        </svg>
+        <button id="continueDirtyWaterBtn" class="choiceBtn" style="max-width:200px; background-color:#2E9DF7;">Continue</button>
+      `;
+      document.getElementById('gameContainer').appendChild(overlay);
+
+      // When the player clicks Continue, remove overlay and continue
+      document.getElementById('continueDirtyWaterBtn').onclick = function() {
+        overlay.remove();
+        if (typeof continueCallback === 'function') {
+          continueCallback();
+        }
       };
     }
   </script>
