@@ -47,9 +47,9 @@
 
     #gameContainer {
       background: #fff;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       max-width: 600px;
       width: 100%;
       position: relative;
@@ -61,20 +61,15 @@
       color: #111; /* Ensure text is very dark on white */
       font-weight: bold; /* Bolder text */
       padding-bottom: 0; /* Remove extra space at bottom */
-      border: 3px solid #FFC907; /* charity: water yellow border */
+      /* Removed border for better mobile visibility */
     }
 
     h1 {
-      color: #00263a; /* Even darker blue for better contrast */
+      color: #00263a; /* Dark blue for excellent contrast on white */
       font-size: 2rem;
       text-align: center;
       font-weight: bold;
       letter-spacing: 1px;
-      text-shadow: 1px 1px 2px #fff, 0 0 2px #fff;
-      background: linear-gradient(135deg, #2E9DF7, #FFC907);
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
       margin-bottom: 15px;
     }
 
@@ -84,10 +79,12 @@
       color: #111; /* Very dark text */
       font-weight: bold;
       text-shadow: 1px 1px 2px #fff, 0 0 2px #fff;
-      background: rgba(255,255,255,0.85); /* Light background for readability */
+      background: rgba(255,255,255,0.65); /* More transparent background */
+      backdrop-filter: blur(3px); /* Add blur effect */
       border-radius: 6px;
       padding: 10px 12px;
       box-sizing: border-box;
+      border: 1px solid rgba(44,157,247,0.2); /* Subtle border */
     }
 
     #choices {
@@ -103,11 +100,11 @@
       display: block;
       background-color: #2E9DF7; /* charity: water blue */
       color: #fff;
-      border: 2px solid #FFC907; /* charity: water yellow border */
+      border: none; /* Removed border for cleaner mobile look */
       padding: 12px;
       margin: 10px 0;
       width: 100%;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
       font-size: 1rem;
       font-weight: bold;
@@ -128,7 +125,6 @@
     .choiceBtn:hover {
       background-color: #FFC907; /* charity: water yellow on hover */
       color: #00263a; /* dark text on yellow background */
-      border-color: #2E9DF7;
       transform: translateY(-2px);
       box-shadow: 0 4px 8px rgba(255, 201, 7, 0.4);
     }
@@ -143,24 +139,26 @@
       margin-top: 20px;
       font-size: 1rem;
       color: #00263a;
-      background: linear-gradient(135deg, #FFC907, #FFD700);
-      padding: 10px 12px;
-      border-radius: 8px;
+      background: rgba(255, 201, 7, 0.75); /* More transparent background */
+      backdrop-filter: blur(3px); /* Add blur effect */
+      padding: 8px 12px;
+      border-radius: 6px;
       font-weight: bold;
-      border: 2px solid #2E9DF7;
       box-shadow: 0 2px 4px rgba(255, 201, 7, 0.3);
+      border: 1px solid rgba(255, 201, 7, 0.4); /* Subtle border */
     }
 
     /* Score area with charity: water branding */
     #scoreArea {
-      background: linear-gradient(135deg, #FFC907, #FFD700);
+      background: rgba(255, 201, 7, 0.75); /* More transparent background */
+      backdrop-filter: blur(3px); /* Add blur effect */
       color: #00263a;
-      border: 2px solid #2E9DF7;
-      border-radius: 8px;
+      border-radius: 6px;
       padding: 8px 12px;
       margin-bottom: 8px;
       font-weight: bold;
       box-shadow: 0 2px 4px rgba(255, 201, 7, 0.3);
+      border: 1px solid rgba(255, 201, 7, 0.4); /* Subtle border */
     }
 
     /* Character styles */
@@ -200,18 +198,25 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start; /* Changed from center to flex-start */
       z-index: 10;
       color: #111;
       font-weight: bold;
+      overflow-y: auto; /* Allow scrolling if content is too tall */
+      padding: 20px 15px 40px 15px; /* Add padding to ensure content isn't cut off */
+      box-sizing: border-box;
     }
     #landingTitle {
       font-size: 2.2rem;
-      color: #00263a;
-      text-shadow: 1px 1px 2px #fff, 0 0 2px #fff;
+      color: #00263a !important; /* Dark blue for better contrast - important to override h1 styles */
+      text-shadow: none !important; /* Remove white text shadow that blends with background */
       margin-bottom: 10px;
       text-align: center;
       font-weight: bold;
+      background: none !important; /* Remove any gradient background */
+      -webkit-background-clip: initial !important; /* Reset background clip */
+      background-clip: initial !important; /* Reset background clip */
+      -webkit-text-fill-color: #00263a !important; /* Ensure solid color text */
     }
     #landingSubtitle {
       font-size: 1.1rem;
@@ -225,10 +230,10 @@
     .landingBtn {
       background-color: #2E9DF7; /* charity: water blue */
       color: #fff;
-      border: 2px solid #FFC907; /* charity: water yellow border */
+      border: none; /* Removed border for cleaner mobile look */
       padding: 14px 32px;
       margin: 10px;
-      border-radius: 8px;
+      border-radius: 6px;
       font-size: 1.1rem;
       cursor: pointer;
       font-weight: bold;
@@ -252,7 +257,6 @@
     .landingBtn:hover {
       background-color: #FFC907; /* charity: water yellow on hover */
       color: #00263a; /* dark text on yellow background */
-      border-color: #2E9DF7;
       transform: translateY(-2px);
       box-shadow: 0 5px 10px rgba(255, 201, 7, 0.4);
     }
@@ -342,22 +346,77 @@
       padding: 10px;
       box-sizing: border-box;
     }
+    
+    /* Better responsive support for direction overlays */
+    @media (max-height: 600px) {
+      #directionsCutScene > div,
+      #schoolEndingScene > div,
+      #glassCutScene > div {
+        max-height: 80vh;
+        overflow-y: auto;
+        padding: 15px;
+      }
+      #directionsCutScene img,
+      #schoolEndingScene img,
+      #glassCutScene img {
+        max-width: 100px;
+      }
+    }
     /* Improved responsive design for all screen sizes */
     @media (max-width: 600px) {
+      body {
+        padding: 10px 10px 50px 10px; /* Reduced padding for more space */
+      }
       #gameContainer {
-        padding: 8px;
+        padding: 10px; /* Reduced padding */
         max-width: 98vw;
+        margin: 0 auto;
+      }
+      #landingPage {
+        padding: 15px 10px 60px 10px; /* Increased bottom padding for mobile */
+        box-sizing: border-box;
+        justify-content: flex-start; /* Ensure content starts at top */
+        min-height: 100vh; /* Ensure full height */
       }
       h1 {
         font-size: 1.4rem;
+        margin-bottom: 10px;
+      }
+      #landingTitle {
+        font-size: 1.6rem; /* Slightly smaller for mobile */
+        margin-bottom: 6px; /* Reduced margin */
+      }
+      #landingSubtitle {
+        font-size: 0.95rem;
+        margin-bottom: 15px; /* Reduced margin */
+        max-width: 95%;
+      }
+      /* Reduce spacing around images */
+      #landingPage img {
+        margin-bottom: 10px !important;
+      }
+      #landingPage header img {
+        margin-bottom: 8px !important;
+        max-width: 160px !important;
       }
       #scoreArea, #statusBar, #storyText {
         font-size: 1em;
         padding: 8px 6px;
+        margin: 8px 0; /* Reduced margins */
       }
       .choiceBtn, .landingBtn {
         font-size: 0.95rem;
-        padding: 12px;
+        padding: 14px 12px; /* More generous padding for easier tapping */
+        margin: 8px 0; /* Reduced margins between buttons */
+        width: 100%;
+        max-width: none; /* Remove max-width restriction */
+      }
+      .landingBtn {
+        padding: 16px 12px; /* Even more padding for landing buttons */
+        margin: 8px auto; /* Center the buttons */
+        display: block;
+        width: 100%;
+        max-width: 280px; /* Set reasonable max-width */
       }
       #characterContainer, #characterSprite {
         width: 28px;
@@ -369,11 +428,28 @@
       #milestoneLabels {
         font-size: 0.6em;
       }
-      #landingTitle {
-        font-size: 1.8rem;
+      /* Difficulty selection improvements for mobile */
+      nav > div {
+        margin-bottom: 15px !important;
       }
-      #landingSubtitle {
-        font-size: 1rem;
+      nav > div > div {
+        flex-direction: column !important;
+        gap: 8px !important;
+      }
+      nav > div label {
+        font-size: 0.9rem !important;
+        padding: 8px;
+        background: rgba(255,255,255,0.8);
+        border-radius: 4px;
+        margin: 2px 0;
+      }
+      /* Ensure navigation buttons area has enough space */
+      nav {
+        width: 100% !important;
+        margin-bottom: 20px !important;
+      }
+      nav > div:last-child {
+        margin-bottom: 30px !important; /* Extra space for button container */
       }
     }
 
@@ -485,10 +561,31 @@
     <img src="img/Girl with cup of water..jpg" alt="Happy girl drinking from a clean cup of water, showing the positive impact of access to clean water" style="max-width: 120px; height: auto; border-radius: 8px; border: 2px solid #2E9DF7; margin: 10px 0;">
     
     <nav>
-      <button class="landingBtn" id="startGameBtn" aria-label="Start the interactive water journey game">Start Game</button>
-      <a href="https://www.charitywater.org/" target="_blank" rel="noopener" aria-label="Learn more about Charity: Water's mission and donate">
-        <button class="landingBtn" style="background-color:#FFC907; color:#00263a; border-color:#2E9DF7;">Learn More</button>
-      </a>
+      <!-- Difficulty Selection -->
+      <div style="margin-bottom: 20px;">
+        <h2 style="font-size: 1.3rem; color: #005073; margin-bottom: 10px;">Choose Your Difficulty:</h2>
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 15px;">
+          <label style="display: flex; align-items: center; font-size: 1rem; color: #222; cursor: pointer;">
+            <input type="radio" name="difficulty" value="easy" checked style="margin-right: 8px; transform: scale(1.2);">
+            <span style="color: #4FCB53; font-weight: bold;">Easy</span> - 6 pts to win, 6 energy
+          </label>
+          <label style="display: flex; align-items: center; font-size: 1rem; color: #222; cursor: pointer;">
+            <input type="radio" name="difficulty" value="normal" style="margin-right: 8px; transform: scale(1.2);">
+            <span style="color: #2E9DF7; font-weight: bold;">Normal</span> - 10 pts to win, 4 energy
+          </label>
+          <label style="display: flex; align-items: center; font-size: 1rem; color: #222; cursor: pointer;">
+            <input type="radio" name="difficulty" value="hard" style="margin-right: 8px; transform: scale(1.2);">
+            <span style="color: #F5402C; font-weight: bold;">Hard</span> - 15 pts to win, 3 energy
+          </label>
+        </div>
+      </div>
+      
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%;">
+        <button class="landingBtn" id="startGameBtn" aria-label="Start the interactive water journey game">Start Game</button>
+        <a href="https://www.charitywater.org/main" target="_blank" rel="noopener" aria-label="Learn more about Charity: Water's mission and donate" style="text-decoration: none;">
+          <button class="landingBtn" style="background-color:#FFC907; color:#00263a; border-color:#2E9DF7;">Learn More About charity: water</button>
+        </a>
+      </div>
     </nav>
   </main>
 
@@ -505,17 +602,20 @@
     <!-- Add a clear score area at the top -->
     <section id="scoreSection" aria-label="Game progress">
       <div id="scoreArea" style="text-align:center; font-size:1.1em; margin-bottom:8px;" role="status" aria-live="polite">
-        Journey Points: <span id="scoreValue">10</span>
+        <div style="font-size: 0.9em; color: #666; margin-bottom: 4px;">
+          <span id="difficultyDisplay">Easy Mode</span> - Need <span id="winConditionDisplay">6</span> points to win
+        </div>
+        Journey Points: <span id="scoreValue">0</span>
       </div>
       
       <!-- Progress path directly under the character's feet -->
-      <div id="progressPath" role="img" aria-label="Journey progress map showing path from village to water source">
+      <div id="progressPath" role="img" aria-label="Journey progress map showing path from home to water source and back to village">
         <!-- Place the character icon absolutely over the SVG path -->
         <div id="characterContainer" aria-hidden="true">
           <img id="characterSprite" src="img/Girl with jerry can.jpg" alt="" style="width: 40px; height: 75px; object-fit: cover; border-radius: 50%; border: 2px solid #FFC907;">
         </div>
         <svg id="pathSVG" width="100%" height="60" viewBox="0 0 400 60" style="max-width: 100%; min-width: 200px;" role="img" aria-labelledby="pathDesc">
-          <title id="pathDesc">Journey map showing winding path from home village to water source with obstacles along the way</title>
+          <title id="pathDesc">Journey map showing path from home village to water source and back, with obstacles along the way</title>
           <!-- Winding path (brown) - only to river -->
           <path d="M 40 50 Q 120 10 200 40 Q 280 70 350 30" stroke="#8d5524" stroke-width="10" fill="none" stroke-linecap="round"/>
           <!-- Milestones (4 steps) -->
@@ -544,25 +644,25 @@
           <ellipse cx="180" cy="55" rx="5" ry="2" fill="#bfa77a"/>
           <ellipse cx="620" cy="40" rx="6" ry="3" fill="#bfa77a"/>
         </svg>
-        <!-- Milestone labels for the new map (forward only) -->
+        <!-- Milestone labels for the journey map -->
         <div id="milestoneLabels" style="display: flex; justify-content: space-between; font-size: 0.7em; color: #555; margin-top: 16px; margin-bottom: 4px;" aria-hidden="true">
-          <span>start</span>
-          <span>obstacle</span>
-          <span>stale water</span>
-          <span>river (turn back)</span>
+          <span>home</span>
+          <span>obstacles</span>
+          <span>water source</span>
+          <span>village</span>
         </div>
       </div>
     </section>
 
     <section id="gameContent" aria-label="Game story and choices">
-      <div id="storyText" role="status" aria-live="polite">Click "Start" to begin the journey.</div>
-      <div id="didYouKnow" style="display:none;" role="complementary" aria-label="Educational information">
+      <div id="storyText" role="status" aria-live="polite" style="background: rgba(255, 255, 255, 0.85); padding: 15px; border-radius: 8px; margin-bottom: 15px; backdrop-filter: blur(2px);">Click "Start" to begin the journey.</div>
+      <div id="didYouKnow" style="display:none; background: rgba(255, 201, 7, 0.7); padding: 12px; border-radius: 6px; margin-bottom: 10px; backdrop-filter: blur(3px); border: 1px solid rgba(255, 201, 7, 0.4);" role="complementary" aria-label="Educational information">
         <!-- Did You Know box will be filled by JS -->
       </div>
       <div id="choices" role="group" aria-label="Available choices"></div>
     </section>
 
-    <div id="statusBar" role="status" aria-live="polite"></div>
+    <div id="statusBar" role="status" aria-live="polite" style="background: rgba(255, 255, 255, 0.8); padding: 8px 12px; border-radius: 6px; margin: 10px 0; backdrop-filter: blur(2px);"></div>
     
     <!-- Audio elements for ambient and SFX -->
     <audio id="ambientWind" src="https://cdn.pixabay.com/audio/2022/10/16/audio_12b5b3b2e2.mp3" loop aria-label="Background wind sounds"></audio>
@@ -575,11 +675,43 @@
 
   <script>
     let currentStep = 0;
-    let energy = 4; // Start Energy at 4
+    let energy = 4; // Will be set based on difficulty
     let score = 0; // Start Journey Points at 0
     let lastScore = 0; // Track last score for feedback
     let wentAlone = false; // Track if player chose 'Go alone'
     let returning = false; // Track if player is returning home
+    
+    // Difficulty system
+    let currentDifficulty = 'easy'; // Default to easy
+    const difficultySettings = {
+      easy: {
+        startingEnergy: 6,
+        winCondition: 6,
+        pointsPerChoice: 3,
+        energyPenalty: 1,
+        factDisplayTime: 20000, // 20 seconds
+        name: "Easy",
+        description: "More forgiving journey with helpful guidance"
+      },
+      normal: {
+        startingEnergy: 4,
+        winCondition: 10,
+        pointsPerChoice: 2,
+        energyPenalty: 1,
+        factDisplayTime: 15000, // 15 seconds
+        name: "Normal", 
+        description: "Balanced challenge representing real experiences"
+      },
+      hard: {
+        startingEnergy: 3,
+        winCondition: 15,
+        pointsPerChoice: 1,
+        energyPenalty: 2,
+        factDisplayTime: 10000, // 10 seconds
+        name: "Hard",
+        description: "Challenging journey requiring careful planning"
+      }
+    };
 
     const storyText = document.getElementById('storyText');
     const choicesContainer = document.getElementById('choices');
@@ -635,11 +767,11 @@
         ]
       },
       {
-        text: "You finally reach the river. The water looks dirty. What do you do?",
+        text: "You finally reach the river! The water source is busy with other villagers. What do you do?",
         choices: [
-          // Show a cut scene if you fill your container anyway
-          { text: "Fill your container anyway", effect: () => { window.dirtyWaterCutScene = true; }, next: null },
-          { text: "Walk further to a cleaner spot", effect: () => {}, next: 7 }
+          // Wait patiently in line
+          { text: "Wait patiently in line with the other villagers", effect: () => { energy = energy - 1; }, next: 7 },
+          { text: "Ask if you can help carry water for an elderly woman", effect: () => { score += difficultySettings[currentDifficulty].pointsPerChoice; }, next: 7 }
         ]
       },
       {
@@ -680,27 +812,26 @@
       }
     }
 
-    // Update the map SVG and milestone labels to stop at the river, then return
+    // Update the map SVG and milestone positions for the journey
     const journeyPositions = [
-      {cx:40, cy:50},    // Start
-      {cx:140, cy:20},  // Obstacle
-      {cx:220, cy:45},  // Stale Water
-      {cx:350, cy:30}   // River (turn back)
+      {cx:40, cy:50},    // Home
+      {cx:140, cy:20},  // Obstacles
+      {cx:220, cy:45},  // Water Source
+      {cx:350, cy:30}   // Village
     ];
 
     // Map each story step to a milestone index on the map
-    // 0 = start, 1 = obstacle, 2 = stale water, 3 = river
-    // The icon only moves when a key scene is reached
-    // Only 8 steps for the short game. Each number matches a milestone on the map.
+    // 0 = home, 1 = obstacles, 2 = water source, 3 = village
+    // The icon moves to show progress through the journey
     const stepToMilestone = [
-      0, // Step 0: start
-      0, // Step 1: still at start
-      1, // Step 2: obstacle (broken glass)
-      1, // Step 3: still at obstacle (shortcut/thorns)
-      1, // Step 4: still at obstacle (snake)
-      1, // Step 5: still at obstacle (muddy patch)
-      2, // Step 6: stale water (boys playing soccer)
-      3  // Step 7: river (clean water scene)
+      0, // Step 0: wake up at home
+      0, // Step 1: still at home area
+      1, // Step 2: encountering obstacles (broken glass)
+      1, // Step 3: more obstacles (snake)
+      1, // Step 4: continuing through obstacles (muddy patch)
+      1, // Step 5: final obstacle (wild dog)
+      2, // Step 6: reaching the water source (busy with villagers)
+      3  // Step 7: returning to village with water
     ];
 
     // Move the character to the correct milestone for the current story step
@@ -774,14 +905,16 @@
 
       // First screen: introduction
       overlay.innerHTML = `
-        <img src="img/Girl with jerry can.jpg" alt="Young girl carrying a large yellow water container, representing millions of girls who walk long distances daily to collect water for their families" style="max-width: 120px; height: auto; border-radius: 10px; border: 2px solid #FFC907; margin-bottom: 15px;">
-        <div id="directionsIntro" style="font-size:1.2em; color:#005073; font-weight:bold; margin-bottom:18px; max-width:420px;">
-          <span style="font-size:1.4em;">Welcome to The Long Walk: A Journey for Water</span><br><br>
-          This story is based on the true journeys of girls in countries like Ethiopia, Uganda, and India.<br><br>
-          Today, you will follow <span style='color:#4FCB53;'>Amina</span> as she walks miles to collect water for her family.<br><br>
-          <span style='color:#F5402C;'>Your choices will affect what happens to Amina and her village.</span><br><br>
+        <div style="padding: 20px; max-width: 500px; max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column; align-items: center; text-align: center;">
+          <img src="img/Girl with jerry can.jpg" alt="Young girl carrying a large yellow water container, representing millions of girls who walk long distances daily to collect water for their families" style="width: 100%; max-width: 140px; height: auto; border-radius: 10px; border: 2px solid #FFC907; margin-bottom: 15px;">
+          <div id="directionsIntro" style="font-size:1.1em; color:#005073; font-weight:bold; margin-bottom:18px; max-width:420px; line-height: 1.4;">
+            <span style="font-size:1.3em;">Welcome to The Long Walk: A Journey for Water</span><br><br>
+            This story is based on the true journeys of girls in countries like Ethiopia, Uganda, and India.<br><br>
+            Today, you will follow <span style='color:#4FCB53;'>Amina</span> as she walks miles to collect water for her family.<br><br>
+            <span style='color:#F5402C;'>Your choices will affect what happens to Amina and her village.</span><br><br>
+          </div>
+          <button id="nextDirectionsBtn" class="choiceBtn" style="max-width:220px; margin-top: 10px;" aria-label="Continue to game instructions">Next</button>
         </div>
-        <button id="nextDirectionsBtn" class="choiceBtn" style="max-width:220px;" aria-label="Continue to game instructions">Next</button>
       `;
       document.getElementById('gameContainer').appendChild(overlay);
 
@@ -789,19 +922,26 @@
       document.getElementById('nextDirectionsBtn').onclick = function() {
         // Replace the content with instructions
         overlay.innerHTML = `
-          <img src="img/clean and dirty water cups.jpg" alt="Two cups side by side showing the contrast between clean, clear drinking water and dirty, contaminated water with visible particles and debris" style="max-width: 140px; height: auto; border-radius: 8px; border: 2px solid #2E9DF7; margin-bottom: 12px;">
-          <div id="directionsInstructions" style="font-size:1.1em; color:#005073; font-weight:bold; margin-bottom:18px; max-width:420px;">
-            <span style='color:#2E9DF7;'>Journey Points:</span> Make good choices to earn points. If you reach <b>10 Journey Points</b> by the end, the new well in the village will be working for everyone!<br><br>
-            <span style='color:#159A48;'>Energy:</span> You start with <b>4 Energy</b>. If you lose all your energy, Amina must turn back and her family won't get water that day.<br><br>
-            The more people play and help Amina, the more is donated to <a href='https://www.charitywater.org/' target='_blank' style='color:#2E9DF7;' aria-label="Visit charity: water website to learn more and donate">Charity: Water</a>.<br><br>
-            <span style='color:#FFC907;'>Are you ready to help Amina on her journey?</span>
+          <div style="padding: 20px; max-width: 500px; max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column; align-items: center; text-align: center;">
+            <img src="img/clean and dirty water cups.jpg" alt="Two cups side by side showing the contrast between clean, clear drinking water and dirty, contaminated water with visible particles and debris" style="width: 100%; max-width: 160px; height: auto; border-radius: 8px; border: 2px solid #2E9DF7; margin-bottom: 12px;">
+            <div id="directionsInstructions" style="font-size:1.0em; color:#005073; font-weight:bold; margin-bottom:18px; max-width:420px; line-height: 1.4;">
+              <div style="background: rgba(255,201,7,0.2); padding: 8px; border-radius: 6px; margin-bottom: 12px;">
+                <strong>${difficultySettings[currentDifficulty].name} Mode:</strong><br>
+                ${difficultySettings[currentDifficulty].description}
+              </div>
+              <span style='color:#2E9DF7;'>Journey Points:</span> Make good choices to earn points. You need <b>${difficultySettings[currentDifficulty].winCondition} Journey Points</b> to win and help the village get a new well!<br><br>
+              <span style='color:#159A48;'>Energy:</span> You start with <b>${difficultySettings[currentDifficulty].startingEnergy} Energy</b>. If you lose all your energy, Amina must turn back and her family won't get water that day.<br><br>
+              The more people play and help Amina, the more is donated to <a href='https://www.charitywater.org/' target='_blank' style='color:#2E9DF7;' aria-label="Visit charity: water website to learn more and donate">Charity: Water</a>.<br><br>
+              <span style='color:#FFC907;'>Are you ready to help Amina on her journey?</span>
+            </div>
+            <img src="img/water-can.png" alt="Yellow plastic water container used for collecting and carrying water during the long journey to water sources" style="width: 100%; max-width: 70px; height: auto; margin-bottom: 12px;">
+            <button id="startJourneyBtn" class="choiceBtn" style="max-width:220px; background-color:#4FCB53; border-color:#FFC907; margin-top: 10px;" aria-label="Start Amina's water collection journey">Start Journey</button>
           </div>
-          <img src="img/water-can.png" alt="Yellow plastic water container used for collecting and carrying water during the long journey to water sources" style="max-width: 60px; height: auto; margin-bottom: 12px;">
-          <button id="startJourneyBtn" class="choiceBtn" style="max-width:220px; background-color:#4FCB53; border-color:#FFC907;" aria-label="Start Amina's water collection journey">Start Journey</button>
         `;
         // When 'Start Journey' is clicked, remove overlay and start the story
         document.getElementById('startJourneyBtn').onclick = function() {
           overlay.remove();
+          updateDifficultyDisplay();
           showStep();
         };
       };
@@ -809,8 +949,14 @@
 
     // Start ambient sounds when game starts
     function startGame() {
+      // Get selected difficulty
+      const selectedDifficulty = document.querySelector('input[name="difficulty"]:checked');
+      if (selectedDifficulty) {
+        currentDifficulty = selectedDifficulty.value;
+      }
+      
       currentStep = 0;
-      energy = 4;
+      energy = difficultySettings[currentDifficulty].startingEnergy;
       score = 0; // Reset Journey Points to 0
       lastScore = 0;
       returning = false; // Reset return flag
@@ -826,6 +972,23 @@
       ambientFootsteps.play();
       // Show the directions cut scene first
       showDirectionsCutScene();
+    }
+
+    // Update difficulty display in UI
+    function updateDifficultyDisplay() {
+      const difficultyDisplay = document.getElementById('difficultyDisplay');
+      const winConditionDisplay = document.getElementById('winConditionDisplay');
+      const scoreValue = document.getElementById('scoreValue');
+      
+      if (difficultyDisplay) {
+        difficultyDisplay.textContent = `${difficultySettings[currentDifficulty].name} Mode`;
+      }
+      if (winConditionDisplay) {
+        winConditionDisplay.textContent = difficultySettings[currentDifficulty].winCondition;
+      }
+      if (scoreValue) {
+        scoreValue.textContent = score;
+      }
     }
 
     // Stop all ambient sounds
@@ -861,11 +1024,12 @@
       box.innerHTML = `<strong>Did You Know?</strong> ${didYouKnowFacts[factIndex]}`;
       box.style.display = 'block';
       box.style.opacity = '1';
-      // Show the fact for 15 seconds (was 5 seconds)
+      // Show the fact for difficulty-based time
+      const displayTime = difficultySettings[currentDifficulty].factDisplayTime;
       setTimeout(() => {
         box.style.opacity = '0';
         setTimeout(() => { box.style.display = 'none'; }, 500);
-      }, 15000); // 15000 ms = 15 seconds
+      }, displayTime);
     }
 
     function updateScoreDisplay() {
@@ -992,8 +1156,8 @@
           if (step.text.includes("Amina") && choice.text.includes("Go alone")) {
             showGoAloneScene(() => {
               choice.effect(); // Set doublePointsThisStep and wentAlone
-              // Always add 4 journey points for double points steps
-              score += 4;
+              // Always add double journey points for this special choice
+              score += difficultySettings[currentDifficulty].pointsPerChoice * 2;
               if (typeof choice.next === "number") {
                 currentStep = choice.next;
               } else {
@@ -1010,7 +1174,7 @@
             // After the wild dog cut scene, subtract 2 energy. If energy is now 0 or less, show game over. Otherwise, go to the next step.
             showWildDogCutScene(() => {
               window.wildDogCutScene = false;
-              energy = energy - 2; // Lose 2 energy for running past the dog
+              energy = energy - difficultySettings[currentDifficulty].energyPenalty * 2; // Lose double energy for running past the dog
               if (energy <= 0) {
                 // If energy is 0 or less, show the game over cut scene
                 endGame();
@@ -1052,9 +1216,9 @@
           // If this choice triggers the broom cut scene, show it and stop
           if (window.broomCutScene) {
             showBroomCutScene(() => {
-              // Always add 4 journey points for teamwork
-              score += 4;
-              energy = energy - 1; // Lose 1 energy for the effort
+              // Always add double journey points for teamwork
+              score += difficultySettings[currentDifficulty].pointsPerChoice * 2;
+              energy = energy - difficultySettings[currentDifficulty].energyPenalty; // Lose energy for the effort
               window.broomCutScene = false;
               if (typeof choice.next === "number") {
                 currentStep = choice.next;
@@ -1066,11 +1230,9 @@
             });
             return;
           }
-          // For all other steps, always add 2 journey points (unless this step is a penalty step)
-          // Penalty steps are handled in their own cut scenes or effect functions
-          // So here, just add 2 points for a normal step
+          // For all other steps, add points based on difficulty
           if (!window.skipJourneyPointsThisStep) {
-            score += 2;
+            score += difficultySettings[currentDifficulty].pointsPerChoice;
           } else {
             // If skipJourneyPointsThisStep is true, do not add journey points
             window.skipJourneyPointsThisStep = false; // Reset the flag for next step
@@ -1111,19 +1273,6 @@
         });
         return;
       }
-
-      // In showStep, after wild dog cut scene, check for dirty water cut scene
-      if (window.dirtyWaterCutScene) {
-        // After the dirty water cut scene, always go to the next step (currentStep++)
-        showDirtyWaterCutScene(() => {
-          window.dirtyWaterCutScene = false;
-          energy = energy - 1; // Lose 1 energy
-          currentStep++; // Go to the next step
-          showStep();
-          showDidYouKnow();
-        });
-        return;
-      }
     }
 
     function updateStatus() {
@@ -1150,13 +1299,15 @@
       choicesContainer.innerHTML = '';
       stopAmbient();
 
-      // Beginner-friendly: You win if you have 10 or more Journey Points at the end
-      if (currentStep === 7 && score >= 10) {
+      const winCondition = difficultySettings[currentDifficulty].winCondition;
+
+      // Check if player won based on difficulty settings
+      if (currentStep === 7 && score >= winCondition) {
         updatePathMarker(currentStep);
         moveCharacter(currentStep);
         setBackground(currentStep);
         showWellCelebrationScene();
-        storyText.innerHTML = "You made it! With clean water, your family is healthier and happier.";
+        storyText.innerHTML = `You made it! With clean water, your family is healthier and happier.<br><br><strong>${difficultySettings[currentDifficulty].name} Mode Completed!</strong>`;
         playSound(sfxVictory);
         const box = document.getElementById('didYouKnow');
         box.innerHTML = `<strong>Did You Know?</strong> ${didYouKnowFacts[didYouKnowFacts.length - 1]}`;
@@ -1165,24 +1316,49 @@
         storyText.focus();
         const restart = document.createElement('button');
         restart.classList.add('choiceBtn');
-        restart.textContent = 'Restart';
-        restart.onclick = startGame;
+        restart.textContent = 'Play Again';
+        restart.onclick = () => {
+          // Go back to landing page to allow difficulty change
+          const landingPage = document.getElementById('landingPage');
+          const gameContainer = document.getElementById('gameContainer');
+          
+          gameContainer.style.display = 'none';
+          gameContainer.setAttribute('aria-hidden', 'true');
+          
+          landingPage.style.display = 'flex';
+          landingPage.setAttribute('aria-hidden', 'false');
+          
+          landingPage.focus();
+          hideWellScene();
+        };
         choicesContainer.appendChild(restart);
         updateStatus();
         updateScoreDisplay();
         return;
       }
-      // If you finished the journey but have less than 10 points, show restart scene
-      if (currentStep === 7 && score < 10) {
+      // If you finished the journey but have less than required points
+      if (currentStep === 7 && score < winCondition) {
         updatePathMarker(currentStep);
         moveCharacter(currentStep);
         setBackground(currentStep);
-        storyText.innerHTML = "You finished, but you need 10 Journey Points to win. Try again!";
+        storyText.innerHTML = `You finished, but you need ${winCondition} Journey Points to win in ${difficultySettings[currentDifficulty].name} Mode. Try again!`;
         playSound(sfxLoss);
         const restart = document.createElement('button');
         restart.classList.add('choiceBtn');
-        restart.textContent = 'Restart';
-        restart.onclick = startGame;
+        restart.textContent = 'Try Again';
+        restart.onclick = () => {
+          // Go back to landing page to allow difficulty change
+          const landingPage = document.getElementById('landingPage');
+          const gameContainer = document.getElementById('gameContainer');
+          
+          gameContainer.style.display = 'none';
+          gameContainer.setAttribute('aria-hidden', 'true');
+          
+          landingPage.style.display = 'flex';
+          landingPage.setAttribute('aria-hidden', 'false');
+          
+          landingPage.focus();
+        };
         choicesContainer.appendChild(restart);
         updateStatus();
         updateScoreDisplay();
@@ -1216,26 +1392,41 @@
         box.style.display = 'block';
         box.style.opacity = '1';
       }
-      storyText.focus();
-      const restart = document.createElement('button');
-      restart.classList.add('choiceBtn');
-      restart.textContent = 'Restart';
-      restart.onclick = startGame;
+      storyText.focus();        const restart = document.createElement('button');
+        restart.classList.add('choiceBtn');
+        restart.textContent = 'Play Again';
+        restart.onclick = () => {
+          // Go back to landing page to allow difficulty change
+          const landingPage = document.getElementById('landingPage');
+          const gameContainer = document.getElementById('gameContainer');
+          
+          gameContainer.style.display = 'none';
+          gameContainer.setAttribute('aria-hidden', 'true');
+          
+          landingPage.style.display = 'flex';
+          landingPage.setAttribute('aria-hidden', 'false');
+          
+          landingPage.focus();
+          hideWellScene();
+        };
       choicesContainer.appendChild(restart);
       updateStatus();
       updateScoreDisplay(); // Show final score
-      // Show a summary message based on score
+      // Show a summary message based on score and difficulty
       const scoreArea = document.getElementById('scoreArea');
       if (scoreArea) {
+        const winCondition = difficultySettings[currentDifficulty].winCondition;
         let msg = "";
-        if (score >= 15) {
-          msg = "Amazing! You made great choices and helped your family.";
-        } else if (score >= 10) {
-          msg = "Good job! You finished the journey safely.";
+        if (score >= winCondition + 5) {
+          msg = `Amazing! You exceeded the ${difficultySettings[currentDifficulty].name} mode goal!`;
+        } else if (score >= winCondition) {
+          msg = `Great job! You completed ${difficultySettings[currentDifficulty].name} mode successfully!`;
         } else {
-          msg = "Try again to make safer and smarter choices!";
+          msg = `Try again to reach ${winCondition} points in ${difficultySettings[currentDifficulty].name} mode!`;
         }
-        scoreArea.innerHTML = `Journey Points: <span id="scoreValue">${score}</span> <br><span style="color:#159A48;">${msg}</span>`;
+        scoreArea.innerHTML = `<div style="font-size: 0.9em; color: #666; margin-bottom: 4px;">
+          ${difficultySettings[currentDifficulty].name} Mode - Need ${winCondition} points to win
+        </div>Journey Points: <span id="scoreValue">${score}</span> <br><span style="color:#159A48;">${msg}</span>`;
       }
     }
 
@@ -1297,12 +1488,28 @@
 
     // Add event listener for the Reset button
     document.getElementById('resetBtn').onclick = function() {
-      // Reset the game to the beginning
-      startGame();
-      // Focus on story text after reset
-      setTimeout(() => {
-        document.getElementById('storyText').focus();
-      }, 100);
+      // Stop any ambient sounds
+      stopAmbient();
+      
+      // Hide the game container
+      const landingPage = document.getElementById('landingPage');
+      const gameContainer = document.getElementById('gameContainer');
+      
+      gameContainer.style.display = 'none';
+      gameContainer.setAttribute('aria-hidden', 'true');
+      
+      landingPage.style.display = 'flex';
+      landingPage.setAttribute('aria-hidden', 'false');
+      
+      // Focus on the landing page for screen readers
+      landingPage.focus();
+      
+      // Reset any overlays that might be showing
+      const overlays = ['directionsCutScene', 'schoolEndingScene', 'glassCutScene', 'wellCelebrationScene', 'snakeBiteScene', 'goAloneScene', 'snakeWaitCutScene', 'lostInBrushCutScene', 'muddyPatchRestCutScene', 'muddyPatchPushThroughCutScene', 'wildDogCutScene', 'dirtyWaterCutScene', 'broomCutScene'];
+      overlays.forEach(overlayId => {
+        const overlay = document.getElementById(overlayId);
+        if (overlay) overlay.remove();
+      });
     };
 
     // Function to show a gentle overlay scene if the player chooses 'Go to school'
@@ -1344,7 +1551,17 @@
       // Add event listener for the Restart button
       document.getElementById('restartSchoolBtn').onclick = function() {
         overlay.remove(); // Remove the overlay
-        startGame(); // Restart the game
+        // Go back to landing page to allow difficulty change
+        const landingPage = document.getElementById('landingPage');
+        const gameContainer = document.getElementById('gameContainer');
+        
+        gameContainer.style.display = 'none';
+        gameContainer.setAttribute('aria-hidden', 'true');
+        
+        landingPage.style.display = 'flex';
+        landingPage.setAttribute('aria-hidden', 'false');
+        
+        landingPage.focus();
       };
     }
 
@@ -1393,10 +1610,9 @@
       // Add event listener for the Continue button
       document.getElementById('continueGlassBtn').onclick = function() {
         overlay.remove(); // Remove the overlay
-        // Always subtract 1 energy and 1 journey point for running through glass
-        // This happens no matter if you go alone or with Amina
-        energy = energy - 1;
-        score = score - 1; // Always subtract exactly 1 Journey Point (not random)
+        // Always subtract energy and journey point for running through glass based on difficulty
+        energy = energy - difficultySettings[currentDifficulty].energyPenalty;
+        score = score - 1; // Always subtract exactly 1 Journey Point (not difficulty-based)
         if (typeof continueCallback === 'function') {
           continueCallback(); // Continue the journey
         }
