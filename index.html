@@ -4,12 +4,37 @@
   <meta charset="UTF-8">
   <!-- Responsive viewport for mobile and tablet -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="An educational game about the daily journey many girls take to collect water, inspired by charity: water's mission.">
+  <meta name="keywords" content="water crisis, education, charity water, social impact, interactive game">
   <title>The Long Walk: A Journey for Water</title>
   <style>
+    /* Skip navigation link for accessibility */
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      z-index: 9999;
+      background: #2E9DF7;
+      color: #fff;
+      padding: 10px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    
+    .skip-link:focus {
+      left: 10px;
+      top: 10px;
+      width: auto;
+      height: auto;
+      overflow: visible;
+    }
+
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: #f4f4f4;
+      background: linear-gradient(135deg, #f4f4f4, #e8f4f8);
       color: #111;
       font-weight: bold;
       display: flex;
@@ -17,7 +42,7 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      padding: 20px;
+      padding: 20px 20px 60px 20px; /* Add bottom padding for footer */
     }
 
     #gameContainer {
@@ -36,6 +61,7 @@
       color: #111; /* Ensure text is very dark on white */
       font-weight: bold; /* Bolder text */
       padding-bottom: 0; /* Remove extra space at bottom */
+      border: 3px solid #FFC907; /* charity: water yellow border */
     }
 
     h1 {
@@ -45,6 +71,11 @@
       font-weight: bold;
       letter-spacing: 1px;
       text-shadow: 1px 1px 2px #fff, 0 0 2px #fff;
+      background: linear-gradient(135deg, #2E9DF7, #FFC907);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 15px;
     }
 
     #storyText {
@@ -70,42 +101,66 @@
 
     .choiceBtn {
       display: block;
-      background-color: #005073;
+      background-color: #2E9DF7; /* charity: water blue */
       color: #fff;
-      border: none;
+      border: 2px solid #FFC907; /* charity: water yellow border */
       padding: 12px;
       margin: 10px 0;
       width: 100%;
-      border-radius: 5px;
+      border-radius: 8px;
       cursor: pointer;
       font-size: 1rem;
       font-weight: bold;
       letter-spacing: 0.5px;
-      transition: background 0.2s, color 0.2s;
-      box-shadow: 1px 1px 2px #fff, 0 0 2px #fff;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(46, 157, 247, 0.3);
       margin-left: auto;
       margin-right: auto;
+      text-decoration: none;
     }
 
     .choiceBtn:focus {
-      outline: 3px solid #FFC907;
-      outline-offset: 2px;
+      outline: 4px solid #FFC907;
+      outline-offset: 3px;
+      box-shadow: 0 0 0 2px #fff, 0 0 0 6px #FFC907;
     }
 
     .choiceBtn:hover {
-      background-color: #0077b6;
-      color: #fff;
+      background-color: #FFC907; /* charity: water yellow on hover */
+      color: #00263a; /* dark text on yellow background */
+      border-color: #2E9DF7;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(255, 201, 7, 0.4);
+    }
+
+    /* Ensure keyboard navigation visibility */
+    .choiceBtn:focus-visible {
+      outline: 4px solid #FFC907;
+      outline-offset: 3px;
     }
 
     #statusBar {
       margin-top: 20px;
       font-size: 1rem;
-      color: #111;
-      background: rgba(255,255,255,0.85);
-      padding: 8px 0;
-      border-radius: 5px;
+      color: #00263a;
+      background: linear-gradient(135deg, #FFC907, #FFD700);
+      padding: 10px 12px;
+      border-radius: 8px;
       font-weight: bold;
-      text-shadow: 1px 1px 2px #fff, 0 0 2px #fff;
+      border: 2px solid #2E9DF7;
+      box-shadow: 0 2px 4px rgba(255, 201, 7, 0.3);
+    }
+
+    /* Score area with charity: water branding */
+    #scoreArea {
+      background: linear-gradient(135deg, #FFC907, #FFD700);
+      color: #00263a;
+      border: 2px solid #2E9DF7;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(255, 201, 7, 0.3);
     }
 
     /* Character styles */
@@ -168,26 +223,38 @@
       text-shadow: 1px 1px 2px #fff, 0 0 2px #fff;
     }
     .landingBtn {
-      background-color: #005073;
+      background-color: #2E9DF7; /* charity: water blue */
       color: #fff;
-      border: none;
+      border: 2px solid #FFC907; /* charity: water yellow border */
       padding: 14px 32px;
       margin: 10px;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 1.1rem;
       cursor: pointer;
       font-weight: bold;
-      transition: background 0.2s, color 0.2s;
+      transition: all 0.3s ease;
       letter-spacing: 0.5px;
-      box-shadow: 1px 1px 2px #fff, 0 0 2px #fff;
+      box-shadow: 0 3px 6px rgba(46, 157, 247, 0.3);
+      text-decoration: none;
     }
+    
     .landingBtn:focus {
-      outline: 3px solid #FFC907;
-      outline-offset: 2px;
+      outline: 4px solid #FFC907;
+      outline-offset: 3px;
+      box-shadow: 0 0 0 2px #fff, 0 0 0 6px #FFC907;
     }
+    
+    .landingBtn:focus-visible {
+      outline: 4px solid #FFC907;
+      outline-offset: 3px;
+    }
+    
     .landingBtn:hover {
-      background-color: #0077b6;
-      color: #fff;
+      background-color: #FFC907; /* charity: water yellow on hover */
+      color: #00263a; /* dark text on yellow background */
+      border-color: #2E9DF7;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 10px rgba(255, 201, 7, 0.4);
     }
     .landingBtn[style*="background-color:#FFC907"] {
       color: #222 !important; /* Ensure readable text on yellow */
@@ -243,7 +310,7 @@
     #milestoneLabels span {
       min-width: 40px;
       text-align: center;
-      color: #111;
+      color: #222; /* Darker for better contrast */
       font-weight: bold;
       text-shadow: 1px 1px 2px #fff, 0 0 2px #fff;
     }
@@ -275,22 +342,22 @@
       padding: 10px;
       box-sizing: border-box;
     }
-    /* Responsive text and layout for small screens */
+    /* Improved responsive design for all screen sizes */
     @media (max-width: 600px) {
       #gameContainer {
         padding: 8px;
         max-width: 98vw;
       }
       h1 {
-        font-size: 1.1rem;
+        font-size: 1.4rem;
       }
       #scoreArea, #statusBar, #storyText {
         font-size: 1em;
-        padding: 6px 4px;
+        padding: 8px 6px;
       }
       .choiceBtn, .landingBtn {
         font-size: 0.95rem;
-        padding: 10px;
+        padding: 12px;
       }
       #characterContainer, #characterSprite {
         width: 28px;
@@ -302,122 +369,209 @@
       #milestoneLabels {
         font-size: 0.6em;
       }
+      #landingTitle {
+        font-size: 1.8rem;
+      }
+      #landingSubtitle {
+        font-size: 1rem;
+      }
+    }
+
+    /* Tablet responsive design */
+    @media (min-width: 601px) and (max-width: 1024px) {
+      #gameContainer {
+        max-width: 700px;
+        padding: 25px;
+      }
+      h1 {
+        font-size: 2.2rem;
+      }
+      #storyText {
+        font-size: 1.3rem;
+      }
+      .choiceBtn, .landingBtn {
+        font-size: 1.1rem;
+        padding: 14px;
+        max-width: 400px;
+      }
+      #landingTitle {
+        font-size: 2.5rem;
+      }
+      #landingSubtitle {
+        font-size: 1.2rem;
+        max-width: 500px;
+      }
+    }
+
+    /* Large screen responsive design */
+    @media (min-width: 1025px) {
+      #gameContainer {
+        max-width: 800px;
+        padding: 30px;
+      }
+      h1 {
+        font-size: 2.5rem;
+      }
+      #storyText {
+        font-size: 1.4rem;
+      }
+      .choiceBtn, .landingBtn {
+        font-size: 1.2rem;
+        padding: 16px;
+        max-width: 450px;
+      }
+      #landingTitle {
+        font-size: 3rem;
+      }
+      #landingSubtitle {
+        font-size: 1.3rem;
+        max-width: 600px;
+      }
+    }
+
+    /* High contrast mode support */
+    @media (prefers-contrast: high) {
+      body {
+        background: #000;
+        color: #fff;
+      }
+      #gameContainer {
+        background: #fff;
+        border: 4px solid #000;
+        color: #000;
+      }
+      .choiceBtn {
+        border: 3px solid #000;
+      }
+    }
+
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      #characterContainer {
+        transition: none;
+      }
+      #gameContainer {
+        transition: none;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Skip navigation link for accessibility -->
+  <a href="#gameContent" class="skip-link">Skip to main content</a>
+  
   <!-- Landing Page Overlay -->
-  <div id="landingPage" role="dialog" aria-modal="true" aria-labelledby="landingTitle" aria-describedby="landingSubtitle">
-    <div id="landingTitle" tabindex="0">💧 The Long Walk: A Charity: Water Journey</div>
-    <div id="landingSubtitle" tabindex="0">
+  <main id="landingPage" role="dialog" aria-modal="true" aria-labelledby="landingTitle" aria-describedby="landingSubtitle">
+    <header>
+      <img src="img/cw_logo_horizontal.png" alt="charity: water - bringing clean and safe drinking water to people in developing countries" style="max-width: 200px; margin-bottom: 15px; height: auto;">
+    </header>
+    
+    <!-- Hero image showing the journey -->
+    <img src="img/Girl with jerry can.jpg" alt="Young girl carrying a large yellow water container on a dusty path, representing the daily journey millions of girls take to collect water" style="max-width: 150px; height: auto; border-radius: 12px; border: 3px solid #FFC907; margin-bottom: 15px;">
+    
+    <h1 id="landingTitle">💧 The Long Walk: A Charity: Water Journey</h1>
+    <p id="landingSubtitle">
       Every day, millions of girls walk miles for clean water.<br>
       Can you help her reach a brighter future?<br>
-      <span style="color:#005073; font-weight:bold;">Play to experience her journey.</span>
-    </div>
-    <button class="landingBtn" id="startGameBtn" aria-label="Start Game">Start Game</button>
-    <a href="https://www.charitywater.org/" target="_blank" rel="noopener" aria-label="Learn more about Charity: Water">
-      <button class="landingBtn" style="background-color:#FFC907; color:#222;">Learn More</button>
-    </a>
-  </div>
+      <span style="color:#2E9DF7; font-weight:bold;">Play to experience her journey.</span>
+    </p>
+    
+    <!-- Show clean water image as motivation -->
+    <img src="img/Girl with cup of water..jpg" alt="Happy girl drinking from a clean cup of water, showing the positive impact of access to clean water" style="max-width: 120px; height: auto; border-radius: 8px; border: 2px solid #2E9DF7; margin: 10px 0;">
+    
+    <nav>
+      <button class="landingBtn" id="startGameBtn" aria-label="Start the interactive water journey game">Start Game</button>
+      <a href="https://www.charitywater.org/" target="_blank" rel="noopener" aria-label="Learn more about Charity: Water's mission and donate">
+        <button class="landingBtn" style="background-color:#FFC907; color:#00263a; border-color:#2E9DF7;">Learn More</button>
+      </a>
+    </nav>
+  </main>
 
-  <div id="gameContainer">
-    <h1>The Long Walk: A Journey for Water</h1>
-    <!-- Reset button for player control -->
-    <button id="resetBtn" class="choiceBtn" style="max-width:200px; margin: 0 auto 10px auto; background-color:#F5402C;">Reset</button>
+  <main id="gameContainer" style="display:none;" role="main" aria-label="Water journey game content" tabindex="-1">
+    <!-- charity: water logo watermark -->
+    <img src="img/cw_logo.png" alt="charity: water logo" style="position: absolute; top: 10px; right: 10px; width: 40px; height: 40px; opacity: 0.7; z-index: 5;">
+    
+    <header>
+      <h1>The Long Walk: A Journey for Water</h1>
+      <!-- Reset button for player control -->
+      <button id="resetBtn" class="choiceBtn" style="max-width:200px; margin: 0 auto 10px auto; background-color:#F5402C;" aria-label="Reset game to beginning">Reset Game</button>
+    </header>
+
     <!-- Add a clear score area at the top -->
-    <div id="scoreArea" style="text-align:center; font-size:1.1em; color:#2E9DF7; margin-bottom:8px;">
-      Journey Points: <span id="scoreValue">10</span>
-    </div>
-    <!-- Progress path directly under the character's feet -->
-    <div id="progressPath">
-      <!-- Place the character icon absolutely over the SVG path -->
-      <div id="characterContainer">
-        <!-- Simple SVG: African girl with a rounder body and a green dress -->
-        <svg id="characterSprite" viewBox="0 0 64 120" width="40" height="75" xmlns="http://www.w3.org/2000/svg">
-          <!-- Hair: long, flowing, covers head and part of shoulders -->
-          <path d="M32 12 Q10 40 20 90 Q32 115 44 90 Q54 40 32 12" fill="#3e2723"/>
-          <!-- Head (tan skin) -->
-          <ellipse cx="32" cy="28" rx="13" ry="15" fill="#c68642"/>
-          <!-- Face: eyes, smile -->
-          <ellipse cx="27" cy="28" rx="2" ry="2.5" fill="#222"/>
-          <ellipse cx="37" cy="28" rx="2" ry="2.5" fill="#222"/>
-          <path d="M28 36 Q32 40 36 36" stroke="#6d4c24" stroke-width="2" fill="none"/>
-          <!-- Neck (single, simple, natural) -->
-          <rect x="29" y="40" width="6" height="10" rx="3" fill="#c68642"/>
-          <!-- Body: rounder torso (ellipse) -->
-          <ellipse cx="32" cy="65" rx="15" ry="20" fill="#4FCB53"/>
-          <!-- Dress (green, flared, overlays torso for skirt) -->
-          <path d="M17 75 Q32 120 47 75 Q47 110 17 75" fill="#4FCB53"/>
-          <!-- Dress belt -->
-          <rect x="22" y="80" width="20" height="6" rx="3" fill="#FFC907" opacity="0.7"/>
-          <!-- Left Arm (holding canister) -->
-          <rect x="7" y="52" width="10" height="28" rx="5" fill="#c68642" transform="rotate(-18 12 66)"/>
-          <!-- Right Arm (swinging) -->
-          <rect x="47" y="52" width="10" height="28" rx="5" fill="#c68642" transform="rotate(18 52 66)"/>
-          <!-- Left Leg -->
-          <rect x="26" y="105" width="6" height="13" rx="3" fill="#8d5524"/>
-          <!-- Right Leg -->
-          <rect x="32" y="105" width="6" height="13" rx="3" fill="#8d5524"/>
-          <!-- Canister (yellow, held in left hand) -->
-          <rect x="2" y="75" width="14" height="18" rx="3" fill="#FFC907" stroke="#bfa100" stroke-width="2"/>
-          <rect x="7" y="71" width="4" height="7" rx="1" fill="#bfa100"/>
-          <!-- Canister handle -->
-          <rect x="5" y="73" width="8" height="3" rx="1.5" fill="#bfa100"/>
-          <!-- Hair details (bangs) -->
-          <ellipse cx="32" cy="20" rx="10" ry="6" fill="#3e2723"/>
+    <section id="scoreSection" aria-label="Game progress">
+      <div id="scoreArea" style="text-align:center; font-size:1.1em; margin-bottom:8px;" role="status" aria-live="polite">
+        Journey Points: <span id="scoreValue">10</span>
+      </div>
+      
+      <!-- Progress path directly under the character's feet -->
+      <div id="progressPath" role="img" aria-label="Journey progress map showing path from village to water source">
+        <!-- Place the character icon absolutely over the SVG path -->
+        <div id="characterContainer" aria-hidden="true">
+          <img id="characterSprite" src="img/Girl with jerry can.jpg" alt="" style="width: 40px; height: 75px; object-fit: cover; border-radius: 50%; border: 2px solid #FFC907;">
+        </div>
+        <svg id="pathSVG" width="100%" height="60" viewBox="0 0 400 60" style="max-width: 100%; min-width: 200px;" role="img" aria-labelledby="pathDesc">
+          <title id="pathDesc">Journey map showing winding path from home village to water source with obstacles along the way</title>
+          <!-- Winding path (brown) - only to river -->
+          <path d="M 40 50 Q 120 10 200 40 Q 280 70 350 30" stroke="#8d5524" stroke-width="10" fill="none" stroke-linecap="round"/>
+          <!-- Milestones (4 steps) -->
+          <circle cx="40"  cy="50" r="13" fill="#FFC907" stroke="#bfa100" stroke-width="2"/>
+          <circle cx="140" cy="20" r="11" fill="#FF902A" stroke="#F5402C" stroke-width="2"/>
+          <circle cx="220" cy="45" r="11" fill="#8BD1CB" stroke="#159A48" stroke-width="2"/>
+          <circle cx="350" cy="30" r="13" fill="#2E9DF7" stroke="#005073" stroke-width="3"/>
+          <!-- Girl marker (moves along path) -->
+          <circle id="girlMarker" cx="40" cy="50" r="12" fill="#c68642" stroke="#3e2723" stroke-width="2"/>
+          <!-- Girl icon on the marker (simple head and dress) -->
+          <g id="girlMiniIcon">
+            <ellipse cx="40" cy="45" rx="4" ry="5" fill="#c68642"/>
+            <ellipse cx="40" cy="55" rx="5" ry="7" fill="#4FCB53"/>
+            <ellipse cx="40" cy="40" rx="5" ry="3" fill="#3e2723"/>
+          </g>
+          <!-- Simple SVG trees and rocks for jungle/forest feel -->
+          <ellipse cx="100" cy="10" rx="8" ry="4" fill="#159A48"/>
+          <rect x="95" y="5" width="4" height="8" fill="#8d5524"/>
+          <ellipse cx="250" cy="60" rx="10" ry="5" fill="#159A48"/>
+          <rect x="245" y="55" width="4" height="8" fill="#8d5524"/>
+          <ellipse cx="400" cy="10" rx="7" ry="3" fill="#159A48"/>
+          <rect x="397" y="7" width="3" height="6" fill="#8d5524"/>
+          <ellipse cx="550" cy="55" rx="8" ry="4" fill="#159A48"/>
+          <rect x="547" y="51" width="3" height="7" fill="#8d5524"/>
+          <!-- Rocks -->
+          <ellipse cx="180" cy="55" rx="5" ry="2" fill="#bfa77a"/>
+          <ellipse cx="620" cy="40" rx="6" ry="3" fill="#bfa77a"/>
         </svg>
+        <!-- Milestone labels for the new map (forward only) -->
+        <div id="milestoneLabels" style="display: flex; justify-content: space-between; font-size: 0.7em; color: #555; margin-top: 16px; margin-bottom: 4px;" aria-hidden="true">
+          <span>start</span>
+          <span>obstacle</span>
+          <span>stale water</span>
+          <span>river (turn back)</span>
+        </div>
       </div>
-      <svg id="pathSVG" width="100%" height="60" viewBox="0 0 400 60" style="max-width: 100%; min-width: 200px;">
-        <!-- Winding path (brown) - only to river -->
-        <path d="M 40 50 Q 120 10 200 40 Q 280 70 350 30" stroke="#8d5524" stroke-width="10" fill="none" stroke-linecap="round"/>
-        <!-- Milestones (4 steps) -->
-        <circle cx="40"  cy="50" r="13" fill="#FFC907" stroke="#bfa100" stroke-width="2"/>
-        <circle cx="140" cy="20" r="11" fill="#FF902A" stroke="#F5402C" stroke-width="2"/>
-        <circle cx="220" cy="45" r="11" fill="#8BD1CB" stroke="#159A48" stroke-width="2"/>
-        <circle cx="350" cy="30" r="13" fill="#2E9DF7" stroke="#005073" stroke-width="3"/>
-        <!-- Girl marker (moves along path) -->
-        <circle id="girlMarker" cx="40" cy="50" r="12" fill="#c68642" stroke="#3e2723" stroke-width="2"/>
-        <!-- Girl icon on the marker (simple head and dress) -->
-        <g id="girlMiniIcon">
-          <ellipse cx="40" cy="45" rx="4" ry="5" fill="#c68642"/>
-          <ellipse cx="40" cy="55" rx="5" ry="7" fill="#4FCB53"/>
-          <ellipse cx="40" cy="40" rx="5" ry="3" fill="#3e2723"/>
-        </g>
-        <!-- Simple SVG trees and rocks for jungle/forest feel -->
-        <ellipse cx="100" cy="10" rx="8" ry="4" fill="#159A48"/>
-        <rect x="95" y="5" width="4" height="8" fill="#8d5524"/>
-        <ellipse cx="250" cy="60" rx="10" ry="5" fill="#159A48"/>
-        <rect x="245" y="55" width="4" height="8" fill="#8d5524"/>
-        <ellipse cx="400" cy="10" rx="7" ry="3" fill="#159A48"/>
-        <rect x="397" y="7" width="3" height="6" fill="#8d5524"/>
-        <ellipse cx="550" cy="55" rx="8" ry="4" fill="#159A48"/>
-        <rect x="547" y="51" width="3" height="7" fill="#8d5524"/>
-        <!-- Rocks -->
-        <ellipse cx="180" cy="55" rx="5" ry="2" fill="#bfa77a"/>
-        <ellipse cx="620" cy="40" rx="6" ry="3" fill="#bfa77a"/>
-      </svg>
-      <!-- Milestone labels for the new map (forward only) -->
-      <div id="milestoneLabels" style="display: flex; justify-content: space-between; font-size: 0.7em; color: #555; margin-top: 16px; margin-bottom: 4px;">
-        <span>start</span>
-        <span>obstacle</span>
-        <span>stale water</span>
-        <span>river (turn back)</span>
+    </section>
+
+    <section id="gameContent" aria-label="Game story and choices">
+      <div id="storyText" role="status" aria-live="polite">Click "Start" to begin the journey.</div>
+      <div id="didYouKnow" style="display:none;" role="complementary" aria-label="Educational information">
+        <!-- Did You Know box will be filled by JS -->
       </div>
-    </div>
-    <div id="storyText">Click "Start" to begin the journey.</div>
-    <div id="didYouKnow" style="display:none;">
-      <!-- Did You Know box will be filled by JS -->
-    </div>
-    <div id="choices"></div>
-    <div id="statusBar"></div>
+      <div id="choices" role="group" aria-label="Available choices"></div>
+    </section>
+
+    <div id="statusBar" role="status" aria-live="polite"></div>
+    
     <!-- Audio elements for ambient and SFX -->
-    <audio id="ambientWind" src="https://cdn.pixabay.com/audio/2022/10/16/audio_12b5b3b2e2.mp3" loop></audio>
-    <audio id="ambientFootsteps" src="https://cdn.pixabay.com/audio/2022/07/26/audio_124bfae7e7.mp3" loop></audio>
-    <audio id="ambientSchoolBell" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b6e7e7e.mp3"></audio>
-    <audio id="sfxClick" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b6e7e7e.mp3"></audio>
-    <audio id="sfxVictory" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b6e7e7e.mp3"></audio>
-    <audio id="sfxLoss" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b6e7e7e.mp3"></audio>
-  </div>
+    <audio id="ambientWind" src="https://cdn.pixabay.com/audio/2022/10/16/audio_12b5b3b2e2.mp3" loop aria-label="Background wind sounds"></audio>
+    <audio id="ambientFootsteps" src="https://cdn.pixabay.com/audio/2022/07/26/audio_124bfae7e7.mp3" loop aria-label="Footstep sounds"></audio>
+    <audio id="ambientSchoolBell" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b6e7e7e.mp3" aria-label="School bell sound"></audio>
+    <audio id="sfxClick" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b6e7e7e.mp3" aria-label="Click sound effect"></audio>
+    <audio id="sfxVictory" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b6e7e7e.mp3" aria-label="Victory sound"></audio>
+    <audio id="sfxLoss" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b6e7e7e.mp3" aria-label="Loss sound"></audio>
+  </main>
 
   <script>
     let currentStep = 0;
@@ -437,7 +591,7 @@
         text: "You wake up early. Your family's only water source is 3 miles away. What do you do?",
         choices: [
           { text: "Go to school", effect: () => {}, next: null, endMessage: "You went to school, but your family is limited tonight on what they can eat and drink. Education is important, but so is water. Maybe next time you can help both!" },
-          { text: "Grab the yellow jerry can and start on your trail", effect: () => {}, next: 1 }
+          { text: "🪣 Grab the yellow jerry can and start on your trail", effect: () => {}, next: 1 }
         ]
       },
       {
@@ -499,14 +653,16 @@
     // Array of background images for each scene
     // (You can replace these URLs with your own or other free images)
     const backgroundImages = [
-      // Morning sunrise
-      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
-      // Dry, cracked trails
-      "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=600&q=80",
-      // Thorny brush or broken-glass paths
-      "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=600&q=80",
-      // A small village
-      "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80",
+      // Girl waking up - using custom image
+      "img/girl waking up.png",
+      // Meeting Amina - using custom image
+      "img/girlreachinghand.png",
+      // Broken glass scene - using custom image
+      "img/girlwithbrokenglass.png",
+      // Snake encounter - using custom image
+      "img/girl with snake.png",
+      // Muddy patch scene - using custom image
+      "img/girlwithmud.png",
       // Vibrant well with children
       "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=600&q=80"
     ];
@@ -618,13 +774,14 @@
 
       // First screen: introduction
       overlay.innerHTML = `
+        <img src="img/Girl with jerry can.jpg" alt="Young girl carrying a large yellow water container, representing millions of girls who walk long distances daily to collect water for their families" style="max-width: 120px; height: auto; border-radius: 10px; border: 2px solid #FFC907; margin-bottom: 15px;">
         <div id="directionsIntro" style="font-size:1.2em; color:#005073; font-weight:bold; margin-bottom:18px; max-width:420px;">
           <span style="font-size:1.4em;">Welcome to The Long Walk: A Journey for Water</span><br><br>
           This story is based on the true journeys of girls in countries like Ethiopia, Uganda, and India.<br><br>
           Today, you will follow <span style='color:#4FCB53;'>Amina</span> as she walks miles to collect water for her family.<br><br>
           <span style='color:#F5402C;'>Your choices will affect what happens to Amina and her village.</span><br><br>
         </div>
-        <button id="nextDirectionsBtn" class="choiceBtn" style="max-width:220px; background-color:#2E9DF7;">Next</button>
+        <button id="nextDirectionsBtn" class="choiceBtn" style="max-width:220px;" aria-label="Continue to game instructions">Next</button>
       `;
       document.getElementById('gameContainer').appendChild(overlay);
 
@@ -632,13 +789,15 @@
       document.getElementById('nextDirectionsBtn').onclick = function() {
         // Replace the content with instructions
         overlay.innerHTML = `
+          <img src="img/clean and dirty water cups.jpg" alt="Two cups side by side showing the contrast between clean, clear drinking water and dirty, contaminated water with visible particles and debris" style="max-width: 140px; height: auto; border-radius: 8px; border: 2px solid #2E9DF7; margin-bottom: 12px;">
           <div id="directionsInstructions" style="font-size:1.1em; color:#005073; font-weight:bold; margin-bottom:18px; max-width:420px;">
             <span style='color:#2E9DF7;'>Journey Points:</span> Make good choices to earn points. If you reach <b>10 Journey Points</b> by the end, the new well in the village will be working for everyone!<br><br>
             <span style='color:#159A48;'>Energy:</span> You start with <b>4 Energy</b>. If you lose all your energy, Amina must turn back and her family won't get water that day.<br><br>
-            The more people play and help Amina, the more is donated to <a href='https://www.charitywater.org/' target='_blank' style='color:#2E9DF7;'>Charity: Water</a>.<br><br>
+            The more people play and help Amina, the more is donated to <a href='https://www.charitywater.org/' target='_blank' style='color:#2E9DF7;' aria-label="Visit charity: water website to learn more and donate">Charity: Water</a>.<br><br>
             <span style='color:#FFC907;'>Are you ready to help Amina on her journey?</span>
           </div>
-          <button id="startJourneyBtn" class="choiceBtn" style="max-width:220px; background-color:#4FCB53;">Start Journey</button>
+          <img src="img/water-can.png" alt="Yellow plastic water container used for collecting and carrying water during the long journey to water sources" style="max-width: 60px; height: auto; margin-bottom: 12px;">
+          <button id="startJourneyBtn" class="choiceBtn" style="max-width:220px; background-color:#4FCB53; border-color:#FFC907;" aria-label="Start Amina's water collection journey">Start Journey</button>
         `;
         // When 'Start Journey' is clicked, remove overlay and start the story
         document.getElementById('startJourneyBtn').onclick = function() {
@@ -731,7 +890,7 @@
     function checkGameOver() {
       // If energy is 0 or less, show the Game Over cut scene right away
       if (energy <= 0) {
-        showGameOverCutScene();
+        endGame();
         return true; // Game is over
       }
       return false; // Game continues
@@ -745,7 +904,7 @@
           window.muddyPatchRestCutScene = false;
           // After the cut scene, check if energy is 0 or less
           if (energy <= 0) {
-            showGameOverCutScene();
+            endGame();
             return;
           }
           // Go to the next step after muddy patch (step 5: boys playing soccer)
@@ -761,7 +920,7 @@
           window.muddyPatchPushThroughCutScene = false;
           // After the cut scene, check if energy is 0 or less
           if (energy <= 0) {
-            showGameOverCutScene();
+            endGame();
             return;
           }
           // Go to the next step after muddy patch (step 5: boys playing soccer)
@@ -817,6 +976,16 @@
         const btn = document.createElement('button');
         btn.classList.add('choiceBtn');
         btn.textContent = choice.text;
+        btn.setAttribute('aria-label', `Choice ${idx + 1}: ${choice.text}`);
+        btn.setAttribute('tabindex', '0');
+        
+        // Add keyboard navigation
+        btn.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            btn.click();
+          }
+        });
         btn.onclick = () => {
           playSound(sfxClick); // Play click sound
           // If this is the 'Go alone' choice, show the cut scene and double points
@@ -844,7 +1013,7 @@
               energy = energy - 2; // Lose 2 energy for running past the dog
               if (energy <= 0) {
                 // If energy is 0 or less, show the game over cut scene
-                showGameOverCutScene();
+                endGame();
                 return;
               }
               currentStep++; // Go to the next step
@@ -943,25 +1112,6 @@
         return;
       }
 
-      // Check for the wild dog cut scene
-      if (window.wildDogCutScene) {
-        // Show the wild dog cut scene, then continue the game
-        showWildDogCutScene(() => {
-          window.wildDogCutScene = false;
-          energy = energy - 2; // Lose 2 energy for running past the dog
-          // After the cut scene, check if energy is 0 or less
-          if (energy <= 0) {
-            showGameOverCutScene();
-            return;
-          }
-          // Go to the next step and continue the game
-          currentStep++;
-          showStep();
-          showDidYouKnow();
-        });
-        return;
-      }
-
       // In showStep, after wild dog cut scene, check for dirty water cut scene
       if (window.dirtyWaterCutScene) {
         // After the dirty water cut scene, always go to the next step (currentStep++)
@@ -979,6 +1129,21 @@
     function updateStatus() {
       // Show only Energy and Journey Points in the status bar
       statusBar.textContent = `Energy: ${energy} | Journey Points: ${score}`;
+      
+      // Announce status changes to screen readers
+      const announcement = `Current status: ${energy} energy remaining, ${score} journey points earned`;
+      const srAnnouncement = document.createElement('div');
+      srAnnouncement.setAttribute('aria-live', 'polite');
+      srAnnouncement.setAttribute('aria-atomic', 'true');
+      srAnnouncement.style.position = 'absolute';
+      srAnnouncement.style.left = '-9999px';
+      srAnnouncement.textContent = announcement;
+      document.body.appendChild(srAnnouncement);
+      
+      // Remove announcement after it's read
+      setTimeout(() => {
+        document.body.removeChild(srAnnouncement);
+      }, 1000);
     }
 
     function endGame() {
@@ -1096,31 +1261,10 @@
 
       // SVG well and happy people
       wellDiv.innerHTML = `
-        <svg width="180" height="120" viewBox="0 0 180 120">
-          <!-- Well base -->
-          <ellipse cx="90"
-          <rect x="60" y="60" width="60" height="50" rx="12" fill="#bfa77a" stroke="#8d5524" stroke-width="2"/>
-          <!-- Well water -->
-          <ellipse cx="90" cy="90" rx="25" ry="8" fill="#2E9DF7" opacity="0.7"/>
-          <!-- Well roof -->
-          <rect x="55" y="45" width="70" height="15" rx="4" fill="#8BD1CB" stroke="#159A48" stroke-width="2"/>
-          <!-- Well posts -->
-          <rect x="68" y="62" width="8" height="38" fill="#8d5524"/>
-          <rect x="104" y="62" width="8" height="38" fill="#8d5524"/>
-          <!-- Rope and bucket -->
-          <rect x="87" y="62" width="6" height="22" fill="#FFC907"/>
-          <ellipse cx="90" cy="92" rx="7" ry="4" fill="#FFC907" stroke="#bfa100" stroke-width="1"/>
-          <!-- Happy people (simple circles) -->
-          <circle cx="40" cy="110" r="10" fill="#c68642"/>
-          <circle cx="140" cy="110" r="10" fill="#c68642"/>
-          <circle cx="25" cy="100" r="7" fill="#c68642"/>
-          <circle cx="155" cy="100" r="7" fill="#c68642"/>
-          <!-- Water splash for celebration -->
-          <ellipse cx="90" cy="85" rx="15" ry="4" fill="#2E9DF7" opacity="0.5"/>
-        </svg>
-        <div style="color:#159A48; font-size:1.2em; font-weight:bold; margin-top:8px;">
-          Thanks to Charity: Water, your village has a new well!<br>
-          Now you don't have to walk so far for water.
+        <img src="img/Girl with cup of water..jpg" alt="Girl celebrating with clean water" style="max-width:180px; height:auto; margin-bottom:12px; border-radius:12px; border:3px solid #FFC907;">
+        <div style="color:#2E9DF7; font-size:1.2em; font-weight:bold; margin-top:8px;">
+          🎉 Thanks to <span style="color:#FFC907;">charity: water</span>, your village has a new well! 🎉<br>
+          <span style="color:#159A48;">Now you don't have to walk so far for water.</span>
         </div>
       `;
       document.getElementById('gameContainer').appendChild(wellDiv);
@@ -1135,7 +1279,18 @@
     // Hide landing page and start game when Start Game is clicked
     document.getElementById('startGameBtn').onclick = function() {
       // Hide the landing page
-      document.getElementById('landingPage').style.display = 'none';
+      const landingPage = document.getElementById('landingPage');
+      const gameContainer = document.getElementById('gameContainer');
+      
+      landingPage.style.display = 'none';
+      landingPage.setAttribute('aria-hidden', 'true');
+      
+      gameContainer.style.display = 'block';
+      gameContainer.setAttribute('aria-hidden', 'false');
+      
+      // Focus on the game container for screen readers
+      gameContainer.focus();
+      
       // Start the game
       startGame();
     };
@@ -1144,6 +1299,10 @@
     document.getElementById('resetBtn').onclick = function() {
       // Reset the game to the beginning
       startGame();
+      // Focus on story text after reset
+      setTimeout(() => {
+        document.getElementById('storyText').focus();
+      }, 100);
     };
 
     // Function to show a gentle overlay scene if the player chooses 'Go to school'
@@ -1170,6 +1329,7 @@
 
       // Add a gentle message and a Restart button
       overlay.innerHTML = `
+        <img src="img/Girl with cup of water..jpg" alt="Girl with clean water" style="max-width: 120px; height: auto; border-radius: 8px; border: 2px solid #FFC907; margin-bottom: 12px;">
         <div style="font-size:1.3em; color:#005073; font-weight:bold; margin-bottom:18px; max-width:400px;">
           ${message}
         </div>
@@ -1382,12 +1542,7 @@
         <div style="font-size:1em; color:#222; margin-bottom:12px; max-width:400px;">
           You will earn <span style='color:#2E9DF7;'>double Journey Points</span> for this step.
         </div>
-        <svg width="80" height="60" viewBox="0 0 80 60" style="margin-bottom:16px;">
-          <ellipse cx="40" cy="50" rx="30" ry="8" fill="#bfa77a"/>
-          <circle cx="30" cy="40" r="10" fill="#4FCB53"/>
-          <circle cx="50" cy="40" r="10" fill="#FFC907"/>
-          <text x="40" y="35" text-anchor="middle" font-size="12" fill="#005073" font-weight="bold">:)</text>
-        </svg>
+        <img src="img/water-can.png" alt="Water container" style="max-width:80px; height:auto; margin-bottom:16px;">
         <button id="continueGoAloneBtn" class="choiceBtn" style="max-width:200px; background-color:#2E9DF7;">Continue</button>
       `;
       document.getElementById('gameContainer').appendChild(overlay);
@@ -1678,15 +1833,7 @@
         <div style="font-size:1em; color:#222; margin-bottom:12px; max-width:400px;">
           You lose <span style='color:#F5402C;'>1 Energy</span>.
         </div>
-        <svg width="90" height="60" viewBox="0 0 90 60" style="margin-bottom:16px;">
-          <ellipse cx="45" cy="50" rx="30" ry="8" fill="#bfa77a"/>
-          <rect x="35" y="35" width="20" height="18" rx="5" fill="#FFC907" stroke="#bfa100" stroke-width="2"/>
-          <ellipse cx="45" cy="45" rx="8" ry="4" fill="#2E9DF7" opacity="0.7"/>
-          <circle cx="45" cy="45" r="2" fill="#159A48"/>
-          <ellipse cx="50" cy="48" rx="1.5" ry="1" fill="#8d5524"/>
-          <ellipse cx="40" cy="48" rx="1.5" ry="1" fill="#8d5524"/>
-          <ellipse cx="45" cy="50" rx="2" ry="1" fill="#F5402C"/>
-        </svg>
+        <img src="img/clean and dirty water cups.jpg" alt="Clean vs dirty water" style="max-width:200px; height:auto; margin-bottom:16px; border-radius:8px; border:2px solid #FFC907;">
         <button id="continueDirtyWaterBtn" class="choiceBtn" style="max-width:200px; background-color:#2E9DF7;">Continue</button>
       `;
       document.getElementById('gameContainer').appendChild(overlay);
@@ -1700,5 +1847,10 @@
       };
     }
   </script>
+
+  <!-- Footer with charity: water credit -->
+  <footer role="contentinfo" style="position: fixed; bottom: 0; left: 0; right: 0; background: linear-gradient(135deg, #2E9DF7, #FFC907); color: #fff; text-align: center; padding: 8px 10px; font-size: 0.9em; font-weight: bold; box-shadow: 0 -2px 4px rgba(0,0,0,0.1); z-index: 1000;">
+    Inspired by <a href="https://www.charitywater.org/" target="_blank" rel="noopener" style="color: #fff; text-decoration: underline;" aria-label="Visit charity: water website to learn more and donate">charity: water</a> 💧
+  </footer>
 </body>
 </html>
