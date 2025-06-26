@@ -945,16 +945,17 @@
 
       // Check for the wild dog cut scene
       if (window.wildDogCutScene) {
-        // After the wild dog cut scene, subtract 2 energy. If energy is now 0 or less, show game over. Otherwise, go to the next step.
+        // Show the wild dog cut scene, then continue the game
         showWildDogCutScene(() => {
           window.wildDogCutScene = false;
           energy = energy - 2; // Lose 2 energy for running past the dog
+          // After the cut scene, check if energy is 0 or less
           if (energy <= 0) {
-            // If energy is 0 or less, show the game over cut scene
             showGameOverCutScene();
             return;
           }
-          currentStep++; // Go to the next step
+          // Go to the next step and continue the game
+          currentStep++;
           showStep();
           showDidYouKnow();
         });
