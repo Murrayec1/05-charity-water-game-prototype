@@ -276,7 +276,7 @@
       border-left: 6px solid #FFC907;
       color: #111;
       font-size: 1rem;
-      margin: 16px 0 0 0;
+      margin: 16px auto 0 auto;
       padding: 12px 18px 12px 14px;
       border-radius: 6px;
       box-shadow: 0 2px 8px #0001, 1px 1px 2px #fff;
@@ -285,6 +285,7 @@
       transition: opacity 0.5s;
       font-weight: bold;
       text-shadow: 1px 1px 2px #fff, 0 0 2px #fff;
+      text-align: center;
     }
     #didYouKnow a {
       color: #2E9DF7;
@@ -397,7 +398,14 @@
       }
       #landingPage header img {
         margin-bottom: 8px !important;
-        max-width: 160px !important;
+        max-width: 280px !important; /* Larger logo on mobile */
+      }
+      /* Make hero images bigger on mobile for better visibility */
+      #landingPage img[alt*="Young girl carrying"] {
+        max-width: 220px !important;
+      }
+      #landingPage img[alt*="Happy girl drinking"] {
+        max-width: 180px !important;
       }
       #scoreArea, #statusBar, #storyText {
         font-size: 1em;
@@ -544,13 +552,13 @@
   <!-- Landing Page Overlay -->
   <main id="landingPage" role="dialog" aria-modal="true" aria-labelledby="landingTitle" aria-describedby="landingSubtitle">
     <header>
-      <img src="img/cw_logo_horizontal.png" alt="charity: water - bringing clean and safe drinking water to people in developing countries" style="max-width: 200px; margin-bottom: 15px; height: auto;">
+      <img src="img/cw_logo_horizontal.png" alt="charity: water - bringing clean and safe drinking water to people in developing countries" style="max-width: 320px; margin-bottom: 15px; height: auto;">
     </header>
     
     <!-- Hero image showing the journey -->
-    <img src="img/Girl with jerry can.jpg" alt="Young girl carrying a large yellow water container on a dusty path, representing the daily journey millions of girls take to collect water" style="max-width: 150px; height: auto; border-radius: 12px; border: 3px solid #FFC907; margin-bottom: 15px;">
+    <img src="img/Girl with jerry can.jpg" alt="Young girl carrying a large yellow water container on a dusty path, representing the daily journey millions of girls take to collect water" style="max-width: 250px; height: auto; border-radius: 12px; border: 3px solid #FFC907; margin-bottom: 15px;">
     
-    <h1 id="landingTitle">💧 The Long Walk: A Charity: Water Journey</h1>
+    <h1 id="landingTitle">💧 The Long Walk: A Journey for Water</h1>
     <p id="landingSubtitle">
       Every day, millions of girls walk miles for clean water.<br>
       Can you help her reach a brighter future?<br>
@@ -558,7 +566,7 @@
     </p>
     
     <!-- Show clean water image as motivation -->
-    <img src="img/Girl with cup of water..jpg" alt="Happy girl drinking from a clean cup of water, showing the positive impact of access to clean water" style="max-width: 120px; height: auto; border-radius: 8px; border: 2px solid #2E9DF7; margin: 10px 0;">
+    <img src="img/Girl with cup of water..jpg" alt="Happy girl drinking from a clean cup of water, showing the positive impact of access to clean water" style="max-width: 200px; height: auto; border-radius: 8px; border: 2px solid #2E9DF7; margin: 10px 0;">
     
     <nav>
       <!-- Difficulty Selection -->
@@ -603,46 +611,107 @@
     <section id="scoreSection" aria-label="Game progress">
       <div id="scoreArea" style="text-align:center; font-size:1.1em; margin-bottom:8px;" role="status" aria-live="polite">
         <div style="font-size: 0.9em; color: #666; margin-bottom: 4px;">
-          <span id="difficultyDisplay">Easy Mode</span> - Need <span id="winConditionDisplay">6</span> points to win
+          <span id="difficultyDisplay">Easy Mode</span>
         </div>
-        Journey Points: <span id="scoreValue">0</span>
+        Journey Points: <span id="scoreValue">0</span> / <span id="goalValue">6</span>
       </div>
       
       <!-- Progress path directly under the character's feet -->
       <div id="progressPath" role="img" aria-label="Journey progress map showing path from home to water source and back to village">
         <!-- Place the character icon absolutely over the SVG path -->
-        <div id="characterContainer" aria-hidden="true">
+        <div id="characterContainer" aria-hidden="true" style="position: absolute; transition: left 1.2s ease-in-out, top 1.2s ease-in-out, transform 0.2s ease-in-out;">
           <img id="characterSprite" src="img/Girl with jerry can.jpg" alt="" style="width: 40px; height: 75px; object-fit: cover; border-radius: 50%; border: 2px solid #FFC907;">
         </div>
-        <svg id="pathSVG" width="100%" height="60" viewBox="0 0 400 60" style="max-width: 100%; min-width: 200px;" role="img" aria-labelledby="pathDesc">
-          <title id="pathDesc">Journey map showing path from home village to water source and back, with obstacles along the way</title>
-          <!-- Winding path (brown) - only to river -->
-          <path d="M 40 50 Q 120 10 200 40 Q 280 70 350 30" stroke="#8d5524" stroke-width="10" fill="none" stroke-linecap="round"/>
-          <!-- Milestones (4 steps) -->
-          <circle cx="40"  cy="50" r="13" fill="#FFC907" stroke="#bfa100" stroke-width="2"/>
-          <circle cx="140" cy="20" r="11" fill="#FF902A" stroke="#F5402C" stroke-width="2"/>
-          <circle cx="220" cy="45" r="11" fill="#8BD1CB" stroke="#159A48" stroke-width="2"/>
-          <circle cx="350" cy="30" r="13" fill="#2E9DF7" stroke="#005073" stroke-width="3"/>
-          <!-- Girl marker (moves along path) -->
-          <circle id="girlMarker" cx="40" cy="50" r="12" fill="#c68642" stroke="#3e2723" stroke-width="2"/>
-          <!-- Girl icon on the marker (simple head and dress) -->
-          <g id="girlMiniIcon">
-            <ellipse cx="40" cy="45" rx="4" ry="5" fill="#c68642"/>
-            <ellipse cx="40" cy="55" rx="5" ry="7" fill="#4FCB53"/>
-            <ellipse cx="40" cy="40" rx="5" ry="3" fill="#3e2723"/>
+        <svg id="pathSVG" width="100%" height="100" viewBox="0 0 800 100" style="max-width: 100%; min-width: 200px;" role="img" aria-labelledby="pathDesc">
+          <title id="pathDesc">Journey map showing winding path from home village through forest to water source and back, with obstacles along the way</title>
+          <!-- Extended winding path (brown) - much longer and more detailed with multiple curves -->
+          <path d="M 60 80 Q 120 40 200 60 Q 280 85 360 45 Q 440 20 520 55 Q 600 80 680 35 Q 720 20 740 45" stroke="#8d5524" stroke-width="12" fill="none" stroke-linecap="round"/>
+          <!-- Progress trail - will be dynamically updated -->
+          <path id="progressTrail" d="M 60 80" stroke="#4FCB53" stroke-width="10" fill="none" stroke-linecap="round" style="opacity: 0.8; transition: d 1.2s ease-in-out;"/>
+          <!-- Milestones (4 steps) - now just visual markers, not interactive -->
+          <circle class="milestone" cx="60"  cy="80" r="13" fill="#FFC907" stroke="#bfa100" stroke-width="2" style="transition: all 0.3s ease;">
+            <title>Home - Starting point of the journey</title>
+          </circle>
+          <circle class="milestone" cx="280" cy="85" r="11" fill="#FF902A" stroke="#F5402C" stroke-width="2" style="transition: all 0.3s ease;">
+            <title>Obstacles - Challenges along the path</title>
+          </circle>
+          <circle class="milestone" cx="520" cy="55" r="11" fill="#8BD1CB" stroke="#159A48" stroke-width="2" style="transition: all 0.3s ease;">
+            <title>Water Source - The destination for clean water</title>
+          </circle>
+          <circle class="milestone" cx="740" cy="45" r="13" fill="#2E9DF7" stroke="#005073" stroke-width="3" style="transition: all 0.3s ease;">
+            <title>Village - Return home with water</title>
+          </circle>
+          <!-- Enhanced trees with much clearer and more recognizable visual design -->
+          <g>
+            <!-- Tree 1 - Near beginning -->
+            <!-- Trunk -->
+            <rect x="157" y="25" width="8" height="20" fill="#8B4513" rx="2"/>
+            <!-- Main canopy -->
+            <ellipse cx="161" cy="20" rx="18" ry="12" fill="#228B22"/>
+            <!-- Secondary foliage layers for depth -->
+            <ellipse cx="158" cy="18" rx="12" ry="8" fill="#32CD32"/>
+            <ellipse cx="164" cy="22" rx="10" ry="6" fill="#90EE90"/>
+            <!-- Small branches -->
+            <circle cx="150" cy="25" r="4" fill="#228B22"/>
+            <circle cx="172" cy="27" r="3" fill="#228B22"/>
           </g>
-          <!-- Simple SVG trees and rocks for jungle/forest feel -->
-          <ellipse cx="100" cy="10" rx="8" ry="4" fill="#159A48"/>
-          <rect x="95" y="5" width="4" height="8" fill="#8d5524"/>
-          <ellipse cx="250" cy="60" rx="10" ry="5" fill="#159A48"/>
-          <rect x="245" y="55" width="4" height="8" fill="#8d5524"/>
-          <ellipse cx="400" cy="10" rx="7" ry="3" fill="#159A48"/>
-          <rect x="397" y="7" width="3" height="6" fill="#8d5524"/>
-          <ellipse cx="550" cy="55" rx="8" ry="4" fill="#159A48"/>
-          <rect x="547" y="51" width="3" height="7" fill="#8d5524"/>
-          <!-- Rocks -->
-          <ellipse cx="180" cy="55" rx="5" ry="2" fill="#bfa77a"/>
-          <ellipse cx="620" cy="40" rx="6" ry="3" fill="#bfa77a"/>
+          <g>
+            <!-- Tree 2 - Middle area -->
+            <!-- Trunk -->
+            <rect x="397" y="70" width="10" height="25" fill="#8B4513" rx="2"/>
+            <!-- Main canopy -->
+            <ellipse cx="402" cy="65" rx="20" ry="14" fill="#228B22"/>
+            <!-- Secondary foliage layers -->
+            <ellipse cx="398" cy="62" rx="14" ry="10" fill="#32CD32"/>
+            <ellipse cx="406" cy="68" rx="12" ry="8" fill="#90EE90"/>
+            <!-- Small branches -->
+            <circle cx="388" cy="68" r="5" fill="#228B22"/>
+            <circle cx="416" cy="70" r="4" fill="#228B22"/>
+          </g>
+          <g>
+            <!-- Tree 3 - Near water source -->
+            <!-- Trunk -->
+            <rect x="587" y="15" width="7" height="18" fill="#8B4513" rx="2"/>
+            <!-- Main canopy -->
+            <ellipse cx="590" cy="12" rx="16" ry="10" fill="#228B22"/>
+            <!-- Secondary foliage -->
+            <ellipse cx="587" cy="10" rx="11" ry="7" fill="#32CD32"/>
+            <ellipse cx="593" cy="14" rx="9" ry="5" fill="#90EE90"/>
+            <!-- Small branches -->
+            <circle cx="580" cy="16" r="3" fill="#228B22"/>
+            <circle cx="600" cy="18" r="4" fill="#228B22"/>
+          </g>
+          <g>
+            <!-- Tree 4 - Additional tree for longer path -->
+            <!-- Trunk -->
+            <rect x="667" y="25" width="9" height="22" fill="#8B4513" rx="2"/>
+            <!-- Main canopy -->
+            <ellipse cx="671" cy="20" rx="17" ry="11" fill="#228B22"/>
+            <!-- Secondary foliage -->
+            <ellipse cx="668" cy="18" rx="12" ry="8" fill="#32CD32"/>
+            <ellipse cx="674" cy="22" rx="10" ry="6" fill="#90EE90"/>
+            <!-- Small branches -->
+            <circle cx="661" cy="24" r="4" fill="#228B22"/>
+            <circle cx="681" cy="26" r="3" fill="#228B22"/>
+          </g>
+          <!-- Rocks and terrain features with better definition -->
+          <g>
+            <!-- Rock cluster 1 -->
+            <ellipse cx="240" cy="90" rx="10" ry="5" fill="#A0522D" stroke="#8B4513" stroke-width="1"/>
+            <ellipse cx="235" cy="87" rx="6" ry="3" fill="#D2691E"/>
+            <ellipse cx="245" cy="88" rx="5" ry="3" fill="#CD853F"/>
+          </g>
+          <g>
+            <!-- Rock cluster 2 -->
+            <ellipse cx="460" cy="25" rx="8" ry="4" fill="#A0522D" stroke="#8B4513" stroke-width="1"/>
+            <ellipse cx="455" cy="22" rx="5" ry="3" fill="#D2691E"/>
+          </g>
+          <g>
+            <!-- Rock cluster 3 -->
+            <ellipse cx="640" cy="80" rx="9" ry="5" fill="#A0522D" stroke="#8B4513" stroke-width="1"/>
+            <ellipse cx="635" cy="77" rx="6" ry="3" fill="#D2691E"/>
+            <ellipse cx="645" cy="78" rx="4" ry="2" fill="#CD853F"/>
+          </g>
         </svg>
         <!-- Milestone labels for the journey map -->
         <div id="milestoneLabels" style="display: flex; justify-content: space-between; font-size: 0.7em; color: #555; margin-top: 16px; margin-bottom: 4px;" aria-hidden="true">
@@ -656,7 +725,7 @@
 
     <section id="gameContent" aria-label="Game story and choices">
       <div id="storyText" role="status" aria-live="polite" style="background: rgba(255, 255, 255, 0.85); padding: 15px; border-radius: 8px; margin-bottom: 15px; backdrop-filter: blur(2px);">Click "Start" to begin the journey.</div>
-      <div id="didYouKnow" style="display:none; background: rgba(255, 201, 7, 0.7); padding: 12px; border-radius: 6px; margin-bottom: 10px; backdrop-filter: blur(3px); border: 1px solid rgba(255, 201, 7, 0.4);" role="complementary" aria-label="Educational information">
+      <div id="didYouKnow" style="display:none; background: rgba(255, 201, 7, 0.7); padding: 12px; border-radius: 6px; margin-bottom: 10px; backdrop-filter: blur(3px); border: 1px solid rgba(255, 201, 7, 0.4); text-align: center;" role="complementary" aria-label="Educational information">
         <!-- Did You Know box will be filled by JS -->
       </div>
       <div id="choices" role="group" aria-label="Available choices"></div>
@@ -664,13 +733,118 @@
 
     <div id="statusBar" role="status" aria-live="polite" style="background: rgba(255, 255, 255, 0.8); padding: 8px 12px; border-radius: 6px; margin: 10px 0; backdrop-filter: blur(2px);"></div>
     
-    <!-- Audio elements for ambient and SFX -->
-    <audio id="ambientWind" src="https://cdn.pixabay.com/audio/2022/10/16/audio_12b5b3b2e2.mp3" loop aria-label="Background wind sounds"></audio>
-    <audio id="ambientFootsteps" src="https://cdn.pixabay.com/audio/2022/07/26/audio_124bfae7e7.mp3" loop aria-label="Footstep sounds"></audio>
-    <audio id="ambientSchoolBell" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b6e7e7e.mp3" aria-label="School bell sound"></audio>
-    <audio id="sfxClick" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b6e7e7e.mp3" aria-label="Click sound effect"></audio>
-    <audio id="sfxVictory" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b6e7e7e.mp3" aria-label="Victory sound"></audio>
-    <audio id="sfxLoss" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b6e7e7e.mp3" aria-label="Loss sound"></audio>
+    <!-- Audio elements for ambient and SFX - NO BACKGROUND MUSIC -->
+    <!-- UI interaction sounds - using simple working audio sources -->
+    <audio id="sfxClick" preload="auto" aria-label="Click sound effect">
+      <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmAaBRsGHNzK6Z1HD..." type="audio/wav">
+      <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxButton" preload="auto" aria-label="Button press sound">
+      <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj..." type="audio/wav">
+    </audio>
+    <audio id="sfxVictory" preload="auto" aria-label="Victory celebration sound">
+      <source src="https://www.soundjay.com/misc/sounds/success-1.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxLoss" preload="auto" aria-label="Loss sound">
+      <source src="https://www.soundjay.com/misc/sounds/fail-buzzer-02.wav" type="audio/wav">
+    </audio>
+    
+    <!-- Journey progression sounds -->
+    <audio id="sfxPointsEarned" preload="auto" aria-label="Points earned sound">
+      <source src="https://www.soundjay.com/misc/sounds/coin-drop-1.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxEnergyGain" preload="auto" aria-label="Energy gained sound">
+      <source src="https://www.soundjay.com/misc/sounds/power-up-05.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxEnergyLoss" preload="auto" aria-label="Energy lost sound">
+      <source src="https://www.soundjay.com/misc/sounds/power-down-01.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxMovement" preload="auto" aria-label="Character movement sound">
+      <source src="https://www.soundjay.com/misc/sounds/footstep-01.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxMilestone" preload="auto" aria-label="Milestone reached sound">
+      <source src="https://www.soundjay.com/misc/sounds/ding-idea-01.wav" type="audio/wav">
+    </audio>
+    
+    <!-- Environmental and story sounds -->
+    <audio id="sfxGlassBreak" preload="auto" aria-label="Glass breaking sound">
+      <source src="https://www.soundjay.com/misc/sounds/glass-break-1.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxSnakeHiss" preload="auto" aria-label="Snake hissing sound">
+      <source src="https://www.soundjay.com/misc/sounds/snake-hiss-1.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxDogBark" preload="auto" aria-label="Dog barking sound">
+      <source src="https://www.soundjay.com/misc/sounds/dog-bark-1.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxWaterSplash" preload="auto" aria-label="Water splash sound">
+      <source src="https://www.soundjay.com/misc/sounds/water-drop-1.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxCommunity" preload="auto" aria-label="Community celebration sound">
+      <source src="https://www.soundjay.com/misc/sounds/crowd-cheer-1.wav" type="audio/wav">
+    </audio>
+    
+    <!-- Educational and notification sounds -->
+    <audio id="sfxFactAlert" preload="auto" aria-label="Educational fact notification">
+      <source src="https://www.soundjay.com/misc/sounds/notification-1.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxWarning" preload="auto" aria-label="Warning sound">
+      <source src="https://www.soundjay.com/misc/sounds/warning-1.wav" type="audio/wav">
+    </audio>
+    
+    <!-- Additional interactive sounds for enhanced experience -->
+    <audio id="sfxWalk" preload="auto" aria-label="Walking on dirt path">
+      <source src="https://www.soundjay.com/misc/sounds/footstep-dirt-01.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxRest" preload="auto" aria-label="Rest and recovery sound">
+      <source src="https://www.soundjay.com/misc/sounds/sigh-relief-01.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxThrow" preload="auto" aria-label="Throwing object sound">
+      <source src="https://www.soundjay.com/misc/sounds/whoosh-01.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxSplash" preload="auto" aria-label="Water filling container">
+      <source src="https://www.soundjay.com/misc/sounds/water-pour-01.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxCrowd" preload="auto" aria-label="Villagers gathering">
+      <source src="https://www.soundjay.com/misc/sounds/crowd-talking-01.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxBirds" preload="auto" aria-label="Morning birds chirping">
+      <source src="https://www.soundjay.com/misc/sounds/birds-chirping-01.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxWind" preload="auto" aria-label="Gentle wind through trees">
+      <source src="https://www.soundjay.com/misc/sounds/wind-light-01.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxJerrycan" preload="auto" aria-label="Jerry can hitting ground">
+      <source src="https://www.soundjay.com/misc/sounds/plastic-hit-01.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxSchoolBell" preload="auto" aria-label="School bell ringing">
+      <source src="https://www.soundjay.com/misc/sounds/school-bell-01.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxGasp" preload="auto" aria-label="Surprised gasp">
+      <source src="https://www.soundjay.com/misc/sounds/gasp-surprise-01.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxHeart" preload="auto" aria-label="Heartbeat sound">
+      <source src="https://www.soundjay.com/misc/sounds/heartbeat-01.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxLaughter" preload="auto" aria-label="Children laughing">
+      <source src="https://www.soundjay.com/misc/sounds/children-laugh-01.wav" type="audio/wav">
+    </audio>
+    
+    <!-- Additional immersive sound effects for enhanced storytelling -->
+    <audio id="sfxMorning" preload="auto" aria-label="Morning awakening sounds">
+      <source src="https://www.soundjay.com/misc/sounds/rooster-crow-01.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxVillage" preload="auto" aria-label="Village ambient sounds">
+      <source src="https://www.soundjay.com/misc/sounds/marketplace-ambient-01.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxRiver" preload="auto" aria-label="River flowing sounds">
+      <source src="https://www.soundjay.com/misc/sounds/stream-water-01.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxCelebration" preload="auto" aria-label="Community celebration">
+      <source src="https://www.soundjay.com/misc/sounds/cheer-celebration-01.wav" type="audio/wav">
+    </audio>
+    <audio id="sfxFriendship" preload="auto" aria-label="Friendly conversation">
+      <source src="https://www.soundjay.com/misc/sounds/conversation-happy-01.wav" type="audio/wav">
+    </audio>
   </main>
 
   <script>
@@ -689,7 +863,7 @@
         winCondition: 6,
         pointsPerChoice: 3,
         energyPenalty: 1,
-        factDisplayTime: 20000, // 20 seconds
+        factDisplayTime: 30000, // 30 seconds
         name: "Easy",
         description: "More forgiving journey with helpful guidance"
       },
@@ -698,7 +872,7 @@
         winCondition: 10,
         pointsPerChoice: 2,
         energyPenalty: 1,
-        factDisplayTime: 15000, // 15 seconds
+        factDisplayTime: 25000, // 25 seconds
         name: "Normal", 
         description: "Balanced challenge representing real experiences"
       },
@@ -707,7 +881,7 @@
         winCondition: 15,
         pointsPerChoice: 1,
         energyPenalty: 2,
-        factDisplayTime: 10000, // 10 seconds
+        factDisplayTime: 20000, // 20 seconds
         name: "Hard",
         description: "Challenging journey requiring careful planning"
       }
@@ -717,43 +891,97 @@
     const choicesContainer = document.getElementById('choices');
     const statusBar = document.getElementById('statusBar');
 
-    // Shorter story: only 8 steps, matching the map and milestones
+    // Progressive story: 8 steps with gradual movement along the path
     const storySteps = [
       {
         text: "You wake up early. Your family's only water source is 3 miles away. What do you do?",
         choices: [
-          { text: "Go to school", effect: () => {}, next: null, endMessage: "You went to school, but your family is limited tonight on what they can eat and drink. Education is important, but so is water. Maybe next time you can help both!" },
-          { text: "🪣 Grab the yellow jerry can and start on your trail", effect: () => {}, next: 1 }
+          { text: "Go to school", effect: () => { 
+            // Play school bell sound for the school choice
+            setTimeout(() => playSound(sfxSchoolBell), 300);
+          }, next: null, endMessage: "You went to school, but your family is limited tonight on what they can eat and drink. Education is important, but so is water. Maybe next time you can help both!" },
+          { text: "🪣 Grab the yellow jerry can and start on your trail", effect: () => {
+            // Play jerry can sound when grabbing it
+            setTimeout(() => playSound(sfxJerrycan), 200);
+          }, next: 1 }
         ]
       },
       {
         text: "You meet your friend Amina at the edge of the village. She offers to walk with you. What do you do?",
         choices: [
-          { text: "Walk together", effect: () => { wentAlone = false; }, next: 2 },
-          { text: "Go alone", effect: () => { window.doublePointsThisStep = true; wentAlone = true; }, next: 2 }
+          { text: "Walk together", effect: () => { 
+            wentAlone = false; 
+            // Play children laughing sound for friendship choice
+            setTimeout(() => playSound(sfxLaughter), 400);
+          }, next: 2 },
+          { text: "Go alone", effect: () => { 
+            window.doublePointsThisStep = true; 
+            wentAlone = true;
+            // Play footsteps on dirt for going alone
+            setTimeout(() => playSound(sfxWalk), 300);
+          }, next: 2 }
         ]
       },
       {
         text: "There’s broken glass ahead. What do you do?",
         choices: [
-          { text: "Step carefully around it", effect: () => {}, next: 3 },
-          { text: "Run through it quickly", effect: () => {}, next: 3, glassCutScene: true },
-          { text: "Ask Amina for help", effect: () => { window.broomCutScene = true; }, next: 3 }
+          { text: "Step carefully around it", effect: () => {
+            // Play cautious walking sound
+            setTimeout(() => playSound(sfxWalk), 200);
+          }, next: 3 },
+          { text: "Run through it quickly", effect: () => {
+            // Play breaking glass sound immediately - both audio element and enhanced fallback
+            playSound(sfxGlassBreak);
+            setTimeout(() => createEnhancedGlassBreak(), 100);
+          }, next: 3, glassCutScene: true },
+          { text: "Ask Amina for help", effect: () => { 
+            window.broomCutScene = true;
+            // Play sweep/clean sound for help with glass
+            setTimeout(() => playSound(sfxThrow), 300);
+          }, next: 3 }
         ]
       },
       {
         text: "A snake is coiled in the path. What do you do?",
         choices: [
-          { text: "Walk around slowly", effect: () => { window.snakeWalkAroundCutScene = true; }, next: 4 },
-          { text: "Throw a rock at it", effect: () => { energy--; }, next: 4 },
-          { text: "Wait for it to leave", effect: () => { energy = energy - 1; window.skipJourneyPointsThisStep = true; window.snakeWaitCutScene = true; }, next: 4 }
+          { text: "Walk around slowly", effect: () => { 
+            window.snakeWalkAroundCutScene = true;
+            // Play careful walking sound
+            setTimeout(() => playSound(sfxWalk), 250);
+          }, next: 4 },
+          { text: "Throw a rock at it", effect: () => { 
+            energy--;
+            // Play throwing sound then enhanced snake hiss
+            playSound(sfxThrow);
+            setTimeout(() => playSound(sfxSnakeHiss), 400);
+            setTimeout(() => createEnhancedSnakeHiss(), 500);
+          }, next: 4 },
+          { text: "Wait for it to leave", effect: () => { 
+            energy = energy - 1; 
+            window.skipJourneyPointsThisStep = true; 
+            window.snakeWaitCutScene = true;
+            // Play wind sound while waiting
+            setTimeout(() => playSound(sfxWind), 300);
+          }, next: 4 }
         ]
       },
       {
         text: "You reach a muddy patch. What do you do?",
         choices: [
-          { text: "Rest for a moment", effect: () => { energy = energy + 2; window.muddyPatchRestCutScene = true; }, next: 5 },
-          { text: "Push through", effect: () => { energy = energy - 2; window.muddyPatchPushThroughCutScene = true; }, next: 5 },
+          { text: "Rest for a moment", effect: () => { 
+            energy = energy + 2; 
+            window.muddyPatchRestCutScene = true;
+            // Play rest sound and gentle birds
+            setTimeout(() => playSound(sfxRest), 200);
+            setTimeout(() => playSound(sfxBirds), 800);
+          }, next: 5 },
+          { text: "Push through", effect: () => { 
+            energy = energy - 2; 
+            window.muddyPatchPushThroughCutScene = true;
+            // Play determined walking sound with splash
+            setTimeout(() => playSound(sfxWalk), 100);
+            setTimeout(() => playSound(sfxSplash), 500);
+          }, next: 5 },
           { text: "Try to find another way around", effect: () => { showLostInBrushCutScene(); }, next: null }
         ]
       },
@@ -761,23 +989,46 @@
         text: "You see a wild dog in the road. What do you do?",
         choices: [
           // If you stand your ground, just continue to the next step
-          { text: "Stand your ground. Ignore the dog and keep walking past it.", effect: () => {}, next: 6 },
+          { text: "Stand your ground. Ignore the dog and keep walking past it.", effect: () => {
+            // Play confident walking sound
+            setTimeout(() => playSound(sfxWalk), 200);
+          }, next: 6 },
           // If you distract the dog, set the flag for the cut scene (do not advance step here)
-          { text: "Distract the dog by tossing something into the brush, then run past it yelling.", effect: () => { window.wildDogCutScene = true; }, next: null }
+          { text: "Distract the dog by tossing something into the brush, then run past it yelling.", effect: () => { 
+            window.wildDogCutScene = true;
+            // Play throwing sound immediately then enhanced dog bark
+            playSound(sfxThrow);
+            setTimeout(() => playSound(sfxDogBark), 300);
+            setTimeout(() => createEnhancedDogBark(), 400);
+          }, next: null }
         ]
       },
       {
         text: "You finally reach the river! The water source is busy with other villagers. What do you do?",
         choices: [
           // Wait patiently in line
-          { text: "Wait patiently in line with the other villagers", effect: () => { energy = energy - 1; }, next: 7 },
-          { text: "Ask if you can help carry water for an elderly woman", effect: () => { score += difficultySettings[currentDifficulty].pointsPerChoice; }, next: 7 }
+          { text: "Wait patiently in line with the other villagers", effect: () => { 
+            energy = energy - 1;
+            // Play crowd gathering sounds
+            setTimeout(() => playSound(sfxCrowd), 300);
+          }, next: 7 },
+          { text: "Ask if you can help carry water for an elderly woman", effect: () => { 
+            score += difficultySettings[currentDifficulty].pointsPerChoice * 2; 
+            energy = energy - 1;
+            // Play heartwarming community sound
+            setTimeout(() => playSound(sfxCommunity), 200);
+            setTimeout(() => playSound(sfxHeart), 600);
+          }, next: 7 }
         ]
       },
       {
         text: "You made it to the water! Time to head home.",
         choices: [
-          { text: "Finish the journey", effect: () => {}, next: null }
+          { text: "Finish the journey", effect: () => {
+            // Play water filling sound
+            setTimeout(() => playSound(sfxSplash), 200);
+            setTimeout(() => playSound(sfxWaterSplash), 600);
+          }, next: null }
         ]
       }
     ];
@@ -812,73 +1063,696 @@
       }
     }
 
-    // Update the map SVG and milestone positions for the journey
+    // Progressive journey positions for smooth character movement
+    // Each story step gets its own position along the winding path
     const journeyPositions = [
-      {cx:40, cy:50},    // Home
-      {cx:140, cy:20},  // Obstacles
-      {cx:220, cy:45},  // Water Source
-      {cx:350, cy:30}   // Village
+      {cx:60, cy:80},    // Step 0: Home - wake up early
+      {cx:90, cy:65},    // Step 1: Edge of village - meet Amina
+      {cx:140, cy:50},   // Step 2: First obstacle - broken glass
+      {cx:200, cy:60},   // Step 3: Snake encounter
+      {cx:280, cy:85},   // Step 4: Muddy patch
+      {cx:360, cy:45},   // Step 5: Wild dog encounter
+      {cx:440, cy:20},   // Step 6: Approaching water source
+      {cx:520, cy:55},   // Step 7: At the water source/river
+      {cx:580, cy:70},   // Step 8: Starting journey back
+      {cx:640, cy:50},   // Step 9: Halfway back
+      {cx:700, cy:40},   // Step 10: Almost home
+      {cx:740, cy:45}    // Step 11: Return to village (final)
     ];
 
-    // Map each story step to a milestone index on the map
-    // 0 = home, 1 = obstacles, 2 = water source, 3 = village
-    // The icon moves to show progress through the journey
-    const stepToMilestone = [
-      0, // Step 0: wake up at home
-      0, // Step 1: still at home area
-      1, // Step 2: encountering obstacles (broken glass)
-      1, // Step 3: more obstacles (snake)
-      1, // Step 4: continuing through obstacles (muddy patch)
-      1, // Step 5: final obstacle (wild dog)
-      2, // Step 6: reaching the water source (busy with villagers)
-      3  // Step 7: returning to village with water
+    // Milestone positions for visual reference (not clickable)
+    const milestonePositions = [
+      {cx:60, cy:80},    // Home
+      {cx:280, cy:85},   // Obstacles area
+      {cx:520, cy:55},   // Water Source
+      {cx:740, cy:45}    // Village
     ];
 
-    // Move the character to the correct milestone for the current story step
+    // Move the character progressively along the path with each story step
     function moveCharacter(step) {
-      // Use the mapping to get the milestone index
-      let idx = stepToMilestone[step] || 0;
-      if (returning) {
-        idx = 3 - idx; // Reverse the index for return
-      }
+      // Use the step directly as an index into journeyPositions
+      let positionIndex = Math.min(step, journeyPositions.length - 1);
+      
       const character = document.getElementById('characterContainer');
       const pathSVG = document.getElementById('pathSVG');
       const svgRect = pathSVG.getBoundingClientRect();
-      const scaleX = svgRect.width / 400;
-      const scaleY = svgRect.height / 60;
-      const left = journeyPositions[idx].cx * scaleX - character.offsetWidth / 2;
-      const top = journeyPositions[idx].cy * scaleY - character.offsetHeight + 30; // 30px offset to align feet
-      // Set the position
+      const scaleX = svgRect.width / 800;  // Updated for new viewBox width
+      const scaleY = svgRect.height / 100;  // Updated for new viewBox height
+      const left = journeyPositions[positionIndex].cx * scaleX - character.offsetWidth / 2;
+      const top = journeyPositions[positionIndex].cy * scaleY - character.offsetHeight + 30; // 30px offset to align feet
+      
+      // Play movement sound
+      playSound(sfxMovement);
+      
+      // Add smooth transition animation with slower speed for more gradual movement
+      character.style.transition = 'left 1.2s ease-in-out, top 1.2s ease-in-out';
       character.style.left = `${left}px`;
       character.style.top = `${top}px`;
+      
+      // Update progress trail to show completed path up to current position
+      updateProgressTrail(step);
+      
+      // Play milestone sound if reaching specific story milestones
+      if (step === 2 || step === 4 || step === 7 || step === 11) {
+        setTimeout(() => playSound(sfxMilestone), 1200);
+      }
+      
+      // Add a small bounce effect when reaching the destination
+      setTimeout(() => {
+        character.style.transform = 'scale(1.1)';
+        setTimeout(() => {
+          character.style.transform = 'scale(1)';
+        }, 200);
+      }, 1200);  // Match the movement duration
     }
 
-    // Update the marker on the SVG path to match the story step
-    function updatePathMarker(step) {
-      let idx = stepToMilestone[step] || 0;
-      if (returning) {
-        idx = 3 - idx;
+    // Milestones are now just visual markers (not interactive)
+    function setupMilestoneMarkers() {
+      // Milestones are purely visual - no hover effects or interactivity
+      const milestones = document.querySelectorAll('.milestone');
+      milestones.forEach((milestone) => {
+        // Remove cursor pointer and any interactive styling
+        milestone.style.cursor = 'default';
+      });
+    }
+
+    // Update the progress trail to show completed path segments progressively
+    function updateProgressTrail(step) {
+      const progressTrail = document.getElementById('progressTrail');
+      if (!progressTrail) return;
+      
+      // Create progressive path segments based on story step
+      const progressivePathSegments = [
+        "M 60 80", // Step 0: Start at home
+        "M 60 80 Q 75 72 90 65", // Step 1: To edge of village
+        "M 60 80 Q 75 72 90 65 Q 115 57 140 50", // Step 2: To first obstacle
+        "M 60 80 Q 75 72 90 65 Q 115 57 140 50 Q 170 55 200 60", // Step 3: To snake area
+        "M 60 80 Q 75 72 90 65 Q 115 57 140 50 Q 170 55 200 60 Q 240 72 280 85", // Step 4: To muddy patch
+        "M 60 80 Q 75 72 90 65 Q 115 57 140 50 Q 170 55 200 60 Q 240 72 280 85 Q 320 65 360 45", // Step 5: To wild dog area
+        "M 60 80 Q 75 72 90 65 Q 115 57 140 50 Q 170 55 200 60 Q 240 72 280 85 Q 320 65 360 45 Q 400 32 440 20", // Step 6: Approaching water
+        "M 60 80 Q 75 72 90 65 Q 115 57 140 50 Q 170 55 200 60 Q 240 72 280 85 Q 320 65 360 45 Q 400 32 440 20 Q 480 37 520 55", // Step 7: At water source
+        "M 60 80 Q 120 40 200 60 Q 280 85 360 45 Q 440 20 520 55 Q 550 62 580 70", // Step 8: Starting journey back
+        "M 60 80 Q 120 40 200 60 Q 280 85 360 45 Q 440 20 520 55 Q 550 62 580 70 Q 610 60 640 50", // Step 9: Halfway back
+        "M 60 80 Q 120 40 200 60 Q 280 85 360 45 Q 440 20 520 55 Q 550 62 580 70 Q 610 60 640 50 Q 670 45 700 40", // Step 10: Almost home
+        "M 60 80 Q 120 40 200 60 Q 280 85 360 45 Q 440 20 520 55 Q 600 80 680 35 Q 720 20 740 45" // Step 11: Complete journey back to village
+      ];
+      
+      // Ensure we don't exceed the array bounds
+      const segmentIndex = Math.min(step, progressivePathSegments.length - 1);
+      
+      // Update the progress trail path
+      progressTrail.setAttribute('d', progressivePathSegments[segmentIndex]);
+      
+      // Add a subtle glow effect to the completed trail
+      if (segmentIndex > 0) {
+        progressTrail.style.filter = 'drop-shadow(0 0 4px rgba(79, 203, 83, 0.6))';
+      } else {
+        progressTrail.style.filter = 'none';
       }
-      const marker = document.getElementById('girlMarker');
-      const miniIcon = document.getElementById('girlMiniIcon');
-      marker.setAttribute('cx', journeyPositions[idx].cx);
-      marker.setAttribute('cy', journeyPositions[idx].cy);
-      // Move the mini icon group to match the marker
-      miniIcon.setAttribute('transform', `translate(${journeyPositions[idx].cx - 40},${journeyPositions[idx].cy - 50})`);
     }
 
     // Get audio elements
+    // Ambient sounds (these are commented out in HTML, so they'll be null)
     const ambientWind = document.getElementById('ambientWind');
     const ambientFootsteps = document.getElementById('ambientFootsteps');
-    const ambientSchoolBell = document.getElementById('ambientSchoolBell');
+    const ambientWater = document.getElementById('ambientWater');
+    
+    // UI and interaction sounds
     const sfxClick = document.getElementById('sfxClick');
+    const sfxButton = document.getElementById('sfxButton');
     const sfxVictory = document.getElementById('sfxVictory');
     const sfxLoss = document.getElementById('sfxLoss');
+    
+    // Journey progression sounds
+    const sfxPointsEarned = document.getElementById('sfxPointsEarned');
+    const sfxEnergyGain = document.getElementById('sfxEnergyGain');
+    const sfxEnergyLoss = document.getElementById('sfxEnergyLoss');
+    const sfxMovement = document.getElementById('sfxMovement');
+    const sfxMilestone = document.getElementById('sfxMilestone');
+    
+    // Environmental and story sounds
+    const sfxGlassBreak = document.getElementById('sfxGlassBreak');
+    const sfxSnakeHiss = document.getElementById('sfxSnakeHiss');
+    const sfxDogBark = document.getElementById('sfxDogBark');
+    const sfxWaterSplash = document.getElementById('sfxWaterSplash');
+    const sfxCommunity = document.getElementById('sfxCommunity');
+    
+    // Educational and notification sounds
+    const sfxFactAlert = document.getElementById('sfxFactAlert');
+    const sfxWarning = document.getElementById('sfxWarning');
+
+    // Additional environmental and action sounds
+    const sfxWalk = document.getElementById('sfxWalk');
+    const sfxRest = document.getElementById('sfxRest');
+    const sfxThrow = document.getElementById('sfxThrow');
+    const sfxSplash = document.getElementById('sfxSplash');
+    const sfxCrowd = document.getElementById('sfxCrowd');
+    const sfxBirds = document.getElementById('sfxBirds');
+    const sfxWind = document.getElementById('sfxWind');
+    const sfxJerrycan = document.getElementById('sfxJerrycan');
+    const sfxSchoolBell = document.getElementById('sfxSchoolBell');
+    const sfxGasp = document.getElementById('sfxGasp');
+    const sfxHeart = document.getElementById('sfxHeart');
+    const sfxLaughter = document.getElementById('sfxLaughter');
+
+    // Additional immersive sound effects
+    const sfxMorning = document.getElementById('sfxMorning');
+    const sfxVillage = document.getElementById('sfxVillage');
+    const sfxRiver = document.getElementById('sfxRiver');
+    const sfxCelebration = document.getElementById('sfxCelebration');
+    const sfxFriendship = document.getElementById('sfxFriendship');
 
     // Helper to play a sound from the start
     function playSound(audio) {
-      audio.currentTime = 0;
-      audio.play();
+      // Ensure Web Audio context is initialized
+      initializeAudioContext();
+      
+      if (audio && audio.id) {
+        console.log('Attempting to play:', audio.id);
+        
+        // Try to play the actual audio element first, but use very short timeout
+        let soundPlayedSuccessfully = false;
+        
+        try {
+          audio.currentTime = 0;
+          const playPromise = audio.play();
+          if (playPromise !== undefined) {
+            playPromise.then(() => {
+              console.log('Successfully played:', audio.id);
+              soundPlayedSuccessfully = true;
+            }).catch(e => {
+              console.log('Audio element failed for:', audio.id, '- using Web Audio fallback');
+              if (!soundPlayedSuccessfully) {
+                playWebAudioFallback(audio.id);
+              }
+            });
+          }
+        } catch (e) {
+          console.log('Audio element error for:', audio.id, '- using Web Audio fallback');
+          playWebAudioFallback(audio.id);
+        }
+        
+        // Use Web Audio as primary fallback after very short delay
+        setTimeout(() => {
+          if (!soundPlayedSuccessfully) {
+            console.log('Using Web Audio fallback for:', audio.id);
+            playWebAudioFallback(audio.id);
+          }
+        }, 50);
+      } else {
+        console.log('Audio element not found - using Web Audio fallback');
+        playWebAudioFallback('default');
+      }
+    }
+
+    // Initialize Web Audio context on first user interaction
+    let audioContextInitialized = false;
+    function initializeAudioContext() {
+      if (!audioContextInitialized) {
+        try {
+          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          if (audioContext.state === 'suspended') {
+            audioContext.resume();
+          }
+          audioContextInitialized = true;
+          console.log('Web Audio API initialized');
+        } catch (e) {
+          console.log('Web Audio API not available');
+        }
+      }
+    }
+
+    // Enhanced Web Audio fallback with specific sounds for each type
+    function playWebAudioFallback(audioId) {
+      console.log('Playing Web Audio fallback for:', audioId);
+      
+      // Make sure we have a valid audioId string
+      const id = audioId || 'default';
+      
+      if (id.includes('Victory') || id.includes('Celebration')) {
+        createSpecialBeep('victory');
+      } else if (id.includes('Loss') || id.includes('Warning')) {
+        createSpecialBeep('loss');
+      } else if (id.includes('Points') || id.includes('Milestone')) {
+        createSpecialBeep('points');
+      } else if (id.includes('Energy')) {
+        if (id.includes('Gain')) {
+          createSimpleBeep(440, 150); // Ascending for gain
+          setTimeout(() => createSimpleBeep(523, 100), 100);
+        } else {
+          createSimpleBeep(330, 200); // Descending for loss
+          setTimeout(() => createSimpleBeep(293, 150), 120);
+        }
+      } else if (id.includes('Movement') || id.includes('Walk')) {
+        // Create footstep rhythm - two distinct steps
+        createSimpleBeep(200, 60);
+        setTimeout(() => createSimpleBeep(180, 60), 200);
+        setTimeout(() => createSimpleBeep(200, 60), 400);
+        setTimeout(() => createSimpleBeep(180, 60), 600);
+      } else if (id.includes('Water') || id.includes('Splash') || id.includes('River')) {
+        // Water sounds - bubbly multiple quick beeps
+        for (let i = 0; i < 6; i++) {
+          setTimeout(() => createSimpleBeep(300 + (Math.random() * 100), 40), i * 30);
+        }
+      } else if (id.includes('Wind')) {
+        // Wind sound - enhanced low oscillating tone
+        createEnhancedWindSound();
+      } else if (id.includes('Birds')) {
+        // Bird sounds - more realistic chirping sequence
+        createEnhancedBirdSound();
+      } else if (id.includes('Snake')) {
+        // Enhanced snake hiss - realistic hissing sound
+        createEnhancedSnakeHiss();
+      } else if (id.includes('Dog')) {
+        // Enhanced dog bark - realistic bark pattern
+        createEnhancedDogBark();
+      } else if (id.includes('Glass')) {
+        // Enhanced glass break - realistic shattering sound
+        createEnhancedGlassBreak();
+      } else if (id.includes('Button') || id.includes('Click')) {
+        createSimpleBeep(440, 50);
+      } else if (id.includes('Heart')) {
+        // Heartbeat - realistic rhythm
+        createSimpleBeep(220, 80);
+        setTimeout(() => createSimpleBeep(240, 60), 100);
+        setTimeout(() => createSimpleBeep(220, 80), 600);
+        setTimeout(() => createSimpleBeep(240, 60), 700);
+      } else if (id.includes('Laughter')) {
+        // Laughter - more expressive ascending notes
+        const notes = [400, 450, 500, 480, 520];
+        notes.forEach((note, i) => {
+          setTimeout(() => createSimpleBeep(note, 100), i * 120);
+        });
+      } else if (id.includes('Crowd') || id.includes('Community')) {
+        // Crowd sounds - overlapping voices simulation
+        for (let i = 0; i < 4; i++) {
+          setTimeout(() => createSimpleBeep(300 + (i * 30), 150), i * 80);
+        }
+      } else if (id.includes('Rest')) {
+        // Gentle restful sound
+        createSimpleBeep(392, 200);
+        setTimeout(() => createSimpleBeep(349, 300), 150);
+      } else if (id.includes('Throw')) {
+        // Throwing whoosh sound
+        createSimpleBeep(600, 50);
+        setTimeout(() => createSimpleBeep(400, 100), 50);
+        setTimeout(() => createSimpleBeep(200, 150), 100);
+      } else {
+        createSimpleBeep(349, 150); // Default sound
+      }
+    }
+
+    // Create enhanced wind sound effect
+    function createEnhancedWindSound() {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        const filter = audioContext.createBiquadFilter();
+        
+        oscillator.connect(filter);
+        filter.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        // More realistic wind with frequency modulation
+        oscillator.frequency.setValueAtTime(80, audioContext.currentTime);
+        oscillator.frequency.linearRampToValueAtTime(120, audioContext.currentTime + 0.5);
+        oscillator.frequency.linearRampToValueAtTime(90, audioContext.currentTime + 1);
+        oscillator.frequency.linearRampToValueAtTime(110, audioContext.currentTime + 1.5);
+        oscillator.type = 'sawtooth';
+        
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(200, audioContext.currentTime);
+        filter.Q.setValueAtTime(0.5, audioContext.currentTime);
+        
+        // More natural wind envelope
+        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.03, audioContext.currentTime + 0.2);
+        gainNode.gain.linearRampToValueAtTime(0.06, audioContext.currentTime + 0.8);
+        gainNode.gain.linearRampToValueAtTime(0.02, audioContext.currentTime + 1.2);
+        gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1.8);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 1.8);
+      } catch (e) {
+        console.log('Enhanced wind sound failed, using simple beep');
+        createSimpleBeep(100, 500);
+      }
+    }
+
+    // Create enhanced bird sound effect
+    function createEnhancedBirdSound() {
+      // Create multiple bird chirps with different frequencies and timing
+      const birdSequences = [
+        { freq: 1200, duration: 80, delay: 0 },
+        { freq: 1000, duration: 60, delay: 100 },
+        { freq: 1400, duration: 70, delay: 200 },
+        { freq: 900, duration: 90, delay: 350 },
+        { freq: 1100, duration: 50, delay: 500 },
+        { freq: 1300, duration: 80, delay: 650 }
+      ];
+      
+      birdSequences.forEach(bird => {
+        setTimeout(() => {
+          try {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // Create chirp-like frequency modulation
+            oscillator.frequency.setValueAtTime(bird.freq, audioContext.currentTime);
+            oscillator.frequency.linearRampToValueAtTime(bird.freq * 1.3, audioContext.currentTime + bird.duration / 3000);
+            oscillator.frequency.linearRampToValueAtTime(bird.freq * 0.8, audioContext.currentTime + bird.duration / 1000);
+            oscillator.type = 'sine';
+            
+            // Quick attack, fast decay for chirp effect
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.08, audioContext.currentTime + 0.01);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + bird.duration / 1000);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + bird.duration / 1000);
+          } catch (e) {
+            createSimpleBeep(bird.freq, bird.duration);
+          }
+        }, bird.delay);
+      });
+    }
+
+    // Create enhanced snake hiss sound
+    function createEnhancedSnakeHiss() {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // Create white noise for hiss base
+        const bufferSize = audioContext.sampleRate * 1.2; // 1.2 seconds
+        const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+        const output = buffer.getChannelData(0);
+        
+        // Generate noise with specific characteristics for snake hiss
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = (Math.random() * 2 - 1) * 0.5;
+        }
+        
+        const whiteNoise = audioContext.createBufferSource();
+        whiteNoise.buffer = buffer;
+        
+        // Band-pass filter to create hiss frequency range
+        const filter = audioContext.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(4000, audioContext.currentTime); // High frequency hiss
+        filter.Q.setValueAtTime(1.5, audioContext.currentTime);
+        
+        // Second filter for more realistic snake hiss
+        const filter2 = audioContext.createBiquadFilter();
+        filter2.type = 'highpass';
+        filter2.frequency.setValueAtTime(2000, audioContext.currentTime);
+        
+        const gainNode = audioContext.createGain();
+        
+        // Connect the chain
+        whiteNoise.connect(filter);
+        filter.connect(filter2);
+        filter2.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        // Envelope for realistic hiss
+        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.15, audioContext.currentTime + 0.1);
+        gainNode.gain.linearRampToValueAtTime(0.12, audioContext.currentTime + 0.6);
+        gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1.2);
+        
+        whiteNoise.start(audioContext.currentTime);
+        whiteNoise.stop(audioContext.currentTime + 1.2);
+        
+        console.log('Enhanced snake hiss created');
+      } catch (e) {
+        console.log('Enhanced snake hiss failed, using fallback');
+        createNoiseSound(3000, 800);
+      }
+    }
+
+    // Create enhanced dog bark sound
+    function createEnhancedDogBark() {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // Create multiple bark components
+        const barkSounds = [
+          { freq: 150, duration: 0.15, delay: 0 },      // First bark - low
+          { freq: 200, duration: 0.12, delay: 0.02 },   // Bark harmonic
+          { freq: 300, duration: 0.1, delay: 0.05 },    // Higher harmonic
+          { freq: 180, duration: 0.2, delay: 0.4 },     // Second bark
+          { freq: 220, duration: 0.15, delay: 0.42 },   // Second bark harmonic
+        ];
+        
+        barkSounds.forEach(bark => {
+          setTimeout(() => {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            const filter = audioContext.createBiquadFilter();
+            
+            oscillator.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // Use sawtooth for more aggressive bark sound
+            oscillator.type = 'sawtooth';
+            oscillator.frequency.setValueAtTime(bark.freq, audioContext.currentTime);
+            
+            // Add some frequency modulation for realism
+            oscillator.frequency.linearRampToValueAtTime(bark.freq * 1.2, audioContext.currentTime + bark.duration * 0.3);
+            oscillator.frequency.linearRampToValueAtTime(bark.freq * 0.8, audioContext.currentTime + bark.duration);
+            
+            // Low-pass filter to soften the sound
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(800, audioContext.currentTime);
+            
+            // Sharp attack, quick decay for bark effect
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.01);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + bark.duration);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + bark.duration);
+          }, bark.delay * 1000);
+        });
+        
+        console.log('Enhanced dog bark created');
+      } catch (e) {
+        console.log('Enhanced dog bark failed, using fallback');
+        createSimpleBeep(180, 150);
+        setTimeout(() => createSimpleBeep(220, 120), 100);
+        setTimeout(() => createSimpleBeep(180, 180), 400);
+      }
+    }
+
+    // Create enhanced glass breaking sound
+    function createEnhancedGlassBreak() {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // Create multiple glass breaking components
+        const glassComponents = [
+          { type: 'initial', freq: 2000, duration: 0.1, delay: 0 },     // Initial impact
+          { type: 'shatter', freq: 1500, duration: 0.2, delay: 0.05 },  // Main shatter
+          { type: 'shatter', freq: 1800, duration: 0.15, delay: 0.1 },  // Secondary shatter
+          { type: 'tinkle', freq: 3000, duration: 0.3, delay: 0.2 },    // High tinkles
+          { type: 'tinkle', freq: 2500, duration: 0.25, delay: 0.25 },  // More tinkles
+          { type: 'tinkle', freq: 3500, duration: 0.2, delay: 0.3 },    // Final tinkles
+        ];
+        
+        glassComponents.forEach(glass => {
+          setTimeout(() => {
+            if (glass.type === 'initial' || glass.type === 'shatter') {
+              // Use noise for shattering sound
+              const bufferSize = audioContext.sampleRate * glass.duration;
+              const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+              const output = buffer.getChannelData(0);
+              
+              for (let i = 0; i < bufferSize; i++) {
+                output[i] = (Math.random() * 2 - 1) * 0.7;
+              }
+              
+              const whiteNoise = audioContext.createBufferSource();
+              whiteNoise.buffer = buffer;
+              
+              const filter = audioContext.createBiquadFilter();
+              filter.type = 'bandpass';
+              filter.frequency.setValueAtTime(glass.freq, audioContext.currentTime);
+              filter.Q.setValueAtTime(2, audioContext.currentTime);
+              
+              const gainNode = audioContext.createGain();
+              
+              whiteNoise.connect(filter);
+              filter.connect(gainNode);
+              gainNode.connect(audioContext.destination);
+              
+              gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+              gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + glass.duration);
+              
+              whiteNoise.start(audioContext.currentTime);
+              whiteNoise.stop(audioContext.currentTime + glass.duration);
+            } else {
+              // Use oscillator for tinkle sounds
+              const oscillator = audioContext.createOscillator();
+              const gainNode = audioContext.createGain();
+              
+              oscillator.connect(gainNode);
+              gainNode.connect(audioContext.destination);
+              
+              oscillator.type = 'sine';
+              oscillator.frequency.setValueAtTime(glass.freq, audioContext.currentTime);
+              oscillator.frequency.exponentialRampToValueAtTime(glass.freq * 0.5, audioContext.currentTime + glass.duration);
+              
+              gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+              gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.01);
+              gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + glass.duration);
+              
+              oscillator.start(audioContext.currentTime);
+              oscillator.stop(audioContext.currentTime + glass.duration);
+            }
+          }, glass.delay * 1000);
+        });
+        
+        console.log('Enhanced glass break created');
+      } catch (e) {
+        console.log('Enhanced glass break failed, using fallback');
+        createNoiseSound(2000, 200);
+        setTimeout(() => createSimpleBeep(1500, 150), 100);
+        setTimeout(() => createSimpleBeep(3000, 200), 200);
+        setTimeout(() => createSimpleBeep(2500, 100), 350);
+      }
+    }
+
+    // Create wind sound effect (keeping original for backward compatibility)
+    function createWindSound() {
+      createEnhancedWindSound();
+    }
+
+    // Create bird sound effect (keeping original for backward compatibility)  
+    function createBirdSound() {
+      createEnhancedBirdSound();
+    }
+
+    // Create noise-based sound effect
+    function createNoiseSound(baseFreq, duration) {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const bufferSize = audioContext.sampleRate * (duration / 1000);
+        const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+        const output = buffer.getChannelData(0);
+        
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = Math.random() * 2 - 1;
+        }
+        
+        const whiteNoise = audioContext.createBufferSource();
+        whiteNoise.buffer = buffer;
+        
+        const filter = audioContext.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(baseFreq, audioContext.currentTime);
+        
+        const gainNode = audioContext.createGain();
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration / 1000);
+        
+        whiteNoise.connect(filter);
+        filter.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        whiteNoise.start(audioContext.currentTime);
+        whiteNoise.stop(audioContext.currentTime + duration / 1000);
+      } catch (e) {
+        console.log('Noise sound failed, using simple beep');
+        createSimpleBeep(baseFreq, duration);
+      }
+    }
+
+    // Create a simple beep sound using Web Audio API as fallback
+    function createSimpleBeep(frequency = 440, duration = 200) {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+        oscillator.type = 'sine';
+        
+        // Create a more pleasant sound envelope
+        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.01);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration / 1000);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + duration / 1000);
+        
+        console.log(`Created beep: ${frequency}Hz for ${duration}ms`);
+      } catch (e) {
+        console.log('Web Audio API not available');
+      }
+    }
+
+    // Create complex beep for special events
+    function createSpecialBeep(type) {
+      if (type === 'victory') {
+        // Play ascending notes for victory
+        createSimpleBeep(523, 150); // C
+        setTimeout(() => createSimpleBeep(659, 150), 100); // E
+        setTimeout(() => createSimpleBeep(784, 300), 200); // G
+      } else if (type === 'loss') {
+        // Play descending notes for loss
+        createSimpleBeep(440, 200); // A
+        setTimeout(() => createSimpleBeep(370, 200), 150); // F#
+        setTimeout(() => createSimpleBeep(330, 400), 300); // E
+      } else if (type === 'points') {
+        // Play quick ascending beep for points
+        createSimpleBeep(440, 100);
+        setTimeout(() => createSimpleBeep(523, 100), 80);
+      }
+    }
+
+    // Helper to play ambient sounds with volume control
+    function playAmbient(audio, volume = 0.3) {
+      if (audio) {
+        audio.volume = volume;
+        audio.play().catch(e => console.log('Ambient audio play failed:', e));
+      }
+    }
+
+    // Helper to stop ambient sounds
+    function stopAmbient(audio) {
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+    }
+
+    // Helper to change energy with sound feedback
+    function changeEnergy(amount) {
+      const previousEnergy = energy;
+      energy += amount;
+      
+      // Play appropriate sound based on energy change
+      if (amount > 0) {
+        playSound(sfxEnergyGain);
+      } else if (amount < 0) {
+        playSound(sfxEnergyLoss);
+      }
+      
+      // Show visual feedback if energy hits critical levels
+      if (energy <= 1 && previousEnergy > 1) {
+        playSound(sfxWarning);
+      }
+      
+      return energy;
     }
 
     // Show a directions cut scene at the start of the game (now with two screens)
@@ -929,7 +1803,7 @@
                 <strong>${difficultySettings[currentDifficulty].name} Mode:</strong><br>
                 ${difficultySettings[currentDifficulty].description}
               </div>
-              <span style='color:#2E9DF7;'>Journey Points:</span> Make good choices to earn points. You need <b>${difficultySettings[currentDifficulty].winCondition} Journey Points</b> to win and help the village get a new well!<br><br>
+              <span style='color:#2E9DF7;'>Journey Points:</span> Make good choices to earn points and help the village get a new well!<br><br>
               <span style='color:#159A48;'>Energy:</span> You start with <b>${difficultySettings[currentDifficulty].startingEnergy} Energy</b>. If you lose all your energy, Amina must turn back and her family won't get water that day.<br><br>
               The more people play and help Amina, the more is donated to <a href='https://www.charitywater.org/' target='_blank' style='color:#2E9DF7;' aria-label="Visit charity: water website to learn more and donate">Charity: Water</a>.<br><br>
               <span style='color:#FFC907;'>Are you ready to help Amina on her journey?</span>
@@ -942,6 +1816,10 @@
         document.getElementById('startJourneyBtn').onclick = function() {
           overlay.remove();
           updateDifficultyDisplay();
+          // Play morning awakening sound to start the journey
+          setTimeout(() => playSound(sfxMorning), 200);
+          // Show an opening fact to set the educational tone
+          showSpecificFact("Every day, 200 million women and girls spend hours walking to collect water. Today, you'll experience their journey.");
           showStep();
         };
       };
@@ -960,16 +1838,19 @@
       score = 0; // Reset Journey Points to 0
       lastScore = 0;
       returning = false; // Reset return flag
+      
+      // Update UI to reflect selected difficulty
+      updateDifficultyDisplay();
       setBackground(currentStep);
       moveCharacter(currentStep);
-      updatePathMarker(currentStep);
       choicesContainer.innerHTML = '';
       // Hide the well scene if it exists
       hideWellScene();
-      ambientWind.volume = 0.3;
-      ambientWind.play();
-      ambientFootsteps.volume = 0.2;
-      ambientFootsteps.play();
+      // Setup milestone markers as visual indicators only
+      setupMilestoneMarkers();
+      
+      // NO ambient sounds playing automatically - only interactive sounds when triggered
+      
       // Show the directions cut scene first
       showDirectionsCutScene();
     }
@@ -977,42 +1858,72 @@
     // Update difficulty display in UI
     function updateDifficultyDisplay() {
       const difficultyDisplay = document.getElementById('difficultyDisplay');
-      const winConditionDisplay = document.getElementById('winConditionDisplay');
       const scoreValue = document.getElementById('scoreValue');
+      const goalValue = document.getElementById('goalValue');
       
       if (difficultyDisplay) {
         difficultyDisplay.textContent = `${difficultySettings[currentDifficulty].name} Mode`;
       }
-      if (winConditionDisplay) {
-        winConditionDisplay.textContent = difficultySettings[currentDifficulty].winCondition;
-      }
       if (scoreValue) {
         scoreValue.textContent = score;
+      }
+      if (goalValue) {
+        goalValue.textContent = difficultySettings[currentDifficulty].winCondition;
       }
     }
 
     // Stop all ambient sounds
     function stopAmbient() {
-      ambientWind.pause();
-      ambientWind.currentTime = 0;
-      ambientFootsteps.pause();
-      ambientFootsteps.currentTime = 0;
-      ambientSchoolBell.pause();
-      ambientSchoolBell.currentTime = 0;
+      // Stop individual ambient sounds if they exist
+      if (ambientWind) {
+        ambientWind.pause();
+        ambientWind.currentTime = 0;
+      }
+      if (ambientFootsteps) {
+        ambientFootsteps.pause(); 
+        ambientFootsteps.currentTime = 0;
+      }
+      if (ambientWater) {
+        ambientWater.pause();
+        ambientWater.currentTime = 0;
+      }
     }
 
-    // Array of "Did You Know?" facts
+    // Array of "Did You Know?" facts - expanded for better educational content
     const didYouKnowFacts = [
-      "1 in 10 people lack access to clean water.",
+      // Water crisis facts
+      "1 in 10 people worldwide lack access to clean water - that's 771 million people!",
+      "2 billion people don't have safely managed drinking water at home.",
       "Girls in sub-Saharan Africa spend 4x more time fetching water than boys.",
+      "Women and girls spend 200 million hours every day collecting water.",
       "Access to clean water means more time for school and play.",
       "Diseases from dirty water kill more people every year than all forms of violence, including war.",
-      // New facts about charity: water
-      "Charity: water has funded over 111,000 water projects around the world.",
+      "Every 2 minutes, a child dies from a water-related disease.",
+      "A person can live about a month without food, but only about a week without water.",
+      
+      // Journey and impact facts
+      "Many girls walk up to 6 hours every day just to collect water for their families.",
+      "The water collected is often contaminated and makes people sick.",
+      "When communities get clean water, girls' school attendance increases by 15%.",
+      "Clean water reduces childhood mortality by up to 50%.",
+      "Access to clean water can increase family income by up to 20%.",
+      "One clean water project can serve an entire village for 20+ years.",
+      
+      // charity: water specific facts
+      "charity: water has funded over 111,000 water projects around the world.",
       "Thanks to charity: water, more than 15 million people now have clean water.",
       "100% of public donations to charity: water go directly to clean water projects.",
-      "Charity: water works in 29 countries to help people get safe water.",
+      "charity: water works in 29 countries to help people get safe water.",
       "Clean water from charity: water projects helps kids spend more time in school.",
+      "charity: water uses GPS and photos to track every project they fund.",
+      "Since 2006, charity: water has raised over $740 million for clean water projects.",
+      
+      // Solutions and hope
+      "Just $30 can provide one person with clean water for life.",
+      "Building a well costs about the same as a small car but serves hundreds of people.",
+      "Solar-powered water systems work even in remote areas without electricity.",
+      "Community training ensures water projects last for decades.",
+      "When girls don't have to walk for water, they can go to school and become leaders.",
       "Learn more inspiring stories at <a href='https://www.charitywater.org/stories' target='_blank'>charitywater.org/stories</a>."
     ];
 
@@ -1024,6 +1935,10 @@
       box.innerHTML = `<strong>Did You Know?</strong> ${didYouKnowFacts[factIndex]}`;
       box.style.display = 'block';
       box.style.opacity = '1';
+      
+      // Play educational fact alert sound
+      playSound(sfxFactAlert);
+      
       // Show the fact for difficulty-based time
       const displayTime = difficultySettings[currentDifficulty].factDisplayTime;
       setTimeout(() => {
@@ -1032,10 +1947,30 @@
       }, displayTime);
     }
 
+    // Show a specific Did You Know fact (for cut scenes)
+    function showSpecificFact(factText, displayTimeMs = null) {
+      const box = document.getElementById('didYouKnow');
+      box.innerHTML = `<strong>Did You Know?</strong> ${factText}`;
+      box.style.display = 'block';
+      box.style.opacity = '1';
+      // Use custom display time or default to difficulty setting
+      const displayTime = displayTimeMs || difficultySettings[currentDifficulty].factDisplayTime;
+      setTimeout(() => {
+        box.style.opacity = '0';
+        setTimeout(() => { box.style.display = 'none'; }, 500);
+      }, displayTime);
+    }
+
     function updateScoreDisplay() {
       const scoreValue = document.getElementById('scoreValue');
+      const goalValue = document.getElementById('goalValue');
       if (!scoreValue) return;
+      
       scoreValue.textContent = score;
+      if (goalValue) {
+        goalValue.textContent = difficultySettings[currentDifficulty].winCondition;
+      }
+      
       // Show feedback if score changed
       if (score !== lastScore) {
         const diff = score - lastScore;
@@ -1045,6 +1980,12 @@
         feedback.style.fontWeight = "bold";
         feedback.style.marginLeft = "8px";
         scoreValue.parentElement.appendChild(feedback);
+        
+        // Play sound based on score change
+        if (diff > 0) {
+          playSound(sfxPointsEarned);
+        }
+        
         setTimeout(() => feedback.remove(), 1200);
         lastScore = score;
       }
@@ -1103,7 +2044,6 @@
       setBackground(currentStep);
       // Move the character and marker to match the story's progress on the map
       moveCharacter(currentStep);
-      updatePathMarker(currentStep);
 
       // If the game is over, show the ending
       if (
@@ -1131,6 +2071,42 @@
       if (step.text.includes("broken glass") && wentAlone) {
         choicesToShow = step.choices.filter(choice => !choice.text.includes("Amina"));
       }
+      // Play contextual sounds based on the story step
+      if (step.text.includes("snake")) {
+        setTimeout(() => playSound(sfxSnakeHiss), 200);
+        setTimeout(() => playWebAudioFallback('sfxSnakeHiss'), 300); // Ensure snake sound plays
+      } else if (step.text.includes("river") || step.text.includes("water")) {
+        setTimeout(() => playSound(sfxWaterSplash), 200);
+      } else if (step.text.includes("wild dog")) {
+        setTimeout(() => playSound(sfxDogBark), 200);
+        setTimeout(() => playWebAudioFallback('sfxDogBark'), 300); // Ensure dog bark plays
+      } else if (step.text.includes("broken glass")) {
+        setTimeout(() => playSound(sfxGlassBreak), 200);
+        setTimeout(() => playWebAudioFallback('sfxGlassBreak'), 300); // Ensure glass sound plays
+      }
+      
+      // Add more ambient contextual sounds based on story content
+      if (step.text.includes("wake up early")) {
+        // Morning sounds - birds chirping
+        setTimeout(() => playSound(sfxBirds), 500);
+      } else if (step.text.includes("meet your friend Amina")) {
+        // Village friendship sounds
+        setTimeout(() => playSound(sfxVillage), 300);
+        setTimeout(() => playSound(sfxFriendship), 800);
+      } else if (step.text.includes("muddy patch")) {
+        // Wind sounds for outdoor challenge
+        setTimeout(() => playSound(sfxWind), 400);
+      } else if (step.text.includes("water source is busy")) {
+        // Community gathering sounds
+        setTimeout(() => playSound(sfxCrowd), 300);
+        setTimeout(() => playSound(sfxRiver), 700);
+      } else if (step.text.includes("made it to the water")) {
+        // Victory moment with water splash and river sounds
+        setTimeout(() => playSound(sfxRiver), 200);
+        setTimeout(() => playSound(sfxWaterSplash), 600);
+        setTimeout(() => playSound(sfxCelebration), 1000);
+      }
+      
       storyText.textContent = step.text;
       storyText.focus();
       choicesContainer.innerHTML = '';
@@ -1151,7 +2127,10 @@
           }
         });
         btn.onclick = () => {
-          playSound(sfxClick); // Play click sound
+          // Initialize audio context on first user interaction
+          initializeAudioContext();
+          
+          playSound(sfxButton); // Play button sound
           // If this is the 'Go alone' choice, show the cut scene and double points
           if (step.text.includes("Amina") && choice.text.includes("Go alone")) {
             showGoAloneScene(() => {
@@ -1276,11 +2255,12 @@
     }
 
     function updateStatus() {
-      // Show only Energy and Journey Points in the status bar
-      statusBar.textContent = `Energy: ${energy} | Journey Points: ${score}`;
+      // Show Energy and Journey Points with goal in the status bar
+      const winCondition = difficultySettings[currentDifficulty].winCondition;
+      statusBar.textContent = `Energy: ${energy} | Journey Points: ${score} / ${winCondition}`;
       
       // Announce status changes to screen readers
-      const announcement = `Current status: ${energy} energy remaining, ${score} journey points earned`;
+      const announcement = `Current status: ${energy} energy remaining, ${score} of ${winCondition} journey points earned`;
       const srAnnouncement = document.createElement('div');
       srAnnouncement.setAttribute('aria-live', 'polite');
       srAnnouncement.setAttribute('aria-atomic', 'true');
@@ -1303,11 +2283,28 @@
 
       // Check if player won based on difficulty settings
       if (currentStep === 7 && score >= winCondition) {
-        updatePathMarker(currentStep);
-        moveCharacter(currentStep);
+        // Move through the return journey positions gradually
+        setTimeout(() => moveCharacter(8), 500);   // Start journey back
+        setTimeout(() => moveCharacter(9), 1500);  // Halfway back
+        setTimeout(() => moveCharacter(10), 2500); // Almost home
+        setTimeout(() => moveCharacter(11), 3500); // Return to village
+        
         setBackground(currentStep);
-        showWellCelebrationScene();
-        storyText.innerHTML = `You made it! With clean water, your family is healthier and happier.<br><br><strong>${difficultySettings[currentDifficulty].name} Mode Completed!</strong>`;
+        showWellCelebrationScene(true, score, winCondition, difficultySettings[currentDifficulty].name);
+        
+        // Clear VICTORY message with prominent styling - now simplified since victory info is in the well scene
+        storyText.innerHTML = `
+          <div style="background: rgba(255, 255, 255, 0.9); padding: 15px; border-radius: 8px; color: #005073; text-align: center;">
+            <div style="font-size: 1.3em; font-weight: bold; margin-bottom: 10px; color: #4FCB53;">
+              🌟 Congratulations! You've helped transform a community! 🌟
+            </div>
+            <div style="font-size: 1em; line-height: 1.4;">
+              You made it! With clean water, your family is healthier and happier. Thanks to your choices, the village can now thrive!<br><br>
+              <span style="color: #2E9DF7; font-weight: bold;">Your journey makes a real difference in the world.</span>
+            </div>
+          </div>
+        `;
+        
         playSound(sfxVictory);
         const box = document.getElementById('didYouKnow');
         box.innerHTML = `<strong>Did You Know?</strong> ${didYouKnowFacts[didYouKnowFacts.length - 1]}`;
@@ -1338,10 +2335,24 @@
       }
       // If you finished the journey but have less than required points
       if (currentStep === 7 && score < winCondition) {
-        updatePathMarker(currentStep);
-        moveCharacter(currentStep);
+        moveCharacter(8); // Move to first return position even if not enough points
         setBackground(currentStep);
-        storyText.innerHTML = `You finished, but you need ${winCondition} Journey Points to win in ${difficultySettings[currentDifficulty].name} Mode. Try again!`;
+        
+        // Clear message for insufficient points
+        storyText.innerHTML = `
+          <div style="background: linear-gradient(135deg, #FF902A 0%, #F5402C 100%); color: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; text-align: center; box-shadow: 0 4px 12px rgba(245, 64, 44, 0.3);">
+            <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 8px;">😔 JOURNEY INCOMPLETE</div>
+            <div style="font-size: 1.2em; margin-bottom: 10px;">You reached the water, but didn't earn enough points</div>
+            <div style="background: rgba(255, 255, 255, 0.2); padding: 8px; border-radius: 6px; font-size: 1em;">
+              <strong>${difficultySettings[currentDifficulty].name} Mode:</strong> You earned <span style="color: #FFC907; font-weight: bold;">${score} Journey Points</span><br>
+              <span style="color: #FFC907;">You needed ${winCondition} points to win</span>
+            </div>
+          </div>
+          <div style="background: rgba(255, 255, 255, 0.9); padding: 15px; border-radius: 8px; color: #005073;">
+            You made it to the water source, but your choices along the way weren't optimal. Try again and make better decisions to help your village thrive!
+          </div>
+        `;
+        
         playSound(sfxLoss);
         const restart = document.createElement('button');
         restart.classList.add('choiceBtn');
@@ -1366,10 +2377,24 @@
       }
       // If energy is 0, show the Game Over cut scene
       if (energy <= 0) {
-        updatePathMarker(currentStep);
         moveCharacter(currentStep);
         setBackground(currentStep);
-        storyText.innerHTML = "You ran out of energy and couldn't continue. <br> Try again to learn how to stay safe.";
+        
+        // Clear GAME OVER message with prominent styling
+        storyText.innerHTML = `
+          <div style="background: linear-gradient(135deg, #8B0000 0%, #FF0000 100%); color: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; text-align: center; box-shadow: 0 4px 12px rgba(139, 0, 0, 0.4);">
+            <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 8px;">💔 GAME OVER</div>
+            <div style="font-size: 1.2em; margin-bottom: 10px;">You ran out of energy and couldn't continue</div>
+            <div style="background: rgba(255, 255, 255, 0.2); padding: 8px; border-radius: 6px; font-size: 1em;">
+              <strong>Energy Depleted:</strong> 0 energy remaining<br>
+              <span style="color: #FFC907;">You earned ${score} Journey Points before stopping</span>
+            </div>
+          </div>
+          <div style="background: rgba(255, 255, 255, 0.9); padding: 15px; border-radius: 8px; color: #005073;">
+            Without energy, you had to turn back. Your family will have to wait another day for water. Try again and make choices that preserve your energy!
+          </div>
+        `;
+        
         playSound(sfxLoss);
         // Show last fact (link to stories)
         const box = document.getElementById('didYouKnow');
@@ -1377,14 +2402,24 @@
         box.style.display = 'block';
         box.style.opacity = '1';
       } else {
-        updatePathMarker(6);
-        moveCharacter(backgroundImages.length - 1);
+        moveCharacter(8); // Move to first return position for successful completion
 
         // Show a special well scene at the end
-        showWellCelebrationScene();
+        showWellCelebrationScene(false, score, 0, 'Journey');
 
         // Only show a simple ending message (removed schoolProgress logic)
-        storyText.innerHTML = "You made it! With clean water, your family is healthier and happier.";
+        storyText.innerHTML = `
+          <div style="background: rgba(255, 255, 255, 0.9); padding: 15px; border-radius: 8px; color: #005073; text-align: center;">
+            <div style="font-size: 1.3em; font-weight: bold; margin-bottom: 10px; color: #4FCB53;">
+              🌟 Well done! You completed the journey! 🌟
+            </div>
+            <div style="font-size: 1em; line-height: 1.4;">
+              You made it! With clean water, your family is healthier and happier.<br><br>
+              <span style="color: #2E9DF7; font-weight: bold;">Every step of the journey matters.</span>
+            </div>
+          </div>
+        `;
+        
         playSound(sfxVictory);
         // Show last fact (link to stories)
         const box = document.getElementById('didYouKnow');
@@ -1417,24 +2452,59 @@
       if (scoreArea) {
         const winCondition = difficultySettings[currentDifficulty].winCondition;
         let msg = "";
+        let msgColor = "";
+        let statusIcon = "";
+        
         if (score >= winCondition + 5) {
-          msg = `Amazing! You exceeded the ${difficultySettings[currentDifficulty].name} mode goal!`;
+          msg = `Outstanding! You exceeded the goal by ${score - winCondition} points!`;
+          msgColor = "#4FCB53";
+          statusIcon = "🌟";
         } else if (score >= winCondition) {
-          msg = `Great job! You completed ${difficultySettings[currentDifficulty].name} mode successfully!`;
+          msg = `Excellent! You successfully completed ${difficultySettings[currentDifficulty].name} mode!`;
+          msgColor = "#159A48";
+          statusIcon = "✅";
+        } else if (score >= winCondition - 2) {
+          msg = `So close! You were only ${winCondition - score} points away from winning!`;
+          msgColor = "#FF902A";
+          statusIcon = "⚡";
         } else {
-          msg = `Try again to reach ${winCondition} points in ${difficultySettings[currentDifficulty].name} mode!`;
+          msg = `Keep trying! You need ${winCondition - score} more points to win!`;
+          msgColor = "#F5402C";
+          statusIcon = "🎯";
         }
-        scoreArea.innerHTML = `<div style="font-size: 0.9em; color: #666; margin-bottom: 4px;">
-          ${difficultySettings[currentDifficulty].name} Mode - Need ${winCondition} points to win
-        </div>Journey Points: <span id="scoreValue">${score}</span> <br><span style="color:#159A48;">${msg}</span>`;
+        
+        scoreArea.innerHTML = `
+          <div style="background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 10px; border: 2px solid ${msgColor}; margin-bottom: 10px;">
+            <div style="font-size: 1.1em; color: #666; margin-bottom: 8px; font-weight: bold;">
+              ${statusIcon} ${difficultySettings[currentDifficulty].name} Mode Results
+            </div>
+            <div style="font-size: 1.3em; margin-bottom: 8px;">
+              Journey Points: <span style="color: ${msgColor}; font-weight: bold;">${score}</span> / ${winCondition}
+            </div>
+            <div style="color: ${msgColor}; font-weight: bold; font-size: 1em;">
+              ${msg}
+            </div>
+          </div>
+        `;
       }
     }
 
-    // Show a well celebration scene at the end of the game
-    function showWellCelebrationScene() {
+    // Show a well celebration scene at the end of the game with victory information
+    function showWellCelebrationScene(isVictory = false, score = 0, winCondition = 0, difficulty = 'Normal') {
       // Remove any previous well scene if present
       let oldWell = document.getElementById('wellCelebrationScene');
       if (oldWell) oldWell.remove();
+
+      // Play celebration sounds based on victory status
+      if (isVictory) {
+        playSound(sfxCelebration);
+        setTimeout(() => playSound(sfxWaterSplash), 500);
+        setTimeout(() => playSound(sfxCommunity), 1000);
+        setTimeout(() => playSound(sfxLaughter), 1500);
+      } else {
+        playSound(sfxCommunity);
+        setTimeout(() => playSound(sfxWaterSplash), 400);
+      }
 
       // Create a new div for the well scene
       const wellDiv = document.createElement('div');
@@ -1442,23 +2512,86 @@
       wellDiv.style.position = 'absolute';
       wellDiv.style.left = '50%';
       wellDiv.style.top = '50%';
-      wellDiv.style.transform = 'translate(-50%, -40%)';
-      wellDiv.style.zIndex = '20';
-      wellDiv.style.background = 'rgba(255,255,255,0.95)';
-      wellDiv.style.borderRadius = '12px';
-      wellDiv.style.boxShadow = '0 4px 24px #0002';
-      wellDiv.style.padding = '18px 24px 12px 24px';
+      wellDiv.style.transform = 'translate(-50%, -50%)';
+      wellDiv.style.zIndex = '25';
+      wellDiv.style.background = 'rgba(255,255,255,0.98)';
+      wellDiv.style.borderRadius = '15px';
+      wellDiv.style.boxShadow = '0 6px 30px rgba(0,0,0,0.3)';
+      wellDiv.style.padding = '25px 30px';
       wellDiv.style.textAlign = 'center';
+      wellDiv.style.maxWidth = '500px';
+      wellDiv.style.border = isVictory ? '3px solid #4FCB53' : '3px solid #2E9DF7';
 
-      // SVG well and happy people
-      wellDiv.innerHTML = `
-        <img src="img/Girl with cup of water..jpg" alt="Girl celebrating with clean water" style="max-width:180px; height:auto; margin-bottom:12px; border-radius:12px; border:3px solid #FFC907;">
-        <div style="color:#2E9DF7; font-size:1.2em; font-weight:bold; margin-top:8px;">
-          🎉 Thanks to <span style="color:#FFC907;">charity: water</span>, your village has a new well! 🎉<br>
-          <span style="color:#159A48;">Now you don't have to walk so far for water.</span>
-        </div>
-      `;
+      // Create different content based on victory status
+      if (isVictory) {
+        wellDiv.innerHTML = `
+          <div style="background: linear-gradient(135deg, #4FCB53 0%, #159A48 100%); color: white; padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+            <div style="font-size: 1.6em; font-weight: bold; margin-bottom: 5px;">🎉 VICTORY! 🎉</div>
+            <div style="font-size: 1.1em;">You successfully completed the water journey!</div>
+          </div>
+          
+          <img src="img/Girl with cup of water..jpg" alt="Girl celebrating with clean water" style="max-width:150px; height:auto; margin-bottom:15px; border-radius:10px; border:3px solid #FFC907;">
+          
+          <div style="background: rgba(79, 203, 83, 0.1); padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 2px solid #4FCB53;">
+            <div style="font-size: 1.1em; font-weight: bold; color: #005073; margin-bottom: 5px;">
+              ${difficulty} Mode Completed!
+            </div>
+            <div style="font-size: 1em; color: #005073;">
+              You earned <span style="color: #4FCB53; font-weight: bold;">${score} Journey Points</span> (needed ${winCondition})
+            </div>
+          </div>
+          
+          <div style="color:#2E9DF7; font-size:1.1em; font-weight:bold;">
+            🎉 Thanks to <span style="color:#FFC907;">charity: water</span>, your village has a new well! 🎉<br>
+            <span style="color:#159A48; font-size: 0.95em;">Now you don't have to walk so far for water.</span>
+          </div>
+          
+          <div style="margin-top: 15px; padding: 10px; background: rgba(255, 201, 7, 0.1); border-radius: 6px; border: 1px solid #FFC907;">
+            <div style="font-size: 0.9em; color: #005073;">
+              <strong>Your choices made a difference!</strong><br>
+              Clean water transforms communities around the world.
+            </div>
+          </div>
+        `;
+      } else {
+        wellDiv.innerHTML = `
+          <div style="background: linear-gradient(135deg, #2E9DF7 0%, #005073 100%); color: white; padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+            <div style="font-size: 1.6em; font-weight: bold; margin-bottom: 5px;">🌟 SUCCESS! 🌟</div>
+            <div style="font-size: 1.1em;">You completed the water journey!</div>
+          </div>
+          
+          <img src="img/Girl with cup of water..jpg" alt="Girl celebrating with clean water" style="max-width:150px; height:auto; margin-bottom:15px; border-radius:10px; border:3px solid #FFC907;">
+          
+          <div style="background: rgba(46, 157, 247, 0.1); padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 2px solid #2E9DF7;">
+            <div style="font-size: 1.1em; font-weight: bold; color: #005073; margin-bottom: 5px;">
+              Journey Completed!
+            </div>
+            <div style="font-size: 1em; color: #005073;">
+              You earned <span style="color: #2E9DF7; font-weight: bold;">${score} Journey Points</span>
+            </div>
+          </div>
+          
+          <div style="color:#2E9DF7; font-size:1.1em; font-weight:bold;">
+            🎉 Thanks to <span style="color:#FFC907;">charity: water</span>, your village has clean water! 🎉<br>
+            <span style="color:#159A48; font-size: 0.95em;">Your family is healthier and happier.</span>
+          </div>
+        `;
+      }
+      
       document.getElementById('gameContainer').appendChild(wellDiv);
+      
+      // Auto-hide after 8 seconds to show the main content underneath
+      setTimeout(() => {
+        if (wellDiv.parentNode) {
+          wellDiv.style.transition = 'opacity 1s ease-out';
+          wellDiv.style.opacity = '0';
+          setTimeout(() => {
+            if (wellDiv.parentNode) {
+              wellDiv.remove();
+            }
+          }, 1000);
+        }
+      }, 8000);
     }
 
     // Optionally hide the well scene if needed
@@ -1571,6 +2704,10 @@
       let oldOverlay = document.getElementById('glassCutScene');
       if (oldOverlay) oldOverlay.remove();
 
+      // Play glass breaking and gasp sounds
+      playSound(sfxGlassBreak);
+      setTimeout(() => playSound(sfxGasp), 400);
+
       // Create a new overlay div
       const overlay = document.createElement('div');
       overlay.id = 'glassCutScene';
@@ -1613,6 +2750,8 @@
         // Always subtract energy and journey point for running through glass based on difficulty
         energy = energy - difficultySettings[currentDifficulty].energyPenalty;
         score = score - 1; // Always subtract exactly 1 Journey Point (not difficulty-based)
+        // Show a relevant fact about injuries from unsafe paths
+        showSpecificFact("Every year, thousands of people are injured while walking long distances to collect water. Safe water access means safer communities.");
         if (typeof continueCallback === 'function') {
           continueCallback(); // Continue the journey
         }
@@ -1624,6 +2763,10 @@
       // Remove any previous overlay if present
       let oldOverlay = document.getElementById('broomCutScene');
       if (oldOverlay) oldOverlay.remove();
+
+      // Play collaborative working sounds
+      playSound(sfxThrow); // Sweeping sound
+      setTimeout(() => playSound(sfxLaughter), 600); // Happy teamwork
 
       // Create a new overlay div
       const overlay = document.createElement('div');
@@ -1667,6 +2810,8 @@
       // Add event listener for the Continue button
       document.getElementById('continueBroomBtn').onclick = function() {
         overlay.remove(); // Remove the overlay
+        // Show a fact about teamwork and community
+        showSpecificFact("When communities work together on water projects, they're 5x more likely to succeed long-term. Teamwork creates lasting change!");
         if (typeof continueCallback === 'function') {
           continueCallback(); // Continue the journey
         }
@@ -1678,6 +2823,11 @@
       // Remove any previous overlay if present
       let oldOverlay = document.getElementById('snakeBiteScene');
       if (oldOverlay) oldOverlay.remove();
+
+      // Play dramatic snake bite sounds
+      playSound(sfxSnakeHiss);
+      setTimeout(() => playSound(sfxGasp), 400);
+      setTimeout(() => playSound(sfxHeart), 800); // Heartbeat from fear/pain
 
       // Create a new overlay div
       const overlay = document.createElement('div');
@@ -1732,6 +2882,10 @@
       // Remove any previous overlay if present
       let oldOverlay = document.getElementById('goAloneScene');
       if (oldOverlay) oldOverlay.remove();
+
+      // Play determined solo journey sounds
+      playSound(sfxWalk);
+      setTimeout(() => playSound(sfxWind), 500); // Wind emphasizing solitude
 
       // Create a new overlay div
       const overlay = document.createElement('div');
@@ -1881,6 +3035,11 @@
       let oldOverlay = document.getElementById('muddyPatchRestCutScene');
       if (oldOverlay) oldOverlay.remove();
 
+      // Play peaceful rest sounds
+      playSound(sfxRest);
+      setTimeout(() => playSound(sfxBirds), 800); // Birds chirping during rest
+      setTimeout(() => playSound(sfxWind), 1500); // Gentle wind
+
       // Create a new overlay div
       const overlay = document.createElement('div');
       overlay.id = 'muddyPatchRestCutScene';
@@ -1915,6 +3074,8 @@
       // When the player clicks Continue, remove overlay and continue
       document.getElementById('continueMuddyRestBtn').onclick = function() {
         overlay.remove();
+        // Show a fact about the importance of rest and self-care
+        showSpecificFact("Taking breaks during long water journeys is essential. Many people walk 3-6 hours daily to collect water for their families.");
         if (typeof continueCallback === 'function') {
           continueCallback();
         }
@@ -1927,6 +3088,11 @@
       // Remove any previous overlay if present
       let oldOverlay = document.getElementById('muddyPatchPushThroughCutScene');
       if (oldOverlay) oldOverlay.remove();
+
+      // Play strenuous push-through sounds
+      playSound(sfxWalk);
+      setTimeout(() => playSound(sfxSplash), 400); // Splashing through mud
+      setTimeout(() => playSound(sfxGasp), 800); // Exhaustion from effort
 
       // Create a new overlay div
       const overlay = document.createElement('div');
@@ -1973,6 +3139,12 @@
       // Remove any previous overlay if present
       let oldOverlay = document.getElementById('wildDogCutScene');
       if (oldOverlay) oldOverlay.remove();
+
+      // Play dramatic dog encounter sounds
+      playSound(sfxDogBark);
+      setTimeout(() => playSound(sfxThrow), 500); // Throwing distraction
+      setTimeout(() => playSound(sfxWalk), 800); // Running away quickly
+      setTimeout(() => playSound(sfxHeart), 1200); // Racing heartbeat from adrenaline
 
       // Create a new overlay div
       const overlay = document.createElement('div');
